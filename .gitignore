@@ -1,0 +1,11 @@
+inst/doc
+.Rproj.user
+.Rhistory
+.Rbuildignore
+.RData
+.Ruserdata
+build_packages_howto.Rmd
+SysbioTreemaps.Rproj
+*.o
+*.so
+*.dll

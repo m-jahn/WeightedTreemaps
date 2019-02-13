@@ -1,0 +1,45 @@
+Package: SysbioTreemaps
+Title: Generate and Plot Voronoi or Sunburst Treemaps from Hierarchical Data
+Version: 0.1.0
+Authors@R: c(
+    person(given = "Michael",
+           family = "Jahn",
+           role = c("aut", "cre"),
+           email = "michael.jahn@scilifelab.se"),
+    person(given = "Paul",
+           family = "Murrell",
+           role = c("aut", "cph"),
+           email = "p.murrell@auckland.ac.nz"))
+Description: This package can be used to generate and plot Voronoi treemaps or
+    sunburst treemaps from hierarchical data. There are different implementations for
+    Voronoi tesselations in R, the simplest being the deldir() function (from package
+    deldir). However, deldir and other do not handle nested Voronoi tesselations, nor
+    do they perform additively weighted Voronoi tesselation. This is an important
+    demand for Systems Biology or other applications where one likes to scale the cell
+    size (or area) to a set of predefined weights. The functions provided in this package
+    allow both the additively weighted Voronoi tesselation, and the nesting of different
+    hierarchical levels in one plot. The underlying functions for the tesselation
+    were developed and published by Paul Murrell, University of Auckland, and serve
+    as the basis for this package. They are called by a recursive wrapper,
+    voronoiTreemap(), which subdivides the plot area in polygonal cells according to
+    the highest hierarchical level.  It then continues with the tesselation on the next 
+    lower level uisng the child cell of the previous level as the new parental plotting
+    cell, and so on. 
+License: GPL-3
+Depends: tidyr, gpclib
+Imports: 
+    grid,
+    dplyr,
+    colorspace,
+    sp,
+    soiltexture,
+    Rcpp
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp
