@@ -73,7 +73,8 @@ struct Cropped_voronoi_from_apollonius{
     m_cropped_vd.erase(m_cropped_vd.begin(), m_cropped_vd.end());
   }
 };
-
+// roxygen export tag
+//' @export main
 // [[Rcpp::export]]
 int main()
 {

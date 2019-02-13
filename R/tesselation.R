@@ -21,7 +21,7 @@
 recordSites <- function(sites, weights) {
   write.table(
     cbind(sites$x, sites$y, weights),
-    file="bin/sites.cin",
+    file="sites.cin",
     row.names = FALSE,
     col.names = FALSE
   )
@@ -35,9 +35,10 @@ awv <- function(
   debugCell = FALSE) 
 {
   recordSites(s, w)
-  result <- system("cd bin; ./voronoiDiagram > diagram.txt")
-  if (result)
-    stop(paste("Voronoi diagram failed with error", result))
+  SysbioTreemaps::main() %>% writeLines("diagram.txt")
+  #result <- system("./voronoiDiagram > diagram.txt")
+  #if (result)
+  #  stop(paste("Voronoi diagram failed with error", result))
   roughCells <- readCells(s)
   tolerance <- .0015
   # tolerance <- max(diff(range(s$x)), diff(range(s$y)))*.000001
@@ -50,16 +51,16 @@ awv <- function(
 # NOTE that the result may NOT be in same order as original sites
 # SO have to check order in here
 readCells <- function(s) {
-  diagInfo <- readLines("bin/diagram.txt")
+  diagInfo <- readLines("diagram.txt")
   starts <- grep("^Vertex", diagInfo)
   lengths <- diff(c(starts, length(diagInfo) + 1))
   vertices <- read.table(textConnection(diagInfo[starts]))[-1]
   
   readCell <- function(start, length) {
-    vline <- readLines("bin/diagram.txt", n = start)[start]
+    vline <- readLines("diagram.txt", n = start)[start]
     if (length > 1) {
       border <- read.table(
-        "bin/diagram.txt",
+        "diagram.txt",
         skip = start,
         nrows = length - 1,
         na.strings = "nan"
