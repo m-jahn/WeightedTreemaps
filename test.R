@@ -3,18 +3,20 @@
 #   subset(condition=="CO2-0-15") %>%
 #   arrange(Process.abbr, Pathway.abbr, protein)
 # 
-# library(grid)
-# library(dplyr)
-# library(tidyr)
-# library(gpclib)
-# library(soiltexture)
-# library(sp)
+devtools::load_all()
+
+library(grid)
+library(dplyr)
+library(tidyr)
+library(gpclib)
+library(soiltexture)
+library(sp)
 # 
-# source("R/allocate.R")
-# source("R/draw.R")
-# source("R/drawUtils.R")
-# source("R/tesselation.R")
-# source("R/voronoi.R")
+source("R/allocate.R")
+source("R/draw.R")
+source("R/drawUtils.R")
+source("R/tesselation.R")
+source("R/voronoi.R")
 
 library(dplyr)
 data <- tibble(
@@ -31,8 +33,6 @@ tm <- voronoiTreemap(
 )
 
 drawTreemap(tm)
-
-result <- main()#writeLines("diagram.txt")
 
 data("starwars")
 

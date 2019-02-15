@@ -5,19 +5,20 @@
 
 using namespace Rcpp;
 
-// main
-int main();
-RcppExport SEXP _SysbioTreemaps_main() {
+// cropped_voronoi
+List cropped_voronoi(NumericMatrix sites);
+RcppExport SEXP _SysbioTreemaps_cropped_voronoi(SEXP sitesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(main());
+    Rcpp::traits::input_parameter< NumericMatrix >::type sites(sitesSEXP);
+    rcpp_result_gen = Rcpp::wrap(cropped_voronoi(sites));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_SysbioTreemaps_main", (DL_FUNC) &_SysbioTreemaps_main, 0},
+    {"_SysbioTreemaps_cropped_voronoi", (DL_FUNC) &_SysbioTreemaps_cropped_voronoi, 1},
     {NULL, NULL, 0}
 };
 

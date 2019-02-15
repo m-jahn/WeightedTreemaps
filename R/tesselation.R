@@ -19,12 +19,7 @@
 #' @importFrom sp point.in.polygon
 
 recordSites <- function(sites, weights) {
-  write.table(
-    cbind(sites$x, sites$y, weights),
-    file="sites.cin",
-    row.names = FALSE,
-    col.names = FALSE
-  )
+  cbind(sites$x, sites$y, weights)
 }
 
 # Read the sites and weights from "sites.cin"
@@ -34,65 +29,18 @@ awv <- function(
   s, w, region, debug = FALSE,
   debugCell = FALSE) 
 {
-  recordSites(s, w)
-  SysbioTreemaps::main() %>% writeLines("diagram.txt")
+  sites <- recordSites(s, w)
+  roughCells <- SysbioTreemaps::cropped_voronoi(sites)
   #result <- system("./voronoiDiagram > diagram.txt")
   #if (result)
   #  stop(paste("Voronoi diagram failed with error", result))
-  roughCells <- readCells(s)
+  # roughCells <- readCells(s)
   tolerance <- .0015
   # tolerance <- max(diff(range(s$x)), diff(range(s$y)))*.000001
   tidyCells <- tidyCells(roughCells, tolerance, debug, debugCell)
   trimCells(tidyCells, region)
 }
 
-# Read the bounding cells from "diagram.txt"
-# Return a list of cell information
-# NOTE that the result may NOT be in same order as original sites
-# SO have to check order in here
-readCells <- function(s) {
-  diagInfo <- readLines("diagram.txt")
-  starts <- grep("^Vertex", diagInfo)
-  lengths <- diff(c(starts, length(diagInfo) + 1))
-  vertices <- read.table(textConnection(diagInfo[starts]))[-1]
-  
-  readCell <- function(start, length) {
-    vline <- readLines("diagram.txt", n = start)[start]
-    if (length > 1) {
-      border <- read.table(
-        "diagram.txt",
-        skip = start,
-        nrows = length - 1,
-        na.strings = "nan"
-      )
-    } else {
-      # There has been a case where the vertex is in the file
-      # but there are no edges for the site
-      # Handle this as an empty cell to keep the algorithm going
-      border <- NULL
-    }
-    list(vertex = as.numeric(strsplit(vline, " ")[[1]][2:3]),
-         border = border)
-  }
-  
-  result <- vector("list", length(s$x))
-  for (i in 1:length(s$x)) {
-    sx <- s$x[i]
-    sy <- s$y[i]
-    eps <- .01
-    match <- which((abs(sx - vertices[, 1]) < eps) &
-                     (abs(sy - vertices[, 2]) < eps))
-    if (length(match)) {
-      result[[i]] <- readCell(starts[match], lengths[match])
-    } else {
-      # Return empty cell to allow algorithm to continue
-      result[[i]] <- list(vertex = c(sx, sy),
-                          border = NULL)
-      # stop("Site not present in voronoiDiagram result")
-    }
-  }
-  result
-}
 
 # Tidy the cell information
 # Return a list of lists with x/y
@@ -564,12 +512,12 @@ convertCell.multipleCells <- function(cell) {
     class(p) <- "list"
     suppressWarnings(as(p, "gpc.poly"))
   })
-  Reduce(intersect, polys)
+  Reduce(gpclib::intersect, polys)
 }
 
 trimCells <- function(cells, region) {
   polys <- lapply(cells, convertCell)
-  lapply(polys, intersect, region)
+  lapply(polys, gpclib::intersect, region)
 }
 
 
