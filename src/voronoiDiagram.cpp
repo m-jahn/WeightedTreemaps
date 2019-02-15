@@ -47,46 +47,49 @@ typedef K::Line_2 Line_2;
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-typedef CGAL::Apollonius_graph_traits_2<K>   Traits;
-typedef CGAL::Apollonius_graph_2<Traits>     Apollonius_graph;
-
+typedef CGAL::Apollonius_graph_traits_2<K> Traits;
+typedef CGAL::Apollonius_graph_2<Traits> Apollonius_graph;
 
 //A class to recover Voronoi diagram from stream.
-struct Cropped_voronoi_from_apollonius{
+struct Cropped_voronoi_from_apollonius
+{
   std::list<Segment_2> m_cropped_vd;
   Iso_rectangle_2 m_bbox;
 
-  Cropped_voronoi_from_apollonius(const Iso_rectangle_2& bbox):m_bbox(bbox){}
+  Cropped_voronoi_from_apollonius(const Iso_rectangle_2 &bbox) : m_bbox(bbox) {}
 
   template <class RSL>
-    void crop_and_extract_segment(const RSL& rsl){
-      CGAL::Object obj = CGAL::intersection(rsl,m_bbox);
-      const Segment_2* s=CGAL::object_cast<Segment_2>(&obj);
-      if (s) m_cropped_vd.push_back(*s);
-    }
+  void crop_and_extract_segment(const RSL &rsl)
+  {
+    CGAL::Object obj = CGAL::intersection(rsl, m_bbox);
+    const Segment_2 *s = CGAL::object_cast<Segment_2>(&obj);
+    if (s)
+      m_cropped_vd.push_back(*s);
+  }
 
-  void operator<<(const Ray_2& ray)    { crop_and_extract_segment(ray); }
-  void operator<<(const Line_2& line)  { crop_and_extract_segment(line); }
-  void operator<<(const Segment_2& seg){ crop_and_extract_segment(seg); }
+  void operator<<(const Ray_2 &ray) { crop_and_extract_segment(ray); }
+  void operator<<(const Line_2 &line) { crop_and_extract_segment(line); }
+  void operator<<(const Segment_2 &seg) { crop_and_extract_segment(seg); }
 
-  void reset() {
+  void reset()
+  {
     m_cropped_vd.erase(m_cropped_vd.begin(), m_cropped_vd.end());
   }
 };
 // roxygen export tag
-//' @export main
+//' @export cropped_voronoi
 // [[Rcpp::export]]
-int main()
+List cropped_voronoi(NumericMatrix sites)
 {
-  std::ifstream ifs("sites.cin");
-  assert( ifs );
 
   Apollonius_graph ag;
-  Apollonius_graph::Site_2 site;
 
   // read the sites and insert them in the Apollonius graph
-  while ( ifs >> site ) {
-    ag.insert(site);
+  std::vector<Apollonius_graph::Vertex_handle> handles;
+  for (int i = 0; i != sites.nrow(); i++)
+  {
+    auto handle = ag.insert(Apollonius_graph::Site_2(Point_2(sites(i, 0), sites(i, 1)), sites(i, 2)));
+    handles.push_back(handle);
   }
 
   //construct a rectangle
@@ -95,33 +98,44 @@ int main()
   // points for any open cells, without fear of crossing the
   // area that contains the sites (EXCEPT for pretty pathological
   // cases, e.g., where there are only two sites)
-  Iso_rectangle_2 bbox(-2000,-2000,2000,2000);
+  Iso_rectangle_2 bbox(-2000, -2000, 2000, 2000);
 
   Cropped_voronoi_from_apollonius vor(bbox);
 
+  List results;
   // iterate to extract Voronoi diagram edges around each vertex
-  Apollonius_graph::Finite_vertices_iterator vit;
-  for (vit = ag.finite_vertices_begin();
-       vit != ag.finite_vertices_end();
-       ++vit) {
-    std::cout << "Vertex ";
-    std::cout << vit->site().point();
-    std::cout << "\n";
-    Apollonius_graph::Edge_circulator ec = ag.incident_edges(vit), done(ec);
-    if (ec != 0) {
-      do {
+  for (auto &h : handles)
+  {
+    Apollonius_graph::Edge_circulator ec = ag.incident_edges(h), done(ec);
+    if (ec != 0)
+    {
+      do
+      {
         ag.draw_dual_edge(*ec, vor);
         // std::cout << "Edge\n";
-      } while(++ec != done);
+      } while (++ec != done);
     }
     //print the cropped Voronoi diagram edges as segments
-    std::copy(vor.m_cropped_vd.begin(),vor.m_cropped_vd.end(),
-              std::ostream_iterator<Segment_2>(std::cout,"\n"));
+    NumericVector x1s;
+    NumericVector y1s;
+    NumericVector x2s;
+    NumericVector y2s;
+    for (auto &s : vor.m_cropped_vd)
+    {
+      x1s.push_back(s.source().x());
+      y1s.push_back(s.source().y());
+      x2s.push_back(s.target().x());
+      y2s.push_back(s.target().y());
+    }
+    DataFrame border = DataFrame::create(Named("x1") = x1s, Named("y1") = y1s, Named("x2") = x2s, Named("y2") = y2s);
+    auto &vertex = h->site().point();
+    results.push_back(List::create(Named("vertex") = NumericVector::create(vertex.x(), vertex.y()),
+                                   Named("border") = x1s.size() ? (SEXP)border : R_NilValue));
     vor.reset();
   }
 
   //extract the entire cropped Voronoi diagram
   // ag.draw_dual(vor);
 
-  return 0;
+  return results;
 }

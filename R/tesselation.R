@@ -19,12 +19,7 @@
 #' @importFrom sp point.in.polygon
 
 recordSites <- function(sites, weights) {
-  write.table(
-    cbind(sites$x, sites$y, weights),
-    file="sites.cin",
-    row.names = FALSE,
-    col.names = FALSE
-  )
+  cbind(sites$x, sites$y, weights)
 }
 
 # Read the sites and weights from "sites.cin"
@@ -34,12 +29,12 @@ awv <- function(
   s, w, region, debug = FALSE,
   debugCell = FALSE) 
 {
-  recordSites(s, w)
-  SysbioTreemaps::main() %>% writeLines("diagram.txt")
+  sites <- recordSites(s, w)
+  roughCells <- SysbioTreemaps::cropped_voronoi(sites)
   #result <- system("./voronoiDiagram > diagram.txt")
   #if (result)
   #  stop(paste("Voronoi diagram failed with error", result))
-  roughCells <- readCells(s)
+  # roughCells <- readCells(s)
   tolerance <- .0015
   # tolerance <- max(diff(range(s$x)), diff(range(s$y)))*.000001
   tidyCells <- tidyCells(roughCells, tolerance, debug, debugCell)
@@ -564,12 +559,12 @@ convertCell.multipleCells <- function(cell) {
     class(p) <- "list"
     suppressWarnings(as(p, "gpc.poly"))
   })
-  Reduce(intersect, polys)
+  Reduce(gpclib::intersect, polys)
 }
 
 trimCells <- function(cells, region) {
   polys <- lapply(cells, convertCell)
-  lapply(polys, intersect, region)
+  lapply(polys, gpclib::intersect, region)
 }
 
 
