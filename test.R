@@ -16,7 +16,6 @@ tm <- voronoiTreemap(
   maxIteration = 50,
   debug = FALSE
 )
-
 drawTreemap(tm)
 
 
@@ -25,16 +24,16 @@ data <- read.csv("data/Jahn_et_al_CellReports_2018.csv", stringsAsFactors = FALS
   subset(condition=="CO2-0-15") %>%
   arrange(Process.abbr, Pathway.abbr, protein)
 
-
 tm <- voronoiTreemap(
-  filter(data, mean_mass_fraction_norm > 0), 
-  levels = c("Process.abbr", "Pathway.abbr", "protein"),
-  labels = c("Pathway.abbr", "protein"),
-  #cell.size = "mean_mass_fraction_norm",
+  filter(data, mean_mass_fraction_norm > 0.0003), 
+  levels = c("Process.abbr", "protein"), #"Pathway.abbr"
+  labels = c("Process.abbr", "protein"),
+  cell.size = "mean_mass_fraction_norm",
   maxIteration = 50, 
   debug = FALSE
 )
 drawTreemap(tm)
+
 
 
 # data("starwars")

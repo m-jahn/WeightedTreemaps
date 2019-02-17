@@ -77,9 +77,9 @@ drawRegions <- function(
   if (label) {
     
     # function to determine label sizes for each individual cell
-    # based on cell dimension and 
-    # TODO label character length
-    cex = sqrt(unlist(result$a))/200 %>% round(1)
+    # based on cell dimension and label character length
+    cex = sqrt(unlist(result$a)) * 0.05 / nchar(names)  %>%
+      round(1)
 
     polylist$labels <- textGrob(names,
       sites$x,
