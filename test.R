@@ -1,24 +1,7 @@
-# read test data set
-# data <- read.csv("data/Jahn_et_al_CellReports_2018.csv", stringsAsFactors = FALSE) %>%
-#   subset(condition=="CO2-0-15") %>%
-#   arrange(Process.abbr, Pathway.abbr, protein)
-# 
-devtools::load_all()
-
-library(grid)
 library(dplyr)
-library(tidyr)
-library(gpclib)
-library(soiltexture)
-library(sp)
-# 
-source("R/allocate.R")
-source("R/draw.R")
-source("R/drawUtils.R")
-source("R/tesselation.R")
-source("R/voronoi.R")
+library(SysbioTreemaps)
 
-library(dplyr)
+
 data <- tibble(
   A=rep(c("a", "b", "c"), each=15),
   B=sample(letters[4:13], 45, replace=TRUE),
@@ -28,25 +11,42 @@ data <- tibble(
 
 tm <- voronoiTreemap(
   data,
-  levels = c("A", "B"),
-  maxIteration = 3, debug = TRUE
+  levels = c("A", "B", "C"),
+  cell.size = "C",
+  maxIteration = 50,
+  debug = FALSE
 )
 
 drawTreemap(tm)
 
-data("starwars")
 
-sw <- filter(starwars, !(is.na(homeworld) | is.na(gender))) %>%
-  arrange(gender, homeworld, name)
+# read test data set
+data <- read.csv("data/Jahn_et_al_CellReports_2018.csv", stringsAsFactors = FALSE) %>%
+  subset(condition=="CO2-0-15") %>%
+  arrange(Process.abbr, Pathway.abbr, protein)
 
 
 tm <- voronoiTreemap(
-  sw,
-  levels = c("gender", "homeworld"),
-  maxIteration = 5,
-  labels = c("gender", "homeworld"),
-  cell.size = "height",
-  debug = TRUE
+  filter(data, mean_mass_fraction_norm > 0), 
+  levels = c("Process.abbr", "Pathway.abbr", "protein"),
+  labels = c("Pathway.abbr", "protein"),
+  #cell.size = "mean_mass_fraction_norm",
+  maxIteration = 50, 
+  debug = FALSE
 )
+drawTreemap(tm)
 
-drawTreemap(tm, main="star wars characters treemap")
+
+# data("starwars")
+# sw <- filter(starwars, !(is.na(homeworld) | is.na(gender)))
+# 
+# 
+# tm <- voronoiTreemap(
+#   as.data.frame(sw), 
+#   levels = c("gender", "homeworld", "name"),
+#   maxIteration = 20,
+#   labels = c("name"),
+#   debug = FALSE
+# )
+# 
+# drawTreemap(tm, main="star wars characters treemap")

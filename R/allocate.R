@@ -28,11 +28,13 @@ breaking <- function(
   max = TRUE,
   debug = FALSE,
   prevError) {
+  
   if (max) {
     
     # Stop when largest individual cell error is less than 1%
     # (the default)
     err <- cellError(a, target)
+    if (is.na(err) | is.nan(err)) err <- 1
     if (debug)
       cat(paste("Difference: ", err,
                 " (", abs(err - prevError), ")",
@@ -73,9 +75,10 @@ breaking <- function(
 # (and stabilizes the algorithm generally)
 adjustWeights <- function(w, a, target) {
   # Watch out for zero-area cells (set to small value)
-  a <- ifelse(a == 0, .01 * sum(a), a)
+  a <- ifelse(a == 0, 10, a)
   normA <- a / sum(a)
-  w + mean(abs(w)) * ((target - normA) / target)
+  w = w + mean(abs(w)) * ((target - normA) / target)
+  w
 }
 
 # Use centroid finding code in 'soiltexture' for now
@@ -110,7 +113,6 @@ shiftWeights <- function(s, w) {
         # circles even when weights are negative
         f = sqrt((s$x[i] - s$x[j]) ^ 2 +
                    (s$y[i] - s$y[j]) ^ 2) / (abs(w[i]) + abs(w[j]))
-        
         if (f > 0 && f < 1) {
           w[i] <- w[i] * f
           w[j] <- w[j] * f
@@ -130,6 +132,11 @@ allocate <- function(
 {
   count <- 1
   prevError <- 1
+  
+  # add small artificial error in case of a tesselation with exactly
+  # identical areas, in order to to assist finding boundaries
+  if (length(unique(w)) == 1)
+    w <- w * runif(length(w), 0.95, 1.05)
   
   repeat {
     k <- awv(s, w, outer, debug, debugCell)
@@ -166,11 +173,12 @@ allocate <- function(
       target, 
       debug = debug, 
       prevError = prevError)
-
-    if (count > maxIteration || stop_cond$stopping) {
+    
+    if (count == maxIteration || stop_cond$stopping) {
       return(list(
         names = names, k = k, s = s,
-        w = w, a = areas, t = target
+        w = w, a = areas, t = target,
+        count = count
       ))
     } else {
       w <- adjustWeights(w, unlist(areas), target)

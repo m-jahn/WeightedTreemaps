@@ -12,7 +12,8 @@
 #'
 #' @param data (data.frame) A data.frame with one column for each hierarchical level
 #' @param levels (character) Character vector indicating the column names to 
-#'   be used. The order of names must correspond to the hierarchical levels, going from broad to fine 
+#'   be used. The order of names must correspond to the hierarchical levels, 
+#'   going from broad to fine 
 #' @param fun (function) Function to be used to aggregate cell sizes of parental cells
 #' @param sort (logical) Should the columns of the data.frame be sorted before?
 #' @param cell.size (character) Indicates the column used to control cell size. 
@@ -64,7 +65,7 @@ voronoiTreemap <- function(
   data, 
   levels, 
   fun = sum,
-  sort = FALSE, 
+  sort = TRUE, 
   cell.size = NULL, 
   cell.color = levels[1], 
   cols = c("royalblue", "chartreuse3", "darkgoldenrod1", "red"),
@@ -216,7 +217,8 @@ voronoiTreemap <- function(
         {(./sum(.))-weights} %>% abs
       cat("Level" , level, "tesselation: ",
           round(mean(tessErr)*100, 2), "% mean error, ",
-          round(max(tessErr)*100, 2), "% max error\n"
+          round(max(tessErr)*100, 2), "% max error, ",
+          treemap$count, "iterations\n"
         )
       
     }

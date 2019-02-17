@@ -18,24 +18,17 @@
 #' @import gpclib
 #' @importFrom sp point.in.polygon
 
-recordSites <- function(sites, weights) {
-  cbind(sites$x, sites$y, weights)
-}
 
-# Read the sites and weights from "sites.cin"
-# Generate an additively weighted Voronoi diagram
-# Write bounding cells to "diagram.txt"
+# Generate one iteration of the Additively Weighted Voronoi diagram
 awv <- function(
   s, w, region, debug = FALSE,
   debugCell = FALSE) 
 {
-  sites <- recordSites(s, w)
+  # combine X, Y coordinates and weights as input for
+  # C++ tesselation function
+  sites <- cbind(s$x, s$y, w)
   roughCells <- SysbioTreemaps::cropped_voronoi(sites)
-  #result <- system("./voronoiDiagram > diagram.txt")
-  #if (result)
-  #  stop(paste("Voronoi diagram failed with error", result))
-  # roughCells <- readCells(s)
-  tolerance <- .0015
+  tolerance <- 0.0015
   # tolerance <- max(diff(range(s$x)), diff(range(s$y)))*.000001
   tidyCells <- tidyCells(roughCells, tolerance, debug, debugCell)
   trimCells(tidyCells, region)
@@ -425,7 +418,7 @@ closeCell.default <- function(cell, vertex, tol, scale=1000) {
       # "Subtract" smallCell from bound rect to get largeCell
       cellPoly <- suppressWarnings(as(cell, "gpc.poly"))
       cellPoly <-
-        intersect(gpclib::append.poly(cellPoly, boundRect), boundRect)
+        gpclib::intersect(gpclib::append.poly(cellPoly, boundRect), boundRect)
       pts <- getpts(cellPoly)
       cell <- list(x = c(pts$x, pts$x[1]),
                    y = c(pts$y, pts$y[1]))
@@ -492,28 +485,21 @@ startsAt <- function(border, x, y, direction, tol) {
 # Take polygons from Voronoi cells and intersect them with
 # outer polygon (e.g., circle radius 1000)
 # Return list of "gpc.poly"
-#convertCell <- function(cell) {
-#  UseMethod("convertCell")
-#}
-
 convertCell <- function(cell) {
   # Handle empty cells
   if (is.null(cell)) {
     new("gpc.poly")
+  } else if (inherits(cell, "multipleCells")) {
+    polys <- lapply(cell, function(p) {
+      class(p) <- "list"
+      suppressWarnings(as(p, "gpc.poly"))
+    })
+    Reduce(gpclib::intersect, polys)
   } else {
-    class(cell) <- "list"
     suppressWarnings(as(cell, "gpc.poly"))
   }
 }
 
-convertCell.multipleCells <- function(cell) {
-  #polys <- suppressWarnings(lapply(cell, as, "gpc.poly"))
-  polys <- lapply(cell, function(p) {
-    class(p) <- "list"
-    suppressWarnings(as(p, "gpc.poly"))
-  })
-  Reduce(gpclib::intersect, polys)
-}
 
 trimCells <- function(cells, region) {
   polys <- lapply(cells, convertCell)
