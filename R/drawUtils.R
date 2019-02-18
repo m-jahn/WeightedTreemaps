@@ -20,14 +20,14 @@
 #' @importFrom grid textGrob
 #' @importFrom grid grid.draw
 
-drawPoly <- function(p, name, gp = gpar()) {
+drawPoly <- function(p, name, fill, lwd, col) {
   if (length(p@pts)) {
     pts <- getpts(p)
     polygonGrob(
       pts$x,
       pts$y,
       default = "native",
-      gp = gp,
+      gp = gpar(col = col, lwd = lwd, fill = fill),
       name = name)
   }
 }
@@ -64,13 +64,9 @@ drawRegions <- function(
   weights <- result$w
   
   # draw polygon, pass graphical parameters to drawPoly function
-  polylist <- mapply(drawPoly, k, names,
+  polylist <- mapply(drawPoly, k, names, fill = fill,
     SIMPLIFY=FALSE,
-    MoreArgs = list(gp = gpar(
-      lwd = lwd, 
-      col = col,
-      fill = fill
-    ))
+    MoreArgs = list(lwd = lwd, col = col)
   )
   names(polylist) = names
   

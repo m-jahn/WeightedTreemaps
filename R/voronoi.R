@@ -16,11 +16,16 @@
 #'   going from broad to fine 
 #' @param fun (function) Function to be used to aggregate cell sizes of parental cells
 #' @param sort (logical) Should the columns of the data.frame be sorted before?
+#' @param filter (logical) Filter the supplied data frame to remove very small
+#'   cells that would not be visible. The default is to remove cells with a 
+#'   relative target area below 0.0005, or 0.05%. The algorithm can still fail
+#'   so it can be worthwhile to simply rerun the function, probably applying a
+#'   stricter threshold.
 #' @param cell.size (character) Indicates the column used to control cell size. 
 #'   Can be one of \code{levels}
 #' @param cell.color (character) Indicates the column used to control cell color. 
 #'   Can be one of \code{levels}
-#' @param cols (character) A character vector of colors used to fill cells. 
+#' @param color.palette (character) A character vector of colors used to fill cells. 
 #' @param border.size (character) The initial line width of the highest level 
 #'   cells. Is reduced each level.
 #' @param border.color (numeric) Color for cell borders.
@@ -66,11 +71,12 @@ voronoiTreemap <- function(
   levels, 
   fun = sum,
   sort = TRUE, 
+  filter = 0.0005,
   cell.size = NULL, 
   cell.color = levels[1], 
-  cols = c("royalblue", "chartreuse3", "darkgoldenrod1", "red"),
+  color.palette = NULL,
   border.size = 6,
-  border.color = grey(0.8),
+  border.color = grey(0.9),
   labels = levels[length(levels)],
   label.col = grey(0.5),
   maxIteration = 50,
@@ -81,13 +87,27 @@ voronoiTreemap <- function(
   #
   # check input data frame
   if (!is.data.frame(data)) {
-    
     if (!is.matrix(data))
       stop("'data' must be a matrix or a data frame")
     else if (is.null(colnames(data)))
       stop("'data' must have column names")
     else
       data <- as.data.frame(data)
+  }
+  
+  # filter out very small target areas that are barely visible
+  # and will make the treemap generation more unstable
+  if (!is.null(cell.size)) {
+    if (data[[cell.size]] %>% {./sum(.) < 0.0005} %>% any) {
+      if (is.numeric(filter)) {
+        filtered <- data[[cell.size]] %>% {./sum(.)} >= filter
+        data <- subset(data, filtered)
+        warning(paste(sum(!filtered), "out of", length(filtered), 
+          "cells were filtered due to target area falling below treshold."))
+      } else {
+        warning("Some cells have very small target areas. Use 'filter' argument to remove those automatically.")
+      }
+    }
   }
   
   # check levels/hierarchies and level options
@@ -130,7 +150,19 @@ voronoiTreemap <- function(
       yscale = c(0,1000)
     ))
   }
-
+  
+  # generate colors for each cell and add to data frame
+  data$fill.color <- with(data, {
+    colvector <- get(cell.color) %>%
+    as.factor %>%
+    as.numeric
+    if (is.null(color.palette)) {
+      colorspace::rainbow_hcl(length(unique(colvector)))[colvector]
+    } else {
+      colorRampPalette(color.palette)(length(unique(colvector)))[colvector]
+    }
+  })
+  
   # CORE FUNCTION (RECURSIVE)
   voronoi.core <- function(level, df, parent=NULL, output=list()) {
     
@@ -233,10 +265,10 @@ voronoiTreemap <- function(
       label.col = label.col, 
       lwd = border.size/level, 
       col = border.color,
-      fill = {if (level != length(levels)) NA else "white"}
+      fill = {if (level != length(levels)) NA else unique(df$fill.color)}
     )
     
-  
+    
     # CALL CORE FUNCTION RECURSIVELY
     if (level != length(levels)) {
       

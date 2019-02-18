@@ -73,11 +73,13 @@ breaking <- function(
 # adjust by multiple of average absolute weights
 # This avoids problem of getting stuck at a tiny weight
 # (and stabilizes the algorithm generally)
+# difference to original implementation: step change of weights lower
+# to prevent crashing of algorithm
 adjustWeights <- function(w, a, target) {
   # Watch out for zero-area cells (set to small value)
   a <- ifelse(a == 0, 10, a)
   normA <- a / sum(a)
-  w = w + mean(abs(w)) * ((target - normA) / target)
+  w = w + mean(abs(w))/3 * ((target - normA) / target)
   w
 }
 
@@ -133,12 +135,13 @@ allocate <- function(
   count <- 1
   prevError <- 1
   
-  # add small artificial error in case of a tesselation with exactly
-  # identical areas, in order to to assist finding boundaries
-  if (length(unique(w)) == 1)
-    w <- w * runif(length(w), 0.95, 1.05)
-  
   repeat {
+    
+    # add small artificial error in case of a tesselation with exactly
+    # identical areas, in order to to assist finding boundaries
+    if (length(unique(w)) == 1)
+      w <- w * runif(length(w), 0.95, 1.05)
+    
     k <- awv(s, w, outer, debug, debugCell)
     areas <- lapply(k, area.poly)
     
@@ -148,13 +151,13 @@ allocate <- function(
     # many iterations
     if (debug) {
       drawRegions(
-        list(names = names, 
+        list(names = names,
              k = k, s = s,
-             w = w, a = areas, 
+             w = w, a = areas,
              t = target
         ),
         debug, label = TRUE, label.col = grey(0.5),
-        lwd = 2, col = grey(0.5), 
+        lwd = 2, col = grey(0.5),
         fill = grey(1, alpha=0.33)
       )
       
@@ -181,6 +184,7 @@ allocate <- function(
         count = count
       ))
     } else {
+      
       w <- adjustWeights(w, unlist(areas), target)
       s <- shiftSites(s, k)
       w <- shiftWeights(s, w)

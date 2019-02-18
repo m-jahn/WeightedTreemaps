@@ -4,7 +4,7 @@
 \alias{voronoiTreemap}
 \title{voronoiTreemap}
 \usage{
-voronoiTreemap(data, levels, fun = sum, sort = FALSE,
+voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 5e-04,
   cell.size = NULL, cell.color = levels[1], cols = c("royalblue",
   "chartreuse3", "darkgoldenrod1", "red"), border.size = 6,
   border.color = grey(0.8), labels = levels[length(levels)],
@@ -14,11 +14,18 @@ voronoiTreemap(data, levels, fun = sum, sort = FALSE,
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
 
 \item{levels}{(character) Character vector indicating the column names to 
-be used. The order of names must correspond to the hierarchical levels, going from broad to fine}
+be used. The order of names must correspond to the hierarchical levels, 
+going from broad to fine}
 
 \item{fun}{(function) Function to be used to aggregate cell sizes of parental cells}
 
 \item{sort}{(logical) Should the columns of the data.frame be sorted before?}
+
+\item{filter}{(logical) Filter the supplied data frame to remove very small
+cells that would not be visible. The default is to remove cells with a 
+relative target area below 0.0005, or 0.05%. The algorithm can still fail
+so it can be worthwhile to simply rerun the function, probably applying a
+stricter threshold.}
 
 \item{cell.size}{(character) Indicates the column used to control cell size. 
 Can be one of \code{levels}}
