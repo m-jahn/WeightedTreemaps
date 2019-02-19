@@ -1,65 +1,101 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Create Voronoi and Sunburst Treemaps from Hierarchical Data"
+author: "Michael Jahn"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: github_document
+#output: rmarkdown::html_vignette
+#vignette: >
+#  %\VignetteIndexEntry{}
+#  %\VignetteEngine{knitr::rmarkdown}
+#  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.path = ""
 )
 ```
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+## Description
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+This package can be used to generate and plot Voronoi treemaps or
+sunburst treemaps from hierarchical data. 
 
-## Vignette Info
-
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r, out.width = "600px",  fig.align = 'center', echo = FALSE}
+#paste0(getwd(), "/vignettes/tm.png")
+#knitr::include_graphics("vignettes/tm.png")
+knitr::include_graphics("vignettes/tm.png")
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+There are different implementations for
+Voronoi tesselations in R, the simplest being the deldir() function (from package
+deldir). However, deldir and other do not handle nested Voronoi tesselations, nor
+do they perform additively weighted Voronoi tesselation. This is an important
+demand for systems biology and other applications where one likes to scale the cell
+size (or area) to a set of predefined weights. The functions provided in this package
+allow both the additively weighted Voronoi tesselation, and the nesting of different
+hierarchical levels in one plot. The underlying functions for the tesselation
+were developed and published by Paul Murrell, University of Auckland, and serve
+as the basis for this package. They are called by a recursive wrapper function,
+voronoiTreemap(), which subdivides the plot area in polygonal cells according to
+the highest hierarchical level.  It then continues with the tesselation on the next 
+lower level uisng the child cell of the previous level as the new parental plotting
+cell, and so on. The sunburst treemap is a computationally less demanding treemap that
+does not require iterative refinement, but simply generates circle sectors that are
+sized according to predefined weights. It is also a arecursive algorithm and can be
+used to draw sectors of different hierarchical level with increasing granularity.
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+## Requirements
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+The C++ code requires the [CGAL](https://www.cgal.org/download.html) library.
+Installation for (Ubuntu-like) Linux:
 
-## More Examples
+`sudo apt install libcgal-dev`
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+## Installation
 
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+To install the package directly from github, use this function from devtools package:
+
+```
+require(devtools)
+devtools::install_github(https://github.com/m-jahn/SysbioTreemaps)
+```
+The package is not available on CRAN yet. 
+
+## Usage
+
+Create a simple example data frame
+
+```
+library(dplyr)
+library(SysbioTreemaps)
+
+data <- tibble(
+  A=rep(c("a", "b", "c"), each=15),
+  B=sample(letters[4:13], 45, replace=TRUE),
+  C=sample(1:100, 45)
+) %>% arrange(A, B, C)
 ```
 
-Also a quote using `>`:
+Compute the treemap. It will return a list of grid graphics objects.
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```
+tm <- voronoiTreemap(
+  data = data,
+  levels = c("A", "B", "C"),
+  cell.size = "C",
+  cell.color = "A",
+  maxIteration = 50,
+)
+```
+Draw the treempap.
+
+```
+drawTreemap(tm)
+```
+
+## References
+
+The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html 

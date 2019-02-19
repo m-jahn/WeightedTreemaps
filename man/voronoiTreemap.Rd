@@ -5,10 +5,10 @@
 \title{voronoiTreemap}
 \usage{
 voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 5e-04,
-  cell.size = NULL, cell.color = levels[1], cols = c("royalblue",
-  "chartreuse3", "darkgoldenrod1", "red"), border.size = 6,
-  border.color = grey(0.8), labels = levels[length(levels)],
-  label.col = grey(0.5), maxIteration = 50, debug = FALSE)
+  cell.size = NULL, cell.color = levels[1], color.palette = NULL,
+  border.size = 6, border.color = grey(0.9),
+  labels = levels[length(levels)], label.col = grey(0.5),
+  maxIteration = 50, debug = FALSE)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
@@ -33,7 +33,7 @@ Can be one of \code{levels}}
 \item{cell.color}{(character) Indicates the column used to control cell color. 
 Can be one of \code{levels}}
 
-\item{cols}{(character) A character vector of colors used to fill cells.}
+\item{color.palette}{(character) A character vector of colors used to fill cells.}
 
 \item{border.size}{(character) The initial line width of the highest level 
 cells. Is reduced each level.}
@@ -72,6 +72,28 @@ This function returns a list of graphical objects instead of a plot. In order
 to actually draw the treemap, use \code{\link{drawTreemap}}.
 }
 \examples{
+library(SysbioTreemaps)
+library(dplyr)
+
+# generate example data
+data <- tibble(
+  A=rep(c("a", "b", "c"), each=15),
+  B=sample(letters[4:13], 45, replace=TRUE),
+  C=sample(1:100, 45)
+) \%>\% arrange(A, B, C)
+
+# generate treemap
+tm <- voronoiTreemap(
+  data = data,
+  levels = c("A", "B", "C"),
+  cell.size = "C",
+  cell.color = "A",
+  maxIteration = 50,
+  )
+
+# plot treemap
+drawTreemap(tm)
+
 
 }
 \seealso{

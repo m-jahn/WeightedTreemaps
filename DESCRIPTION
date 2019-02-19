@@ -19,16 +19,19 @@ Description: This package can be used to generate and plot Voronoi treemaps or
     Voronoi tesselations in R, the simplest being the deldir() function (from package
     deldir). However, deldir and other do not handle nested Voronoi tesselations, nor
     do they perform additively weighted Voronoi tesselation. This is an important
-    demand for Systems Biology or other applications where one likes to scale the cell
+    demand for systems biology and other applications where one likes to scale the cell
     size (or area) to a set of predefined weights. The functions provided in this package
     allow both the additively weighted Voronoi tesselation, and the nesting of different
     hierarchical levels in one plot. The underlying functions for the tesselation
     were developed and published by Paul Murrell, University of Auckland, and serve
-    as the basis for this package. They are called by a recursive wrapper,
+    as the basis for this package. They are called by a recursive wrapper function,
     voronoiTreemap(), which subdivides the plot area in polygonal cells according to
     the highest hierarchical level.  It then continues with the tesselation on the next 
     lower level uisng the child cell of the previous level as the new parental plotting
-    cell, and so on. 
+    cell, and so on. The sunburst treemap is a computationally less demanding treemap that
+    does not require iterative refinement, but simply generates circle sectors that are
+    sized according to predefined weights. It is also a arecursive algorithm and can be
+    used to draw sectors of different hierarchical level with increasing granularity.
 License: GPL-3
 Depends: tidyr, gpclib
 Imports: 

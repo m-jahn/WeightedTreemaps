@@ -1,8 +1,14 @@
 #' drawTreemap
 #'
-#' Draws the treemap from a list obtained by running [voronoiTreemap()]
+#' Draws the treemap from a list obtained by running [voronoiTreemap()] or
+#' [sunburstTreemap()]. Some graphical parameters can be tweaked but most
+#' settings are made during treemap generation.
 #'
-#' @param data (data.frame) A data.frame with one column for each hierarchical level
+#' @param treemap (list) A list of grid polygons and text objects that is the
+#'   output from treemap generation.
+#' @param width (numeric) The width (0 to 1) of the viewport that the treemap will occupy.
+#' @param height (numeric) The height (0 to 1)of the viewport that the treemap will occupy.
+#' @param title (character) A title, optional.
 #' 
 #' @return Creates a grid viewport and draws the treemap.
 #' 
@@ -10,6 +16,27 @@
 #'   the input for the drawing function
 #'
 #' @examples
+#' library(SysbioTreemaps)
+#' library(dplyr)
+#' 
+#' # generate example data
+#' data <- tibble(
+#'   A=rep(c("a", "b", "c"), each=15),
+#'   B=sample(letters[4:13], 45, replace=TRUE),
+#'   C=sample(1:100, 45)
+#' ) %>% arrange(A, B, C)
+#' 
+#' # generate treemap
+#' tm <- voronoiTreemap(
+#'   data = data,
+#'   levels = c("A", "B", "C"),
+#'   cell.size = "C",
+#'   cell.color = "A",
+#'   maxIteration = 50,
+#'   )
+#' 
+#' # plot treemap
+#' drawTreemap(tm)
 #' 
 #' @import tidyr
 #' @importFrom grid grid.newpage
@@ -25,16 +52,16 @@ drawTreemap <- function(
   treemap, 
   width=0.9, 
   height=0.9,
-  main=NULL)
+  title=NULL)
 {
   
   # new grid page
   grid::grid.newpage()
   
   # draw some additional elements, like a title
-  if (!is.null(main)) {
+  if (!is.null(title)) {
     grid::grid.text(
-      main, 
+      title, 
       x = grid::unit(0.5, "npc"), 
       y = grid::unit(0.98, "npc"),
       gp=grid::gpar(cex=0.8)

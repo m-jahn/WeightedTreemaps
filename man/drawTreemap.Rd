@@ -4,18 +4,48 @@
 \alias{drawTreemap}
 \title{drawTreemap}
 \usage{
-drawTreemap(treemap, width = 0.9, height = 0.9, main = NULL)
+drawTreemap(treemap, width = 0.9, height = 0.9, title = NULL)
 }
 \arguments{
-\item{data}{(data.frame) A data.frame with one column for each hierarchical level}
+\item{treemap}{(list) A list of grid polygons and text objects that is the
+output from treemap generation.}
+
+\item{width}{(numeric) The width (0 to 1) of the viewport that the treemap will occupy.}
+
+\item{height}{(numeric) The height (0 to 1)of the viewport that the treemap will occupy.}
+
+\item{title}{(character) A title, optional.}
 }
 \value{
 Creates a grid viewport and draws the treemap.
 }
 \description{
-Draws the treemap from a list obtained by running [voronoiTreemap()]
+Draws the treemap from a list obtained by running [voronoiTreemap()] or
+[sunburstTreemap()]. Some graphical parameters can be tweaked but most
+settings are made during treemap generation.
 }
 \examples{
+library(SysbioTreemaps)
+library(dplyr)
+
+# generate example data
+data <- tibble(
+  A=rep(c("a", "b", "c"), each=15),
+  B=sample(letters[4:13], 45, replace=TRUE),
+  C=sample(1:100, 45)
+) \%>\% arrange(A, B, C)
+
+# generate treemap
+tm <- voronoiTreemap(
+  data = data,
+  levels = c("A", "B", "C"),
+  cell.size = "C",
+  cell.color = "A",
+  maxIteration = 50,
+  )
+
+# plot treemap
+drawTreemap(tm)
 
 }
 \seealso{

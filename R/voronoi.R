@@ -49,6 +49,28 @@
 #' @seealso \code{\link{drawTreemap}} for drawing the treemap.
 #'
 #' @examples
+#' library(SysbioTreemaps)
+#' library(dplyr)
+#' 
+#' # generate example data
+#' data <- tibble(
+#'   A=rep(c("a", "b", "c"), each=15),
+#'   B=sample(letters[4:13], 45, replace=TRUE),
+#'   C=sample(1:100, 45)
+#' ) %>% arrange(A, B, C)
+#' 
+#' # generate treemap
+#' tm <- voronoiTreemap(
+#'   data = data,
+#'   levels = c("A", "B", "C"),
+#'   cell.size = "C",
+#'   cell.color = "A",
+#'   maxIteration = 50,
+#'   )
+#' 
+#' # plot treemap
+#' drawTreemap(tm)
+#' 
 #' 
 #' @import gpclib
 #' @import tidyr

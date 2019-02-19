@@ -1,5 +1,5 @@
-library(dplyr)
 library(SysbioTreemaps)
+library(dplyr)
 
 
 data <- tibble(
@@ -9,14 +9,14 @@ data <- tibble(
 ) %>% arrange(A, B, C)
 
 
-
 tm <- voronoiTreemap(
   data = data,
   levels = c("A", "B", "C"),
   cell.size = "C",
-  cell.color = "C",
+  cell.color = "A",
   maxIteration = 50,
   debug = FALSE,
+  sort=TRUE
 )
 drawTreemap(tm)
 
