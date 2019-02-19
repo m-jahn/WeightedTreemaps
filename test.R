@@ -1,13 +1,13 @@
 library(SysbioTreemaps)
-library(dplyr)
 
 
-data <- tibble(
+# TODO include check to coerce factors to strings or not allow factors at all
+
+data <- data.frame(stringsAsFactors = FALSE,
   A=rep(c("a", "b", "c"), each=15),
   B=sample(letters[4:13], 45, replace=TRUE),
   C=sample(1:100, 45)
-) %>% arrange(A, B, C)
-
+)
 
 tm <- voronoiTreemap(
   data = data,
