@@ -73,13 +73,18 @@ breaking <- function(
 # adjust by multiple of average absolute weights
 # This avoids problem of getting stuck at a tiny weight
 # (and stabilizes the algorithm generally)
-# difference to original implementation: step change of weights lower
-# to prevent crashing of algorithm
+# difference to original implementation: adjustment of maximal 
+# step change of weights to prevent crashing of algorithm
 adjustWeights <- function(w, a, target) {
   # Watch out for zero-area cells (set to small value)
   a <- ifelse(a == 0, 10, a)
   normA <- a / sum(a)
-  w = w + mean(abs(w))/3 * ((target - normA) / target)
+  # weights scaling factor: the lower the number of cells, the more
+  # conservative the relative change in cell size is
+  # this is a defensive measure as tesselation of 2 or 3 cells
+  # tend to crash due to excessive weights (overshooting)
+  w_extension = 1+(50/(length(w)^2))
+  w = w + mean(abs(w)) / w_extension * ((target - normA) / target)
   w
 }
 
@@ -150,16 +155,16 @@ allocate <- function(
     # with care. The result resembles the final treemap but is an overlay of
     # many iterations
     if (debug) {
-      drawRegions(
-        list(names = names,
-             k = k, s = s,
-             w = w, a = areas,
-             t = target
-        ),
-        debug, label = TRUE, label.col = grey(0.5),
-        lwd = 2, col = grey(0.5),
-        fill = grey(1, alpha=0.33)
-      )
+      # drawRegions(
+      #   list(names = names,
+      #        k = k, s = s,
+      #        w = w, a = areas,
+      #        t = target
+      #   ),
+      #   debug, label = TRUE, label.col = grey(0.5),
+      #   lwd = 2, col = grey(0.5),
+      #   fill = grey(1, alpha=0.33)
+      # )
       
       info <-
         rbind(

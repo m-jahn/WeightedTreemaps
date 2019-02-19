@@ -168,8 +168,8 @@ voronoiTreemap <- function(
     grid::pushViewport(grid::viewport(
       width = 0.9,
       height = 0.9,
-      xscale = c(0,1000),
-      yscale = c(0,1000)
+      xscale = c(0,2500),
+      yscale = c(0,2500)
     ))
   }
   
@@ -195,8 +195,8 @@ voronoiTreemap <- function(
     if (level==1) {
       
       ParentPoly <- list(
-        x=c(0,0,1000,1000,0), 
-        y=c(0,1000,1000,0,0)
+        x=c(0, 0, 2500, 2500, 0), 
+        y=c(0, 2500, 2500, 0, 0)
       )
       # turn boundary polygon into gpc.poly object for treemap generation
       GpcPoly <- suppressWarnings(as(ParentPoly, "gpc.poly"))
