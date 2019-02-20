@@ -27,6 +27,7 @@ awv <- function(
   # combine X, Y coordinates and weights as input for
   # C++ tesselation function
   sites <- cbind(s$x, s$y, w)
+  write.csv(sites, "lastrun.csv")
   roughCells <- SysbioTreemaps::cropped_voronoi(sites)
   tolerance <- 0.0015
   # tolerance <- max(diff(range(s$x)), diff(range(s$y)))*.000001
@@ -53,7 +54,7 @@ getCellBorder <- function(
   tolerance,
   debug,
   debugCell = FALSE,
-  scale = 2500)
+  scale = 2000)
 {
   N <- nrow(border)
   direction <- 1
@@ -273,7 +274,7 @@ tidyCell <-
 # 3 = bottom-right
 # 4 = bottom-left
 
-side <- function(x, y, scale = 2500) {
+side <- function(x, y, scale = 2000) {
   if (x == -2 * scale)
     return(1)
   if (y == 2 * scale)
@@ -302,7 +303,7 @@ antiSide <- function(corner) {
 
 
 
-closeClock <- function(x, y, start, end, scale = 2500) {
+closeClock <- function(x, y, start, end, scale = 2000) {
   cornerX <- c(-2 * scale, 2 * scale, 2 * scale,-2 * scale)
   cornerY <- c(2 * scale, 2 * scale,-2 * scale,-2 * scale)
   
@@ -321,7 +322,7 @@ closeClock <- function(x, y, start, end, scale = 2500) {
   list(x = x, y = y)
 }
 
-closeAnti <- function(x, y, start, end, scale = 2500) {
+closeAnti <- function(x, y, start, end, scale = 2000) {
   cornerX <- c(-2 * scale, 2 * scale, 2 * scale,-2 * scale)
   cornerY <- c(2 * scale, 2 * scale,-2 * scale,-2 * scale)
   
@@ -344,7 +345,7 @@ closeCell <- function(cell, vertex, tol) {
   UseMethod("closeCell")
 }
 
-stretchX <- function(x, y, N, side, scale = 2500) {
+stretchX <- function(x, y, N, side, scale = 2000) {
   switch(side,
          c(x[1], max(x), x[N]),
          c(max(-2 * scale, x[1] - scale * .05),
@@ -356,7 +357,7 @@ stretchX <- function(x, y, N, side, scale = 2500) {
            min(2 * scale, x[N] + scale * .05)))
 }
 
-stretchY <- function(x, y, N, side, scale = 2500) {
+stretchY <- function(x, y, N, side, scale = 2000) {
   switch(side,
          c(max(-2 * scale, y[1] - scale * .05),
            y[which.max(x)],
@@ -368,7 +369,7 @@ stretchY <- function(x, y, N, side, scale = 2500) {
          c(y[1], min(y), y[N]))
 }
 
-closeCell.default <- function(cell, vertex, tol, scale = 2500) {
+closeCell.default <- function(cell, vertex, tol, scale = 2000) {
   # Two options:  go round clip region boundary clockwise or anit-clockwise
   # Try first one, check if vertex is "inside" the result
   # If not, do second one (and check that vertex is "inside" that result!)
@@ -457,7 +458,7 @@ sim <- function(a, b, tol = .0015) {
   abs(a - b) < tol
 }
 
-stopping <- function(endX, endY, startX, startY, tol, scale = 2500) {
+stopping <- function(endX, endY, startX, startY, tol, scale = 2000) {
   if (endX == -2 * scale || endX == 2 * scale ||
       endY == -2 * scale || endY == 2 * scale) {
     # cat("Hit boundary\n")

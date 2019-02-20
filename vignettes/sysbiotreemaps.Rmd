@@ -100,4 +100,6 @@ Will be added soon.
 
 ## References
 
-The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html 
+The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html
+
+For a similar but JAVA based implementation of Voronoi treemaps wrapped in R, see https://github.com/dlesl/voronoi_treemap_rJava

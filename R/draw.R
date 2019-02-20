@@ -72,8 +72,8 @@ drawTreemap <- function(
   grid::pushViewport(grid::viewport(
     width = width,
     height = height,
-    xscale = c(0,2500),
-    yscale = c(0,2500)
+    xscale = c(0,2000),
+    yscale = c(0,2000)
   ))
   
   # the treemap object is a nested list with two

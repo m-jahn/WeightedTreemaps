@@ -1,7 +1,7 @@
 ---
 title: "Create Voronoi and Sunburst Treemaps from Hierarchical Data"
 author: "Michael Jahn"
-date: "2019-02-19"
+date: "2019-02-20"
 output: github_document
 #output: rmarkdown::html_vignette
 #vignette: >
@@ -86,4 +86,6 @@ Will be added soon.
 
 ## References
 
-The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html 
+The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html
+
+For a similar but JAVA based implementation of Voronoi treemaps wrapped in R, see https://github.com/dlesl/voronoi_treemap_rJava

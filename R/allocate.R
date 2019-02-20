@@ -77,14 +77,15 @@ breaking <- function(
 # step change of weights to prevent crashing of algorithm
 adjustWeights <- function(w, a, target) {
   # Watch out for zero-area cells (set to small value)
-  a <- ifelse(a == 0, 10, a)
+  #a <- ifelse(a == 0, 10, a)
   normA <- a / sum(a)
-  # weights scaling factor: the lower the number of cells, the more
-  # conservative the relative change in cell size is
-  # this is a defensive measure as tesselation of 2 or 3 cells
-  # tend to crash due to excessive weights (overshooting)
-  w_extension = 1+(50/(length(w)^2))
-  w = w + mean(abs(w)) / w_extension * ((target - normA) / target)
+  # avoid extreme scaling values -> quadratic function
+  # added to buffer strong difference between computed area and target
+  # and another quadratic transformation to the global weight increase
+  # these increase stability but also computation time
+  scaling = ((target - normA) / target) %>%
+    ifelse(. < -1, ./ sqrt(abs(.)), .)
+  w = w + sqrt(mean(abs(w))) * scaling
   w
 }
 
@@ -120,6 +121,10 @@ shiftWeights <- function(s, w) {
         # circles even when weights are negative
         f = sqrt((s$x[i] - s$x[j]) ^ 2 +
                    (s$y[i] - s$y[j]) ^ 2) / (abs(w[i]) + abs(w[j]))
+        if (is.na(f) | is.infinite(f)) {
+          print("Shifting weights impossible due to factor being /NA")
+          f = 1
+        }
         if (f > 0 && f < 1) {
           w[i] <- w[i] * f
           w[j] <- w[j] * f
@@ -170,7 +175,8 @@ allocate <- function(
         rbind(
           area = round(unlist(areas) / sum(unlist(areas)), 4),
           target = round(target, 4),
-          weight = round(w, 1)
+          weight = round(w, 1),
+          areaAbs = round(unlist(areas))
         )
       colnames(info) <- names
       print(info)

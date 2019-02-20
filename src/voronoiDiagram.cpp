@@ -98,7 +98,7 @@ List cropped_voronoi(NumericMatrix sites)
   // points for any open cells, without fear of crossing the
   // area that contains the sites (EXCEPT for pretty pathological
   // cases, e.g., where there are only two sites)
-  Iso_rectangle_2 bbox(-5000, -5000, 5000, 5000);
+  Iso_rectangle_2 bbox(-4000, -4000, 4000, 4000);
 
   Cropped_voronoi_from_apollonius vor(bbox);
 

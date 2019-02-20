@@ -168,8 +168,8 @@ voronoiTreemap <- function(
     grid::pushViewport(grid::viewport(
       width = 0.9,
       height = 0.9,
-      xscale = c(0,2500),
-      yscale = c(0,2500)
+      xscale = c(0,2000),
+      yscale = c(0,2000)
     ))
   }
   
@@ -195,8 +195,8 @@ voronoiTreemap <- function(
     if (level==1) {
       
       ParentPoly <- list(
-        x=c(0, 0, 2500, 2500, 0), 
-        y=c(0, 2500, 2500, 0, 0)
+        x=c(0, 0, 2000, 2000, 0), 
+        y=c(0, 2000, 2000, 0, 0)
       )
       # turn boundary polygon into gpc.poly object for treemap generation
       GpcPoly <- suppressWarnings(as(ParentPoly, "gpc.poly"))
@@ -211,11 +211,16 @@ voronoiTreemap <- function(
     }
   
     # 2. generate starting coordinates within the boundary polygon
-    # using sp package's spsample function
+    # using sp package's spsample function. The set.seed() is important
+    # here because it makes the sampling random, but repeatable 
+    # (same set of coordinates for same query)
     ncells <- df[[levels[level]]] %>% table
-    sampledPoints <- sp::Polygon(coords=ParentPoly) %>%
+    sampledPoints <- {
+      set.seed(1)
+      sp::Polygon(coords=ParentPoly) %>%
       sp::spsample(n=length(ncells), type="random") %>%
       {.@coords}
+    }
     
     
     # 3. generate the weights, these are the (aggregated) scaling factors 
