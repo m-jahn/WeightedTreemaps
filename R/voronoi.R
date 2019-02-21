@@ -18,7 +18,7 @@
 #' @param sort (logical) Should the columns of the data.frame be sorted before?
 #' @param filter (logical) Filter the supplied data frame to remove very small
 #'   cells that would not be visible. The default is to remove cells with a 
-#'   relative target area below 0.0005, or 0.05%. The algorithm can still fail
+#'   relative target area below 0.0001, or 0.01%. The algorithm can still fail
 #'   so it can be worthwhile to simply rerun the function, probably applying a
 #'   stricter threshold.
 #' @param cell.size (character) Indicates the column used to control cell size. 
@@ -38,6 +38,9 @@
 #'   solution fairly quickly, so it seems reasonable to restrict this number
 #'   in order to save computation time. However, more iterations give higher
 #'   accuracy.
+#' @param seed (integer) The default seed is NULL, which will lead to a new 
+#'   random sampling of cell coordinates for each tesselation. If you want
+#'   a reproducibloe arrangement of cells, set seed to an arbitrary number.
 #' @param debug (logical) If debug is TRUE (default is FALSE), the solution 
 #'   for each iteration is drawn to the viewport to allow some visual 
 #'   inspection. The weights, target area, and difference are printed to the 
@@ -93,7 +96,7 @@ voronoiTreemap <- function(
   levels, 
   fun = sum,
   sort = TRUE, 
-  filter = 0.0005,
+  filter = 0.0001,
   cell.size = NULL, 
   cell.color = levels[1], 
   color.palette = NULL,
@@ -102,6 +105,7 @@ voronoiTreemap <- function(
   labels = levels[length(levels)],
   label.col = grey(0.5),
   maxIteration = 50,
+  seed = NULL,
   debug = FALSE)
 {
   
@@ -212,11 +216,11 @@ voronoiTreemap <- function(
   
     # 2. generate starting coordinates within the boundary polygon
     # using sp package's spsample function. The set.seed() is important
-    # here because it makes the sampling random, but repeatable 
+    # here because it makes the sampling reproducible
     # (same set of coordinates for same query)
     ncells <- df[[levels[level]]] %>% table
     sampledPoints <- {
-      set.seed(1)
+      if (!is.null(seed)) {set.seed(seed)}
       sp::Polygon(coords=ParentPoly) %>%
       sp::spsample(n=length(ncells), type="random") %>%
       {.@coords}

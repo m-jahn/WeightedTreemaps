@@ -4,11 +4,11 @@
 \alias{voronoiTreemap}
 \title{voronoiTreemap}
 \usage{
-voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 5e-04,
+voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 1e-04,
   cell.size = NULL, cell.color = levels[1], color.palette = NULL,
   border.size = 6, border.color = grey(0.9),
   labels = levels[length(levels)], label.col = grey(0.5),
-  maxIteration = 50, debug = FALSE)
+  maxIteration = 50, seed = NULL, debug = FALSE)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
@@ -23,7 +23,7 @@ going from broad to fine}
 
 \item{filter}{(logical) Filter the supplied data frame to remove very small
 cells that would not be visible. The default is to remove cells with a 
-relative target area below 0.0005, or 0.05%. The algorithm can still fail
+relative target area below 0.0001, or 0.01%. The algorithm can still fail
 so it can be worthwhile to simply rerun the function, probably applying a
 stricter threshold.}
 
@@ -51,6 +51,10 @@ for each parent cell. The algorithm usually converges to an acceptable
 solution fairly quickly, so it seems reasonable to restrict this number
 in order to save computation time. However, more iterations give higher
 accuracy.}
+
+\item{seed}{(integer) The default seed is NULL, which will lead to a new 
+random sampling of cell coordinates for each tesselation. If you want
+a reproducibloe arrangement of cells, set seed to an arbitrary number.}
 
 \item{debug}{(logical) If debug is TRUE (default is FALSE), the solution 
 for each iteration is drawn to the viewport to allow some visual 

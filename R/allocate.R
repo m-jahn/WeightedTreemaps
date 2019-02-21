@@ -160,16 +160,16 @@ allocate <- function(
     # with care. The result resembles the final treemap but is an overlay of
     # many iterations
     if (debug) {
-      # drawRegions(
-      #   list(names = names,
-      #        k = k, s = s,
-      #        w = w, a = areas,
-      #        t = target
-      #   ),
-      #   debug, label = TRUE, label.col = grey(0.5),
-      #   lwd = 2, col = grey(0.5),
-      #   fill = grey(1, alpha=0.33)
-      # )
+      drawRegions(
+        list(names = names,
+             k = k, s = s,
+             w = w, a = areas,
+             t = target
+        ),
+        debug, label = TRUE, label.col = grey(0.5),
+        lwd = 2, col = grey(0.5),
+        fill = grey(1, alpha=0.33)
+      )
       
       info <-
         rbind(

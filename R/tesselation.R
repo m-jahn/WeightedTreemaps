@@ -27,7 +27,6 @@ awv <- function(
   # combine X, Y coordinates and weights as input for
   # C++ tesselation function
   sites <- cbind(s$x, s$y, w)
-  write.csv(sites, "lastrun.csv")
   roughCells <- SysbioTreemaps::cropped_voronoi(sites)
   tolerance <- 0.0015
   # tolerance <- max(diff(range(s$x)), diff(range(s$y)))*.000001
@@ -211,8 +210,10 @@ tidyCell <-
       print(cell$vertex)
     border <- cell$border
     # Handle empty cells
-    if (is.null(border))
+    if (is.null(border)) {
+      print("One cell has NULL borders")
       return(NULL)
+    }
     ok <- !apply(cell$border, 1, function(x)
       any(is.na(x)))
     border <- border[ok,]

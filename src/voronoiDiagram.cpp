@@ -25,7 +25,7 @@ using namespace Rcpp;
 #include <iostream>
 #include <fstream>
 #include <cassert>
-
+#include <csignal>
 // the number type
 #include <CGAL/MP_Float.h>
 
@@ -88,7 +88,8 @@ List cropped_voronoi(NumericMatrix sites)
   std::vector<Apollonius_graph::Vertex_handle> handles;
   for (int i = 0; i != sites.nrow(); i++)
   {
-    auto handle = ag.insert(Apollonius_graph::Site_2(Point_2(sites(i, 0), sites(i, 1)), sites(i, 2)));
+    auto site = Apollonius_graph::Site_2(Point_2(sites(i, 0), sites(i, 1)), sites(i, 2));
+    auto handle = ag.insert(site);
     handles.push_back(handle);
   }
 
@@ -104,7 +105,8 @@ List cropped_voronoi(NumericMatrix sites)
 
   List results;
   // iterate to extract Voronoi diagram edges around each vertex
-  for (auto &h : handles)
+  int idx = 0;
+  for (Apollonius_graph::Vertex_handle &h : handles)
   {
     Apollonius_graph::Edge_circulator ec = ag.incident_edges(h), done(ec);
     if (ec != 0)
@@ -112,7 +114,6 @@ List cropped_voronoi(NumericMatrix sites)
       do
       {
         ag.draw_dual_edge(*ec, vor);
-        // std::cout << "Edge\n";
       } while (++ec != done);
     }
     //print the cropped Voronoi diagram edges as segments
@@ -121,21 +122,36 @@ List cropped_voronoi(NumericMatrix sites)
     NumericVector x2s;
     NumericVector y2s;
     for (auto &s : vor.m_cropped_vd)
-    {
+    { 
       x1s.push_back(s.source().x());
       y1s.push_back(s.source().y());
       x2s.push_back(s.target().x());
       y2s.push_back(s.target().y());
     }
-    DataFrame border = DataFrame::create(Named("x1") = x1s, Named("y1") = y1s, Named("x2") = x2s, Named("y2") = y2s);
-    auto &vertex = h->site().point();
-    results.push_back(List::create(Named("vertex") = NumericVector::create(vertex.x(), vertex.y()),
-                                   Named("border") = x1s.size() ? (SEXP)border : R_NilValue));
+    DataFrame border = DataFrame::create(
+      Named("x1") = x1s, 
+      Named("y1") = y1s, 
+      Named("x2") = x2s, 
+      Named("y2") = y2s
+    );
+    
+    if (x1s.size() == 0) {
+      results.push_back(List::create(
+        Named("vertex") = NumericVector::create(sites(idx, 0), sites(idx, 1)), 
+        Named("border") = R_NilValue)
+      );
+    } else {
+      auto &vertex = h->site().point();
+      List res = List::create(
+        Named("vertex") = NumericVector::create(vertex.x(), vertex.y()),
+        Named("border") = border);
+      results.push_back(res);
+    }
+    
     vor.reset();
+    idx++;
   }
 
   //extract the entire cropped Voronoi diagram
-  // ag.draw_dual(vor);
-
   return results;
 }
