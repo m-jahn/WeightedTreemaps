@@ -110,8 +110,12 @@ SEXP cropped_voronoi(NumericMatrix sites)
 
   List results;
   // iterate to extract Voronoi diagram edges around each vertex
-  for (Apollonius_graph::Vertex_handle &h : handles)
+  for (Apollonius_graph::Vertex_handle h : handles)
   {
+    if (h == NULL || !h->is_valid()) {
+      Rcout << "Invalid ag, aborting." << std::endl;
+      return R_NilValue;
+    }
     Apollonius_graph::Edge_circulator ec = ag.incident_edges(h), done(ec);
     if (ec != 0)
     {

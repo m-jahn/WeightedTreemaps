@@ -122,18 +122,18 @@ voronoiTreemap <- function(
 
   # filter out very small target areas that are barely visible
   # and will make the treemap generation more unstable
-  if (!is.null(cell.size)) {
-    if (data[[cell.size]] %>% { . / sum(.) < 0.0005 } %>% any) {
-      if (is.numeric(filter)) {
-        filtered <- data[[cell.size]] %>% { . / sum(.) } >= filter
-        data <- subset(data, filtered)
-        warning(paste(sum(!filtered), "out of", length(filtered),
-          "cells were filtered due to target area falling below treshold."))
-      } else {
-        warning("Some cells have very small target areas. Use 'filter' argument to remove those automatically.")
-      }
-    }
-  }
+  # if (!is.null(cell.size)) {
+  #   if (data[[cell.size]] %>% { . / sum(.) < 0.0005 } %>% any) {
+  #     if (is.numeric(filter)) {
+  #       filtered <- data[[cell.size]] %>% { . / sum(.) } >= filter
+  #       data <- subset(data, filtered)
+  #       warning(paste(sum(!filtered), "out of", length(filtered),
+  #         "cells were filtered due to target area falling below treshold."))
+  #     } else {
+  #       warning("Some cells have very small target areas. Use 'filter' argument to remove those automatically.")
+  #     }
+  #   }
+  # }
 
   # check levels/hierarchies and level options
   if (!all(levels %in% colnames(data))) {
