@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // cropped_voronoi
-List cropped_voronoi(NumericMatrix sites);
+SEXP cropped_voronoi(NumericMatrix sites);
 RcppExport SEXP _SysbioTreemaps_cropped_voronoi(SEXP sitesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

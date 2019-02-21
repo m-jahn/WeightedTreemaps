@@ -92,13 +92,13 @@
 #' @export voronoiTreemap
 
 voronoiTreemap <- function(
-  data, 
-  levels, 
+  data,
+  levels,
   fun = sum,
-  sort = TRUE, 
+  sort = TRUE,
   filter = 0.0001,
-  cell.size = NULL, 
-  cell.color = levels[1], 
+  cell.size = NULL,
+  cell.color = levels[1],
   color.palette = NULL,
   border.size = 6,
   border.color = grey(0.9),
@@ -106,9 +106,8 @@ voronoiTreemap <- function(
   label.col = grey(0.5),
   maxIteration = 50,
   seed = NULL,
-  debug = FALSE)
-{
-  
+  debug = FALSE) {
+
   # ERROR HANDLING
   #
   # check input data frame
@@ -120,22 +119,22 @@ voronoiTreemap <- function(
     else
       data <- as.data.frame(data)
   }
-  
+
   # filter out very small target areas that are barely visible
   # and will make the treemap generation more unstable
   if (!is.null(cell.size)) {
-    if (data[[cell.size]] %>% {./sum(.) < 0.0005} %>% any) {
+    if (data[[cell.size]] %>% { . / sum(.) < 0.0005 } %>% any) {
       if (is.numeric(filter)) {
-        filtered <- data[[cell.size]] %>% {./sum(.)} >= filter
+        filtered <- data[[cell.size]] %>% { . / sum(.) } >= filter
         data <- subset(data, filtered)
-        warning(paste(sum(!filtered), "out of", length(filtered), 
+        warning(paste(sum(!filtered), "out of", length(filtered),
           "cells were filtered due to target area falling below treshold."))
       } else {
         warning("Some cells have very small target areas. Use 'filter' argument to remove those automatically.")
       }
     }
   }
-  
+
   # check levels/hierarchies and level options
   if (!all(levels %in% colnames(data))) {
     stop("Not all given levels are column names of 'data'")
@@ -154,17 +153,17 @@ voronoiTreemap <- function(
   if (!is.null(cell.color) & !(cell.color %in% colnames(data))) {
     stop("'cell.color' is not a colname of 'data'")
   }
-  
+
   if (!is.function(fun)) {
     stop("'fun' must be a function")
   }
   # sort data in case it is unsorted
   if (sort) {
-    data <- data[do.call("order", data[levels]), ]
+    data <- data[do.call("order", data[levels]),]
   } else {
     warning(" Sorting is FALSE, it is expected that the input data is sorted")
   }
-  
+
   # in debug mode, open a viewport to draw iterations
   # of treemap generation called from allocate()
   if (debug) {
@@ -172,149 +171,157 @@ voronoiTreemap <- function(
     grid::pushViewport(grid::viewport(
       width = 0.9,
       height = 0.9,
-      xscale = c(0,2000),
-      yscale = c(0,2000)
+      xscale = c(0, 2000),
+      yscale = c(0, 2000)
     ))
   }
-  
+
   # generate colors for each cell and add to data frame
   data$fill.color <- with(data, {
     colvector <- get(cell.color) %>%
-    as.factor %>%
-    as.numeric
+      as.factor %>%
+      as.numeric
     if (is.null(color.palette)) {
       colorspace::rainbow_hcl(length(unique(colvector)))[colvector]
     } else {
       colorRampPalette(color.palette)(length(unique(colvector)))[colvector]
     }
   })
-  
+
   # CORE FUNCTION (RECURSIVE)
-  voronoi.core <- function(level, df, parent=NULL, output=list()) {
-    
-    # CREATE VORONOI TREEMAP OBJECT
-    #
-    # 1. define the boundary polygon
-    # either predefined rectangular bounding box for 1st level
-    if (level==1) {
-      
-      ParentPoly <- list(
-        x=c(0, 0, 2000, 2000, 0), 
-        y=c(0, 2000, 2000, 0, 0)
+  voronoi.core <- function(level, df, parent = NULL, output = list()) {
+
+    repeat {
+      # CREATE VORONOI TREEMAP OBJECT
+      #
+      # 1. define the boundary polygon
+      # either predefined rectangular bounding box for 1st level
+      if (level == 1) {
+
+        ParentPoly <- list(
+        x = c(0, 0, 2000, 2000, 0),
+        y = c(0, 2000, 2000, 0, 0)
       )
-      # turn boundary polygon into gpc.poly object for treemap generation
-      GpcPoly <- suppressWarnings(as(ParentPoly, "gpc.poly"))
-    
-    } else {
-      
-      # or the parental polygon in case of all lower levels > 1
-      stopifnot(!is.null(parent))
-      GpcPoly <- parent
-      ParentPoly <- parent@pts[[1]][c("x", "y")]
-      
-    }
-  
-    # 2. generate starting coordinates within the boundary polygon
-    # using sp package's spsample function. The set.seed() is important
-    # here because it makes the sampling reproducible
-    # (same set of coordinates for same query)
-    ncells <- df[[levels[level]]] %>% table
-    sampledPoints <- {
-      if (!is.null(seed)) {set.seed(seed)}
-      sp::Polygon(coords=ParentPoly) %>%
-      sp::spsample(n=length(ncells), type="random") %>%
-      {.@coords}
-    }
-    
-    
-    # 3. generate the weights, these are the (aggregated) scaling factors 
-    # supplied by the user or simply the n members per cell
-    if (is.null(cell.size)) {
-      # average cell size by number of members, if no function is given
-      weights <- ncells/sum(ncells)
-      
-    } else {
-      # average sector size by user defined function, e.g. sum of expression values
-      # the cell size is calculated as aggregated relative fraction of total
-      stopifnot(is.numeric(df[[cell.size]]))
-      weights <- df %>%
-        dplyr::group_by(get(levels[level])) %>%
-        dplyr::summarise(fun(get(cell.size))) %>%
-        {.[[2]]/sum(.[[2]])}
-    }
-    
-    # 4. generate additively weighted voronoi treemap object;
-    # the allocate function returns a list of polygons to draw, 
-    # among others.
-    # if the parent has only 1 child, skip map generation
-    # and make pseudo treemap object instead
-    
-    if (length(ncells) == 1) {
-      
-      treemap <- list(
-        names = names(ncells), 
-        k = list(GpcPoly), 
-        s = {soiltexture::TT.polygon.centroids(ParentPoly[[1]], ParentPoly[[2]]) %>%
-          list(x=.[[1]], y=.[[2]])},
-        w = weights, 
-        a = gpclib::area.poly(GpcPoly), 
+        # turn boundary polygon into gpc.poly object for treemap generation
+        GpcPoly <- suppressWarnings(as(ParentPoly, "gpc.poly"))
+
+      } else {
+
+        # or the parental polygon in case of all lower levels > 1
+        stopifnot(!is.null(parent))
+        GpcPoly <- parent
+        ParentPoly <- parent@pts[[1]][c("x", "y")]
+
+      }
+
+      # 2. generate starting coordinates within the boundary polygon
+      # using sp package's spsample function. The set.seed() is important
+      # here because it makes the sampling reproducible
+      # (same set of coordinates for same query)
+      ncells <- df[[levels[level]]] %>% table
+      sampledPoints <- {
+        if (!is.null(seed)) { set.seed(seed) }
+        sp::Polygon(coords = ParentPoly) %>%
+          sp::spsample(n = length(ncells), type = "random") %>% { .@coords }
+      }
+
+
+      # 3. generate the weights, these are the (aggregated) scaling factors 
+      # supplied by the user or simply the n members per cell
+      if (is.null(cell.size)) {
+        # average cell size by number of members, if no function is given
+        weights <- ncells / sum(ncells)
+
+      } else {
+        # average sector size by user defined function, e.g. sum of expression values
+        # the cell size is calculated as aggregated relative fraction of total
+        stopifnot(is.numeric(df[[cell.size]]))
+        weights <- df %>%
+          dplyr::group_by(get(levels[level])) %>%
+          dplyr::summarise(fun(get(cell.size))) %>% { .[[2]] / sum(.[[2]]) }
+      }
+
+      # 4. generate additively weighted voronoi treemap object;
+      # the allocate function returns a list of polygons to draw, 
+      # among others.
+      # if the parent has only 1 child, skip map generation
+      # and make pseudo treemap object instead
+
+      if (length(ncells) == 1) {
+
+        treemap <- list(
+        names = names(ncells),
+        k = list(GpcPoly),
+        s = {
+          soiltexture::TT.polygon.centroids(ParentPoly[[1]], ParentPoly[[2]]) %>%
+          list(x = .[[1]], y = .[[2]])
+        },
+        w = weights,
+        a = gpclib::area.poly(GpcPoly),
         t = weights
       )
-    
-    } else {
-      
-      treemap <- allocate(
-        names = names(ncells), 
+        if (is.null(treemap)) {
+          warning("Iteration failed, randomising positions")
+          next
+        }
+
+      } else {
+
+        treemap <- allocate(
+        names = names(ncells),
         s = list(
-          x = sampledPoints[, 1], 
-          y = sampledPoints[, 2]), 
-        w = weights, 
-        target = weights, 
+          x = sampledPoints[, 1],
+          y = sampledPoints[, 2]),
+        w = weights,
+        target = weights,
         maxIteration = maxIteration,
-        outer = GpcPoly, 
+        outer = GpcPoly,
         debug = debug
       )
-      
-      # print summary of cell tesselation
-      tessErr <- unlist(treemap$a) %>%
-        {(./sum(.))-weights} %>% abs
-      cat("Level" , level, "tesselation: ",
-          round(mean(tessErr)*100, 2), "% mean error, ",
-          round(max(tessErr)*100, 2), "% max error, ",
+        if (is.null(treemap)) {
+          warning("Iteration failed, randomising positions")
+          next
+        }
+
+        # print summary of cell tesselation
+        tessErr <- unlist(treemap$a) %>% {(. / sum(.)) - weights } %>% abs
+        cat("Level", level, "tesselation: ",
+          round(mean(tessErr) * 100, 2), "% mean error, ",
+          round(max(tessErr) * 100, 2), "% max error, ",
           treemap$count, "iterations\n"
         )
-      
-    }
-    
-    # DRAWING FUNCTION
-    # this function draws the polygons as polygonGrob objects
-    # from grid package
-    voronoiGrid <- drawRegions(
-      treemap, 
+
+      }
+
+      # DRAWING FUNCTION
+      # this function draws the polygons as polygonGrob objects
+      # from grid package
+      voronoiGrid <- drawRegions(
+      treemap,
       debug = FALSE,
-      label = {if (!is.null(labels)) levels[level] %in% labels else FALSE}, 
-      label.col = label.col, 
-      lwd = border.size/level, 
+      label = { if (!is.null(labels)) levels[level] %in% labels else FALSE },
+      label.col = label.col,
+      lwd = border.size / level,
       col = border.color,
-      fill = {if (level != length(levels)) NA else unique(df$fill.color)}
+      fill = { if (level != length(levels)) NA else unique(df$fill.color) }
     )
-    
-    
-    # CALL CORE FUNCTION RECURSIVELY
-    if (level != length(levels)) {
-      
-      # iterate through all possible sub-categories,
-      # these are the children of the parental polygon
-      # and pass the children's polygon as new parental
-      # also add current tesselation results to output list
-      lapply(1:length(ncells), function(i) {
-        
-        
-        voronoi.core(
-          level=level+1, 
-          df=subset(df, get(levels[level]) %in% names(ncells)[i]),
-          parent=treemap$k[[i]],
-          output={
+
+
+      # CALL CORE FUNCTION RECURSIVELY
+      if (level != length(levels)) {
+
+        # iterate through all possible sub-categories,
+        # these are the children of the parental polygon
+        # and pass the children's polygon as new parental
+        # also add current tesselation results to output list
+        res <- lapply(1:length(ncells), function(i) {
+
+
+          voronoi.core(
+          level = level + 1,
+          df = subset(df, get(levels[level]) %in% names(ncells)[i]),
+          parent = treemap$k[[i]],
+          output = {
             if ("labels" %in% names(voronoiGrid)) {
               addOut <- voronoiGrid[c("labels", names(voronoiGrid)[i])]
             } else {
@@ -324,26 +331,29 @@ voronoiTreemap <- function(
             output
           }
         )
-        
-      }) %>% 
-      unlist(recursive=FALSE)
-      
-    } else {
-      
-      output[[paste0("LEVEL", level)]] <- voronoiGrid
-      return(output)
-      
+
+        }) %>%
+      unlist(recursive = FALSE)
+
+        return(res)
+
+      } else {
+
+        output[[paste0("LEVEL", level)]] <- voronoiGrid
+        return(output)
+
+      }
     }
   }
-  
+
   # MAIN FUNCTION CALL
   # iterate through all levels,
   # collect results in list, remove duplicated polygons
   # and order by hierarchical level
-  tm <- voronoi.core(level=1, df=data) %>%
+  tm <- voronoi.core(level = 1, df = data) %>%
     .[!duplicated(.)]
-  tm <- tm[names(tm) %>% order(decreasing=TRUE)]
+  tm <- tm[names(tm) %>% order(decreasing = TRUE)]
   cat("Treemap successfully created\n")
   return(tm)
-  
+
 }

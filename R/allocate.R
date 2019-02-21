@@ -123,7 +123,7 @@ shiftWeights <- function(s, w) {
                    (s$y[i] - s$y[j]) ^ 2) / (abs(w[i]) + abs(w[j]))
         if (is.na(f) | is.infinite(f)) {
           print("Shifting weights impossible due to factor being /NA")
-          f = 1
+          return(NULL)
         }
         if (f > 0 && f < 1) {
           w[i] <- w[i] * f
@@ -153,6 +153,9 @@ allocate <- function(
       w <- w * runif(length(w), 0.95, 1.05)
     
     k <- awv(s, w, outer, debug, debugCell)
+    if (is.null(k)) {
+      return(NULL)
+    }
     areas <- lapply(k, area.poly)
     
     # if debug=TRUE, every iteration is drawn to the viewport
@@ -199,6 +202,9 @@ allocate <- function(
       w <- adjustWeights(w, unlist(areas), target)
       s <- shiftSites(s, k)
       w <- shiftWeights(s, w)
+      if (is.null(w)) {
+        return(NULL)
+      }
     }
     count <- count + 1
     prevError = stop_cond$prevError

@@ -79,7 +79,7 @@ struct Cropped_voronoi_from_apollonius
 // roxygen export tag
 //' @export cropped_voronoi
 // [[Rcpp::export]]
-List cropped_voronoi(NumericMatrix sites)
+SEXP cropped_voronoi(NumericMatrix sites)
 {
 
   Apollonius_graph ag;
@@ -91,6 +91,11 @@ List cropped_voronoi(NumericMatrix sites)
     auto site = Apollonius_graph::Site_2(Point_2(sites(i, 0), sites(i, 1)), sites(i, 2));
     auto handle = ag.insert(site);
     handles.push_back(handle);
+  }
+  if (!ag.is_valid()) {
+      ag.is_valid(true); // verbose
+      Rcout << "Invalid ag, aborting." << std::endl;
+      return R_NilValue;
   }
 
   //construct a rectangle
@@ -105,7 +110,6 @@ List cropped_voronoi(NumericMatrix sites)
 
   List results;
   // iterate to extract Voronoi diagram edges around each vertex
-  int idx = 0;
   for (Apollonius_graph::Vertex_handle &h : handles)
   {
     Apollonius_graph::Edge_circulator ec = ag.incident_edges(h), done(ec);
@@ -136,10 +140,8 @@ List cropped_voronoi(NumericMatrix sites)
     );
     
     if (x1s.size() == 0) {
-      results.push_back(List::create(
-        Named("vertex") = NumericVector::create(sites(idx, 0), sites(idx, 1)), 
-        Named("border") = R_NilValue)
-      );
+        Rcout << "invalid cell found, aborting" << std::endl;
+        return R_NilValue;
     } else {
       auto &vertex = h->site().point();
       List res = List::create(
@@ -149,7 +151,6 @@ List cropped_voronoi(NumericMatrix sites)
     }
     
     vor.reset();
-    idx++;
   }
 
   //extract the entire cropped Voronoi diagram

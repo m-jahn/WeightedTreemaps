@@ -1,5 +1,4 @@
 library(SysbioTreemaps)
-setwd("/home/michael/Documents/SciLifeLab/Resources/R_projects/SysbioTreemaps")
 # 
 # 
 # # TODO include check to coerce factors to strings or not allow factors at all
@@ -35,7 +34,7 @@ tm <- voronoiTreemap(
   maxIteration = 100,
   debug = FALSE
 )
-# drawTreemap(tm)
+drawTreemap(tm)
 # 
 # 
 # library(SysbioTreemaps)
