@@ -28,6 +28,9 @@ awv <- function(
   # C++ tesselation function
   sites <- cbind(s$x, s$y, w)
   roughCells <- SysbioTreemaps::cropped_voronoi(sites)
+  if (is.null(roughCells)) {
+    return(NULL)
+  }
   tolerance <- 0.0015
   # tolerance <- max(diff(range(s$x)), diff(range(s$y)))*.000001
   tidyCells <- tidyCells(roughCells, tolerance, debug, debugCell)
