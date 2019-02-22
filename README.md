@@ -1,7 +1,7 @@
 ---
 title: "Create Voronoi and Sunburst Treemaps from Hierarchical Data"
 author: "Michael Jahn"
-date: "2019-02-20"
+date: "2019-02-22"
 output: github_document
 #output: rmarkdown::html_vignette
 #vignette: >
@@ -42,7 +42,7 @@ To install the package directly from github, use this function from devtools pac
 
 ```
 require(devtools)
-devtools::install_github(https://github.com/m-jahn/SysbioTreemaps)
+devtools::install_github("https://github.com/m-jahn/SysbioTreemaps")
 ```
 The package is not available on CRAN yet. 
 
@@ -54,11 +54,11 @@ Create a simple example data frame
 library(dplyr)
 library(SysbioTreemaps)
 
-data <- tibble(
+df <- data.frame(stringsAsFactors = FALSE,
   A=rep(c("a", "b", "c"), each=15),
   B=sample(letters[4:13], 45, replace=TRUE),
   C=sample(1:100, 45)
-) %>% arrange(A, B, C)
+)
 ```
 
 Compute the treemap. It will return a list of grid graphics objects.
@@ -84,8 +84,14 @@ drawTreemap(tm)
 
 Will be added soon.
 
-## References
+## References and other treemap packages
 
-The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html
+The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html.
+We created a recursive wrapper around the main tesselation function and
+improved the stability regarding generation of larger treemaps.
 
-For a similar but JAVA based implementation of Voronoi treemaps wrapped in R, see https://github.com/dlesl/voronoi_treemap_rJava
+For a similar but JAVA based implementation of Voronoi treemaps wrapped in R, see
+David Leslie's scripts at https://github.com/dlesl/voronoi_treemap_rJava.
+
+Another popular resource is the web-based treemap generation from University of
+Greifswald at https://bionic-vis.biologie.uni-greifswald.de/.

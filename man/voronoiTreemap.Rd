@@ -4,11 +4,11 @@
 \alias{voronoiTreemap}
 \title{voronoiTreemap}
 \usage{
-voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 1e-04,
+voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 0,
   cell.size = NULL, cell.color = levels[1], color.palette = NULL,
   border.size = 6, border.color = grey(0.9),
   labels = levels[length(levels)], label.col = grey(0.5),
-  maxIteration = 50, seed = NULL, debug = FALSE)
+  maxIteration = 100, seed = NULL, debug = FALSE)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
@@ -22,10 +22,10 @@ going from broad to fine}
 \item{sort}{(logical) Should the columns of the data.frame be sorted before?}
 
 \item{filter}{(logical) Filter the supplied data frame to remove very small
-cells that would not be visible. The default is to remove cells with a 
-relative target area below 0.0001, or 0.01%. The algorithm can still fail
-so it can be worthwhile to simply rerun the function, probably applying a
-stricter threshold.}
+cells that may not be visible. The default is to remove cells with a 
+relative target area below 0.0001, or 0.01%. The algorithm can fail
+when processing many tiny cells so it can be worthwhile to simply 
+rerun the function with a stricter filter.}
 
 \item{cell.size}{(character) Indicates the column used to control cell size. 
 Can be one of \code{levels}}
@@ -77,18 +77,17 @@ to actually draw the treemap, use \code{\link{drawTreemap}}.
 }
 \examples{
 library(SysbioTreemaps)
-library(dplyr)
 
 # generate example data
-data <- tibble(
+df <- data.frame(stringsAsFactors = FALSE,
   A=rep(c("a", "b", "c"), each=15),
   B=sample(letters[4:13], 45, replace=TRUE),
   C=sample(1:100, 45)
-) \%>\% arrange(A, B, C)
+)
 
 # generate treemap
 tm <- voronoiTreemap(
-  data = data,
+  data = df,
   levels = c("A", "B", "C"),
   cell.size = "C",
   cell.color = "A",

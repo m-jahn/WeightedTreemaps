@@ -122,7 +122,7 @@ shiftWeights <- function(s, w) {
         f = sqrt((s$x[i] - s$x[j]) ^ 2 +
                    (s$y[i] - s$y[j]) ^ 2) / (abs(w[i]) + abs(w[j]))
         if (is.na(f) | is.infinite(f)) {
-          print("Shifting weights impossible due to factor being /NA")
+          cat("Shifting weights impossible due to factor being NA\n")
           return(NULL)
         }
         if (f > 0 && f < 1) {
