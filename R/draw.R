@@ -78,7 +78,7 @@ drawTreemap <- function(
   
   # the treemap object is a nested list with two
   # levels, in order to draw we just wrap two lapply functions
-  lapply(tm, function(a) {
+  lapply(treemap, function(a) {
     lapply(a, function(b) {
       grid::grid.draw(b)
     })

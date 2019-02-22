@@ -1,18 +1,19 @@
 library(SysbioTreemaps)
 
-df <- data.frame(stringsAsFactors = FALSE,
+df <- data.frame(#stringsAsFactors = FALSE,
   A=rep(c("a", "b", "c"), each=15),
   B=sample(letters[4:13], 45, replace=TRUE),
   C=sample(1:100, 45)
 )
-
+#apply(df, 2, as.character)
 
 tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
   cell.size = "C",
-  labels="C",
-  maxIteration = 100
+  label.col = grey(1, alpha = 0.5),
+  labels=c("A", "C"),
+  maxIteration = 5
 )
 drawTreemap(tm)
 
@@ -23,12 +24,12 @@ df <- read.csv("data/Jahn_et_al_CellReports_2018.csv", stringsAsFactors = FALSE)
 
 
 tm <- voronoiTreemap(
-  data = df[1:1000, ],
+  data = df,
   levels = c("Process.abbr", "Pathway.abbr", "protein"),
   labels = c("Process.abbr", "protein"),
   cell.size = "mean_mass_fraction_norm",
-  maxIteration = 100,
-  debug = FALSE
+  maxIteration = 50,
+  seed = 123
 )
 drawTreemap(tm)
 # 

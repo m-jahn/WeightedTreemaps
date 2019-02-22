@@ -189,10 +189,16 @@ voronoiTreemap <- function(
 
   # CORE FUNCTION (RECURSIVE)
   voronoi.core <- function(level, df, parent = NULL, output = list()) {
-
+  
+    # Setting the same seed here will sample the same set of coordinates
+    # when drawing similar maps, and lead to similar layout
+    if (!is.null(seed)) { 
+      set.seed(seed) 
+    }
+    
     repeat {
       
-      # set counter for number of mximum tries to not get stuck
+      # set counter for number of maximum tries to not get stuck
       # in repeat loop
       counter = 1
       
@@ -223,13 +229,9 @@ voronoiTreemap <- function(
       # here because it makes the sampling reproducible
       # (same set of coordinates for same query)
       ncells <- df[[levels[level]]] %>% table
-      sampledPoints <- {
-        if (!is.null(seed)) { set.seed(seed) }
-        sp::Polygon(coords = ParentPoly) %>%
-          sp::spsample(n = length(ncells), type = "random") %>% { .@coords }
-      }
-
-
+      sampledPoints <- sp::Polygon(coords = ParentPoly) %>%
+        sp::spsample(n = length(ncells), type = "random") %>% { .@coords }
+      
       # 3. generate the weights, these are the (aggregated) scaling factors 
       # supplied by the user or simply the n members per cell
       if (is.null(cell.size)) {
@@ -278,12 +280,12 @@ voronoiTreemap <- function(
           debug = debug
       )
         if (is.null(treemap) & counter <= 10) {
-          if (!is.null(seed)) {seed = seed + 1}
+          
           counter = counter + 1
           cat("Iteration failed, randomising positions...\n")
           next
         } else if (is.null(treemap) & counter > 10) {
-          cat("Iteration failed after 10 randomisation trials, will continue to generate treemap\n")
+          stop("Iteration failed after 10 randomisation trials, try to rerun treemap without setting seed")
         }
 
         # print summary of cell tesselation
