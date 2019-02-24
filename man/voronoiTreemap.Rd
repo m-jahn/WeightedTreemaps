@@ -8,7 +8,8 @@ voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 0,
   cell.size = NULL, cell.color = levels[1], color.palette = NULL,
   border.size = 6, border.color = grey(0.9),
   labels = levels[length(levels)], label.col = grey(0.5),
-  maxIteration = 100, seed = NULL, debug = FALSE)
+  shape = "rectangle", maxIteration = 100, seed = NULL,
+  debug = FALSE)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
@@ -45,6 +46,9 @@ used for cell labels, or NULL to omit drawing labels. The default is the
 lowest level.}
 
 \item{label.col}{(character) Color for cell labels.}
+
+\item{shape}{(character) Set the initial shape of the treemap. Currently 
+supported are "rectangle", "circle" or "hexagon".}
 
 \item{maxIteration}{(numeric) Force algorithm to stop at this number of iterations
 for each parent cell. The algorithm usually converges to an acceptable 

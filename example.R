@@ -16,7 +16,8 @@ tm <- voronoiTreemap(
   cell.size = "C",
   cell.color = "C",
   labels="C",
-  maxIteration = 10
+  shape = "hexagon", 
+  maxIteration = 100
 )
 
 # draw treemap
@@ -26,8 +27,7 @@ drawTreemap(tm)
 # ADVANCED EXAMPLE
 # -------------------------------------------
 # read test data set from Jahn et al., Cell Reports, 2018
-df <- read.csv("data/Jahn_et_al_CellReports_2018.csv", 
-  stringsAsFactors = FALSE) %>%
+df <- Jahn_CellReports_2018 %>%
   subset(condition=="CO2-0-15")
 
 # generate a custom color palette using colorspace
@@ -39,12 +39,13 @@ custom.pal <- sequential_hcl(n = 40,
   power = c(2.65, 0.7), 
   rev = TRUE)
 
-# generate treemap using some more of the function's parameters
-# for example, we can supply more than one level for drawing labels,
-# change label colors, encode cell size AND cell color by
+# Generate treemap using some more of the function's parameters.
+# For example, we can supply more than one level for drawing labels,
+# change label colors, encode cell size and cell color by
 # a numeric variable, use a custom color palette, 
 # and increase maxIterations which will lead to lower
-# errors in some cases
+# errors in some cases. Set a seed if you want the same arrangement 
+# of cells every time, otherwise it will be random.
 tm <- voronoiTreemap(
   data = df,
   levels = c("Process.abbr", "Pathway.abbr", "protein"),
@@ -59,3 +60,4 @@ tm <- voronoiTreemap(
 
 # draw treemap
 drawTreemap(tm)
+

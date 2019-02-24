@@ -17,18 +17,17 @@
 #'
 #' @examples
 #' library(SysbioTreemaps)
-#' library(dplyr)
 #' 
 #' # generate example data
-#' data <- tibble(
+#' df <- data.frame(
 #'   A=rep(c("a", "b", "c"), each=15),
 #'   B=sample(letters[4:13], 45, replace=TRUE),
 #'   C=sample(1:100, 45)
-#' ) %>% arrange(A, B, C)
+#' )
 #' 
 #' # generate treemap
 #' tm <- voronoiTreemap(
-#'   data = data,
+#'   data = df,
 #'   levels = c("A", "B", "C"),
 #'   cell.size = "C",
 #'   cell.color = "A",

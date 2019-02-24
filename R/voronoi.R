@@ -33,6 +33,8 @@
 #'   used for cell labels, or NULL to omit drawing labels. The default is the
 #'   lowest level.
 #' @param label.col (character) Color for cell labels.
+#' @param shape (character) Set the initial shape of the treemap. Currently 
+#'   supported are "rectangle", "circle" or "hexagon".
 #' @param maxIteration (numeric) Force algorithm to stop at this number of iterations
 #'   for each parent cell. The algorithm usually converges to an acceptable 
 #'   solution fairly quickly, so it seems reasonable to restrict this number
@@ -105,6 +107,7 @@ voronoiTreemap <- function(
   border.color = grey(0.9),
   labels = levels[length(levels)],
   label.col = grey(0.5),
+  shape = "rectangle",
   maxIteration = 100,
   seed = NULL,
   debug = FALSE) {
@@ -205,7 +208,7 @@ voronoiTreemap <- function(
   
   # define color palette with 100 steps
   if (is.null(color.palette)) {
-    pal <- colorspace::rainbow_hcl(100)
+    pal <- colorspace::rainbow_hcl(100, start = 60)
   } else {
     pal <- colorRampPalette(color.palette)(100)
   }
@@ -230,11 +233,26 @@ voronoiTreemap <- function(
       # 1. define the boundary polygon
       # either predefined rectangular bounding box for 1st level
       if (level == 1) {
-
-        ParentPoly <- list(
-        x = c(0, 0, 2000, 2000, 0),
-        y = c(0, 2000, 2000, 0, 0)
-      )
+        
+        if (shape == "rectangle") {
+          ParentPoly <- list(
+            x = c(0, 0, 2000, 2000, 0),
+            y = c(0, 2000, 2000, 0, 0)
+          )
+        } else if (shape == "circle") {
+          ParentPoly <- list(
+            x = sin(seq(0, 2, 2/50)*pi) * 1000 + 1000,
+            y = cos(seq(0, 2, 2/50)*pi) * 1000 + 1000
+          )
+        } else if (shape == "hexagon") {
+          ParentPoly <- list(
+            x = sin(seq(0, 2, 2/6)*pi) * 1000 + 1000,
+            y = cos(seq(0, 2, 2/6)*pi) * 1000 + 1000
+          )
+        } else {
+          stop("shape is none of 'rectangle', 'circle', or 'hexagon'.")
+        }
+        
         # turn boundary polygon into gpc.poly object for treemap generation
         GpcPoly <- suppressWarnings(as(ParentPoly, "gpc.poly"))
 

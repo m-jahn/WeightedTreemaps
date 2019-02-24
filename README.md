@@ -18,8 +18,8 @@ output: github_document
 
 ## Description
 
-This package can be used to generate and plot Voronoi treemaps or
-sunburst treemaps from hierarchical data. 
+This package can be used to generate and plot **Voronoi treemaps** or
+**Sunburst treemaps** from hierarchical data. 
 
 <img src="vignettes/tm.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="700px" style="display: block; margin: auto;" />
 
@@ -32,13 +32,15 @@ The sunburst treemap is a computationally less demanding treemap that does not r
 ## Requirements
 
 The C++ code requires the [CGAL](https://www.cgal.org/download.html) library.
-Installation for (Ubuntu-like) Linux:
+For installation in (Ubuntu-like) Linux systems, type in the shell:
 
-`sudo apt install libcgal-dev`
+```
+sudo apt install libcgal-dev
+```
 
 ## Installation
 
-To install the package directly from github, use this function from devtools package:
+To install the package directly from github, use this function from devtools package in your R session:
 
 ```
 require(devtools)
@@ -51,7 +53,6 @@ The package is not available on CRAN yet.
 Create a simple example data frame
 
 ```
-library(dplyr)
 library(SysbioTreemaps)
 
 df <- data.frame(
@@ -86,8 +87,7 @@ Read test data set from Jahn et al., Cell Reports, 2018.
 (https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2)
 
 ```
-df <- read.csv("data/Jahn_et_al_CellReports_2018.csv", 
-  stringsAsFactors = FALSE) %>%
+df <- Jahn_CellReports_2018 %>%
   subset(condition=="CO2-0-15")
 ```
 
@@ -103,7 +103,7 @@ custom.pal <- sequential_hcl(n = 40,
   rev = TRUE)
 ```
 
-Generate treemap using some more of the function's parameters. For example, we can supply more than one level for drawing labels, change label colors, encode cell size *and* cell color by a numeric variable, use a custom color palette, and increase maxIterations which will lead to lower errors in some cases.
+Generate treemap using some more of the function's parameters. For example, we can supply more than one level for drawing labels, change label colors, encode cell size *and* cell color by a numeric variable, use a custom color palette, and increase maxIterations which will lead to lower errors in some cases. Set a seed if you want the same arrangement of cells every time, otherwise it will be random.
 
 
 ```
@@ -115,11 +115,12 @@ tm <- voronoiTreemap(
   cell.size = "mean_mass_fraction_norm",
   cell.color = "mean_mass_fraction_norm",
   maxIteration = 200,
-  color.palette = custom.pal
+  color.palette = custom.pal, 
+  seed = 1
 )
 ```
 
-Draw treemap
+Draw the treemap.
 
 ```
 drawTreemap(tm)
@@ -136,6 +137,10 @@ improved the stability regarding generation of larger treemaps.
 
 For a similar but JAVA based implementation of Voronoi treemaps wrapped in R, see
 David Leslie's scripts at https://github.com/dlesl/voronoi_treemap_rJava.
+
+A Javascript based R package lets you draw simple treemaps in your browser, however,
+this is not suitable for treemaps with many (as, hundreds of) cells. The package is
+available from CRAN or github, https://github.com/uRosConf/voronoiTreemap.
 
 Another popular resource is the web-based treemap generation from University of
 Greifswald at https://bionic-vis.biologie.uni-greifswald.de/.
