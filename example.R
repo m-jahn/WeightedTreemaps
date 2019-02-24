@@ -1,49 +1,61 @@
 library(SysbioTreemaps)
 
-df <- data.frame(#stringsAsFactors = FALSE,
-  A=rep(c("a", "b", "c"), each=15),
-  B=sample(letters[4:13], 45, replace=TRUE),
-  C=sample(1:100, 45)
+# SIMPLE EXAMPLE
+# -------------------------------------------
+# generate data frame
+df <- data.frame(
+  A = rep(c("a", "b", "c"), each=15),
+  B = sample(letters[4:13], 45, replace=TRUE),
+  C = sample(1:100, 45)
 )
-#apply(df, 2, as.character)
 
+# generate treemap
 tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
   cell.size = "C",
-  label.col = grey(1, alpha = 0.5),
-  labels=c("A", "C"),
-  maxIteration = 5
+  cell.color = "C",
+  labels="C",
+  maxIteration = 10
 )
+
+# draw treemap
 drawTreemap(tm)
 
 
-# read test data set
-df <- read.csv("data/Jahn_et_al_CellReports_2018.csv", stringsAsFactors = FALSE) %>%
+# ADVANCED EXAMPLE
+# -------------------------------------------
+# read test data set from Jahn et al., Cell Reports, 2018
+df <- read.csv("data/Jahn_et_al_CellReports_2018.csv", 
+  stringsAsFactors = FALSE) %>%
   subset(condition=="CO2-0-15")
 
+# generate a custom color palette using colorspace
+library(colorspace); hclwizard()
+custom.pal <- sequential_hcl(n = 40, 
+  h = c(-100, 100), 
+  c = c(60, NA, 66), 
+  l = c(42, 100), 
+  power = c(2.65, 0.7), 
+  rev = TRUE)
 
+# generate treemap using some more of the function's parameters
+# for example, we can supply more than one level for drawing labels,
+# change label colors, encode cell size AND cell color by
+# a numeric variable, use a custom color palette, 
+# and increase maxIterations which will lead to lower
+# errors in some cases
 tm <- voronoiTreemap(
   data = df,
   levels = c("Process.abbr", "Pathway.abbr", "protein"),
   labels = c("Process.abbr", "protein"),
+  label.col = grey(0.7, 0.4),
+  border.color = grey(0.7),
   cell.size = "mean_mass_fraction_norm",
-  maxIteration = 50,
-  seed = 123
+  cell.color = "mean_mass_fraction_norm",
+  maxIteration = 200,
+  color.palette = custom.pal
 )
+
+# draw treemap
 drawTreemap(tm)
-# 
-# 
-# library(SysbioTreemaps)
-# library(dplyr)
-# data("starwars")
-# df <- filter(starwars, !(is.na(homeworld) | is.na(gender)))
-# 
-# 
-# tm <- voronoiTreemap(
-#   data = df,
-#   levels = c("gender","homeworld", "name"),
-#   maxIteration = 100,
-#   debug = FALSE
-# )
-# drawTreemap(tm)

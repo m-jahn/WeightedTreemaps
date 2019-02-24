@@ -1,7 +1,7 @@
 ---
 title: "Create Voronoi and Sunburst Treemaps from Hierarchical Data"
 author: "Michael Jahn"
-date: "2019-02-22"
+date: "2019-02-24"
 output: github_document
 #output: rmarkdown::html_vignette
 #vignette: >
@@ -21,7 +21,7 @@ output: github_document
 This package can be used to generate and plot Voronoi treemaps or
 sunburst treemaps from hierarchical data. 
 
-<img src="vignettes/tm.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="600px" style="display: block; margin: auto;" />
+<img src="vignettes/tm.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="700px" style="display: block; margin: auto;" />
 
 There are different implementations for
 Voronoi tesselations in R, the simplest being the deldir() function (from package deldir). However, deldir and other do not handle nested Voronoi tesselations, nor do they perform additively weighted Voronoi tesselation. This is an important demand for systems biology and other applications where one likes to scale the cell size (or area) to a set of predefined weights. The functions provided in this package allow both the additively weighted Voronoi tesselation, and the nesting of different hierarchical levels in one plot. The underlying functions for the tesselation
@@ -54,7 +54,7 @@ Create a simple example data frame
 library(dplyr)
 library(SysbioTreemaps)
 
-df <- data.frame(stringsAsFactors = FALSE,
+df <- data.frame(
   A=rep(c("a", "b", "c"), each=15),
   B=sample(letters[4:13], 45, replace=TRUE),
   C=sample(1:100, 45)
@@ -82,9 +82,53 @@ drawTreemap(tm)
 
 ## Adcanced example
 
-Will be added soon.
+Read test data set from Jahn et al., Cell Reports, 2018.
+(https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2)
+
+```
+df <- read.csv("data/Jahn_et_al_CellReports_2018.csv", 
+  stringsAsFactors = FALSE) %>%
+  subset(condition=="CO2-0-15")
+```
+
+Generate a custom color palette using colorspace.
+
+```
+library(colorspace); hclwizard()
+custom.pal <- sequential_hcl(n = 40, 
+  h = c(-100, 100), 
+  c = c(60, NA, 66), 
+  l = c(42, 100), 
+  power = c(2.65, 0.7), 
+  rev = TRUE)
+```
+
+Generate treemap using some more of the function's parameters. For example, we can supply more than one level for drawing labels, change label colors, encode cell size *and* cell color by a numeric variable, use a custom color palette, and increase maxIterations which will lead to lower errors in some cases.
+
+
+```
+tm <- voronoiTreemap(
+  data = df,
+  levels = c("Process.abbr", "Pathway.abbr", "protein"),
+  labels = c("Process.abbr", "protein"),
+  label.col = grey(0.7, 0.4),
+  cell.size = "mean_mass_fraction_norm",
+  cell.color = "mean_mass_fraction_norm",
+  maxIteration = 200,
+  color.palette = custom.pal
+)
+```
+
+Draw treemap
+
+```
+drawTreemap(tm)
+```
+
+<img src="vignettes/tm_heatcol.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="700px" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
+
 
 The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html.
 We created a recursive wrapper around the main tesselation function and

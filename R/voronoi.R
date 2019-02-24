@@ -55,7 +55,7 @@
 #' library(SysbioTreemaps)
 #' 
 #' # generate example data
-#' df <- data.frame(stringsAsFactors = FALSE,
+#' df <- data.frame(
 #'   A=rep(c("a", "b", "c"), each=15),
 #'   B=sample(letters[4:13], 45, replace=TRUE),
 #'   C=sample(1:100, 45)
@@ -79,8 +79,10 @@
 #' @importFrom grid grid.newpage
 #' @importFrom grid pushViewport
 #' @importFrom grid viewport
+#' @importFrom dplyr mutate_if
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarise
+#' @importFrom scales rescale
 #' @importFrom sp Polygon
 #' @importFrom sp spsample
 #' @importFrom soiltexture TT.polygon.centroids
@@ -138,6 +140,14 @@ voronoiTreemap <- function(
   if (!all(levels %in% colnames(data))) {
     stop("Not all given levels are column names of 'data'")
   }
+  
+  # check that no level columns are factors and coerce 
+  # to character if necessary
+  if (lapply(df, is.factor) %>% unlist %>% any) {
+    data <- data %>% dplyr::mutate_if(is.factor, as.character)
+  }
+  
+  # check labels
   if (is.null(labels)) {
     warning("Drawing of labels disabled.", immediate. = TRUE)
   } else if (!all(labels %in% levels)) {
@@ -175,18 +185,31 @@ voronoiTreemap <- function(
     ))
   }
 
-  # generate colors for each cell and add to data frame
-  data$fill.color <- with(data, {
-    colvector <- get(cell.color) %>%
-      as.factor %>%
-      as.numeric
-    if (is.null(color.palette)) {
-      colorspace::rainbow_hcl(length(unique(colvector)))[colvector]
+  # generate a color value for each cell and add to data frame
+  data$fill <- with(data, {
+    
+    # if input is character or similar, we try to convert to factor 
+    # and then numeric; otherwise use numeric and rescale
+    # to a new range between 1 and 100
+    if (is.numeric(get(cell.color))) {
+      get(cell.color) %>%
+      scales::rescale(to = c(1, 100))
+      
     } else {
-      colorRampPalette(color.palette)(length(unique(colvector)))[colvector]
+      get(cell.color) %>%
+      as.factor %>%
+      as.numeric %>%
+      scales::rescale(to = c(1, 100))
     }
   })
-
+  
+  # define color palette with 100 steps
+  if (is.null(color.palette)) {
+    pal <- colorspace::rainbow_hcl(100)
+  } else {
+    pal <- colorRampPalette(color.palette)(100)
+  }
+  
   # CORE FUNCTION (RECURSIVE)
   voronoi.core <- function(level, df, parent = NULL, output = list()) {
   
@@ -244,15 +267,25 @@ voronoiTreemap <- function(
         stopifnot(is.numeric(df[[cell.size]]))
         weights <- df %>%
           dplyr::group_by(get(levels[level])) %>%
-          dplyr::summarise(fun(get(cell.size))) %>% { .[[2]] / sum(.[[2]]) }
+          dplyr::summarise(fun(get(cell.size))) %>% 
+          { .[[2]] / sum(.[[2]]) }
       }
-
-      # 4. generate additively weighted voronoi treemap object;
+      
+      # 4. generate colors by aggregating color
+      # scores for each cell using a palette, applies only to lowest level
+      if (level == length(levels)) {
+        fill.color <- df %>%
+          dplyr::group_by(get(levels[level])) %>%
+          dplyr::summarise(mean(fill)) %>%
+          {.[[2]]} %>% round %>%
+          pal[.]
+      }
+      
+      # 5. generate additively weighted voronoi treemap object;
       # the allocate function returns a list of polygons to draw, 
       # among others.
       # if the parent has only 1 child, skip map generation
       # and make pseudo treemap object instead
-
       if (length(ncells) == 1) {
 
         treemap <- list(
@@ -278,14 +311,14 @@ voronoiTreemap <- function(
           maxIteration = maxIteration,
           outer = GpcPoly,
           debug = debug
-      )
+        )
+        
         if (is.null(treemap) & counter <= 10) {
-          
           counter = counter + 1
           cat("Iteration failed, randomising positions...\n")
           next
         } else if (is.null(treemap) & counter > 10) {
-          stop("Iteration failed after 10 randomisation trials, try to rerun treemap without setting seed")
+          stop("Iteration failed after 10 randomisation trials, try to rerun treemap with new seed")
         }
 
         # print summary of cell tesselation
@@ -308,10 +341,10 @@ voronoiTreemap <- function(
       label.col = label.col,
       lwd = border.size / level,
       col = border.color,
-      fill = { if (level != length(levels)) NA else unique(df$fill.color) }
+      fill = { if (level != length(levels)) NA else fill.color }
     )
-
-
+    
+    
       # CALL CORE FUNCTION RECURSIVELY
       if (level != length(levels)) {
 
