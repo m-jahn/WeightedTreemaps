@@ -14,10 +14,11 @@ tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
   cell.size = "C",
-  cell.color = "C",
+  cell.color = "B",
   labels="C",
-  shape = "hexagon", 
-  maxIteration = 100
+  shape = "rounded_rect", 
+  maxIteration = 20,
+  seed = 123
 )
 
 # draw treemap

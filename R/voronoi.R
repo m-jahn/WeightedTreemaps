@@ -34,7 +34,7 @@
 #'   lowest level.
 #' @param label.col (character) Color for cell labels.
 #' @param shape (character) Set the initial shape of the treemap. Currently 
-#'   supported are "rectangle", "circle" or "hexagon".
+#'   supported are "rectangle", "rounded_rect", "circle" or "hexagon".
 #' @param maxIteration (numeric) Force algorithm to stop at this number of iterations
 #'   for each parent cell. The algorithm usually converges to an acceptable 
 #'   solution fairly quickly, so it seems reasonable to restrict this number
@@ -249,8 +249,13 @@ voronoiTreemap <- function(
             x = sin(seq(0, 2, 2/6)*pi) * 1000 + 1000,
             y = cos(seq(0, 2, 2/6)*pi) * 1000 + 1000
           )
+        } else if (shape == "rounded_rect") {
+          ParentPoly <- list(
+            x = rounded_rect[[1]],
+            y = rounded_rect[[2]]
+          )
         } else {
-          stop("shape is none of 'rectangle', 'circle', or 'hexagon'.")
+          stop("shape is none of 'rectangle', 'rounded_rect', circle', or 'hexagon'.")
         }
         
         # turn boundary polygon into gpc.poly object for treemap generation

@@ -48,7 +48,7 @@ lowest level.}
 \item{label.col}{(character) Color for cell labels.}
 
 \item{shape}{(character) Set the initial shape of the treemap. Currently 
-supported are "rectangle", "circle" or "hexagon".}
+supported are "rectangle", "rounded_rect", "circle" or "hexagon".}
 
 \item{maxIteration}{(numeric) Force algorithm to stop at this number of iterations
 for each parent cell. The algorithm usually converges to an acceptable 
