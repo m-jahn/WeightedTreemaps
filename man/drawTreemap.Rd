@@ -4,7 +4,10 @@
 \alias{drawTreemap}
 \title{drawTreemap}
 \usage{
-drawTreemap(treemap, width = 0.9, height = 0.9, title = NULL)
+drawTreemap(treemap, width = 0.9, height = 0.9, cell_color = 1,
+  color_palette = NULL, border_size = 6, border_color = grey(0.9),
+  labels = lapply(treemap, function(x) x$level) \%>\% unlist \%>\% max,
+  label_color = grey(0.7), title = NULL)
 }
 \arguments{
 \item{treemap}{(list) A list of grid polygons and text objects that is the
@@ -14,6 +17,25 @@ output from treemap generation.}
 
 \item{height}{(numeric) The height (0 to 1)of the viewport that the treemap will occupy.}
 
+\item{cell_color}{(numeric or character) A number representing the hierarchical level
+that should be used for cell coloring (categorical), or 'cell_size' for using relative
+area to determine colors, or 'custom_color' to use a color index supplied during
+treemap generation, or \code{NULL} to omit drawing colors.}
+
+\item{color_palette}{(character) A character vector of colors used to fill cells.
+The default is to use \code{\link{rainbow_hcl}} from package\code{colorspace}}
+
+\item{border_size}{(numeric) The initial line width of the highest level 
+cells. Is reduced each level. Default is 6 pts.}
+
+\item{border_color}{(character) Color for cell borders, default is a light grey.}
+
+\item{labels}{(numeric) A number representing the hierarchical level that should be
+used for cell labels, or NULL to omit drawing labels. The default is the
+lowest level (every cell get's a label).}
+
+\item{label_color}{(character) Color for cell labels.}
+
 \item{title}{(character) A title, optional.}
 }
 \value{
@@ -21,8 +43,10 @@ Creates a grid viewport and draws the treemap.
 }
 \description{
 Draws the treemap from a list obtained by running [voronoiTreemap()] or
-[sunburstTreemap()]. Some graphical parameters can be tweaked but most
-settings are made during treemap generation.
+[sunburstTreemap()]. Many graphical parameters can be customized but some
+settings that determine the appearance of treemaps are already made 
+during treemap generation. Such parameters are primarily cell size and
+and initial shape of the treemap.
 }
 \examples{
 library(SysbioTreemaps)
@@ -38,8 +62,8 @@ df <- data.frame(
 tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
-  cell.size = "C",
-  cell.color = "A",
+  cell_size = "C",
+  cell_color = "A",
   maxIteration = 50,
   )
 

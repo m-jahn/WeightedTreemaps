@@ -21,18 +21,14 @@
 #'   relative target area below 0.0001, or 0.01%. The algorithm can fail
 #'   when processing many tiny cells so it can be worthwhile to simply 
 #'   rerun the function with a stricter filter.
-#' @param cell.size (character) Indicates the column used to control cell size. 
+#' @param cell_size (character) The column used to control cell size. 
 #'   Can be one of \code{levels}
-#' @param cell.color (character) Indicates the column used to control cell color. 
-#'   Can be one of \code{levels}
-#' @param color.palette (character) A character vector of colors used to fill cells. 
-#' @param border.size (character) The initial line width of the highest level 
-#'   cells. Is reduced each level.
-#' @param border.color (numeric) Color for cell borders.
-#' @param labels (character) The column name indicating the hierarchical level 
-#'   used for cell labels, or NULL to omit drawing labels. The default is the
-#'   lowest level.
-#' @param label.col (character) Color for cell labels.
+#' @param custom_color (character) An optional column that can be specified to
+#'   control cell color. Cell colors are determined when drawing the treemap
+#'   using \code{\link{drawTreemap}}, but the default is to use one of 
+#'   \code{levels} or \code{cell size}. Any other data source that shall be used
+#'   instead has to be included in the treemap generation and explicitly 
+#'   specified here. The default value is \code{NULL}
 #' @param shape (character) Set the initial shape of the treemap. Currently 
 #'   supported are "rectangle", "rounded_rect", "circle" or "hexagon".
 #' @param maxIteration (numeric) Force algorithm to stop at this number of iterations
@@ -49,7 +45,7 @@
 #'   console. Use with care, this makes treemap generation much slower!
 #'   
 #' 
-#' @return A named list with grid graphical objects for polygons and labels. 
+#' @return A named list with treemap objects containing polygons and metadata 
 #' 
 #' @seealso \code{\link{drawTreemap}} for drawing the treemap.
 #'
@@ -67,7 +63,7 @@
 #' tm <- voronoiTreemap(
 #'   data = df,
 #'   levels = c("A", "B", "C"),
-#'   cell.size = "C",
+#'   cell_size = "C",
 #'   cell.color = "A",
 #'   maxIteration = 50,
 #'   )
@@ -100,13 +96,8 @@ voronoiTreemap <- function(
   fun = sum,
   sort = TRUE,
   filter = 0,
-  cell.size = NULL,
-  cell.color = levels[1],
-  color.palette = NULL,
-  border.size = 6,
-  border.color = grey(0.9),
-  labels = levels[length(levels)],
-  label.col = grey(0.5),
+  cell_size = NULL,
+  custom_color = NULL,
   shape = "rectangle",
   maxIteration = 100,
   seed = NULL,
@@ -124,12 +115,23 @@ voronoiTreemap <- function(
       data <- as.data.frame(data)
   }
 
-  # filter out zero or negative target areas, or apply a user threshold
-  # to filter target areas
-  if (!is.null(cell.size)) {
+  # check variable controlling cell size
+  if (is.null(cell_size)) {
+    warning("No experimental condition is given, cell size encoded by number of members", immediate. = TRUE)
+  } else {
+    
+    if (!(cell_size %in% colnames(data))) {
+      stop("'cell_size' is not a colname of 'data'")
+    }
+    
+    if (any(data[[cell_size]] < 0)) {
+      stop("'cell_size' contains negative values, only positive target areas allowed")
+    }
+      
+    # apply a threshold to filter out small target areas
     if (is.numeric(filter)) {
       
-      filtered <- data[[cell.size]] %>% {. / sum(.)} > filter
+      filtered <- data[[cell_size]] %>% {. / sum(.)} > filter
       
       if (sum(!filtered) > 0) {
         data <- subset(data, filtered)
@@ -149,21 +151,10 @@ voronoiTreemap <- function(
   if (lapply(df, is.factor) %>% unlist %>% any) {
     data <- data %>% dplyr::mutate_if(is.factor, as.character)
   }
-  
-  # check labels
-  if (is.null(labels)) {
-    warning("Drawing of labels disabled.", immediate. = TRUE)
-  } else if (!all(labels %in% levels)) {
-    warning("'labels' is not a colname of 'data'. Drawing of labels disabled.", immediate. = TRUE)
-    labels = NULL
-  }
-  if (is.null(cell.size)) {
-    warning("No experimental condition is given, cell size encoded by number of members", immediate. = TRUE)
-  } else if (!(cell.size %in% colnames(data))) {
-    stop("'cell.size' is not a colname of 'data'")
-  }
-  if (!is.null(cell.color) & !(cell.color %in% colnames(data))) {
-    stop("'cell.color' is not a colname of 'data'")
+
+  if (!is.null(custom_color)) {
+    if(!(custom_color %in% colnames(data)))
+      stop("'custom_color' is not a colname of 'data'")
   }
 
   if (!is.function(fun)) {
@@ -188,30 +179,27 @@ voronoiTreemap <- function(
     ))
   }
 
-  # generate a color value for each cell and add to data frame
-  data$fill <- with(data, {
-    
-    # if input is character or similar, we try to convert to factor 
-    # and then numeric; otherwise use numeric and rescale
-    # to a new range between 1 and 100
-    if (is.numeric(get(cell.color))) {
-      get(cell.color) %>%
-      scales::rescale(to = c(1, 100))
+  # if extra column for color values is supplied,
+  # we need to rescale it and and add to data frame
+  if (!is.null(custom_color)) {
+    data$custom_color <- with(data, {
       
-    } else {
-      get(cell.color) %>%
-      as.factor %>%
-      as.numeric %>%
-      scales::rescale(to = c(1, 100))
-    }
-  })
-  
-  # define color palette with 100 steps
-  if (is.null(color.palette)) {
-    pal <- colorspace::rainbow_hcl(100, start = 60)
-  } else {
-    pal <- colorRampPalette(color.palette)(100)
+      # if input is character or similar, we try to convert to factor 
+      # and then numeric; otherwise use numeric and rescale
+      # to a new range between 1 and 100
+      if (is.numeric(get(custom_color))) {
+        get(custom_color) %>%
+          scales::rescale(to = c(1, 100))
+        
+      } else {
+        get(custom_color) %>%
+          as.factor %>%
+          as.numeric %>%
+          scales::rescale(to = c(1, 100))
+      }
+    })
   }
+  
   
   # CORE FUNCTION (RECURSIVE)
   voronoi.core <- function(level, df, parent = NULL, output = list()) {
@@ -280,28 +268,27 @@ voronoiTreemap <- function(
       
       # 3. generate the weights, these are the (aggregated) scaling factors 
       # supplied by the user or simply the n members per cell
-      if (is.null(cell.size)) {
+      if (is.null(cell_size)) {
         # average cell size by number of members, if no function is given
         weights <- ncells / sum(ncells)
 
       } else {
         # average sector size by user defined function, e.g. sum of expression values
         # the cell size is calculated as aggregated relative fraction of total
-        stopifnot(is.numeric(df[[cell.size]]))
+        stopifnot(is.numeric(df[[cell_size]]))
         weights <- df %>%
           dplyr::group_by(get(levels[level])) %>%
-          dplyr::summarise(fun(get(cell.size))) %>% 
+          dplyr::summarise(fun(get(cell_size))) %>% 
           { .[[2]] / sum(.[[2]]) }
       }
       
-      # 4. generate colors by aggregating color
-      # scores for each cell using a palette, applies only to lowest level
-      if (level == length(levels)) {
-        fill.color <- df %>%
+      # 4. generate custom color values for each cell that can be used
+      # with different palettes when drawing;
+      if (!is.null(custom_color)) {
+        color_value <- df %>%
           dplyr::group_by(get(levels[level])) %>%
-          dplyr::summarise(mean(fill)) %>%
-          {.[[2]]} %>% round %>%
-          pal[.]
+          dplyr::summarise(mean(custom_color)) %>% 
+          {round(.[[2]])}
       }
       
       # 5. generate additively weighted voronoi treemap object;
@@ -351,23 +338,9 @@ voronoiTreemap <- function(
           round(max(tessErr) * 100, 2), "% max error, ",
           treemap$count, "iterations\n"
         )
-
       }
 
-      # DRAWING FUNCTION
-      # this function draws the polygons as polygonGrob objects
-      # from grid package
-      voronoiGrid <- drawRegions(
-      treemap,
-      debug = FALSE,
-      label = { if (!is.null(labels)) levels[level] %in% labels else FALSE },
-      label.col = label.col,
-      lwd = border.size / level,
-      col = border.color,
-      fill = { if (level != length(levels)) NA else fill.color }
-    )
-    
-    
+      
       # CALL CORE FUNCTION RECURSIVELY
       if (level != length(levels)) {
 
@@ -382,12 +355,16 @@ voronoiTreemap <- function(
             df = subset(df, get(levels[level]) %in% names(ncells)[i]),
             parent = treemap$k[[i]],
             output = {
-              if ("labels" %in% names(voronoiGrid)) {
-                addOut <- voronoiGrid[c("labels", names(voronoiGrid)[i])]
-              } else {
-                addOut <- voronoiGrid[i]
-              }
-              output[[paste0("LEVEL", level)]] <- addOut
+              output[[paste0("LEVEL", level, "_", names(ncells)[i])]] <- 
+                list(names = treemap$names[[i]], 
+                     k = treemap$k[i], 
+                     s = list(x = treemap$s$x[[i]], y = treemap$s$y[[i]]),
+                     w = treemap$w[[i]], 
+                     a = treemap$a[[i]],
+                     t = treemap$t[[i]], 
+                     count = treemap$count,
+                     level = level,
+                     custom_color = {if (!is.null(custom_color)) color_value[[i]] else NA})
               output
             }
           )
@@ -396,8 +373,10 @@ voronoiTreemap <- function(
         return(res)
       
       } else {
-      
-        output[[paste0("LEVEL", level)]] <- voronoiGrid
+        
+        treemap$level = level
+        treemap$custom_color = {if (!is.null(custom_color)) color_value else NA}
+        output[[paste0("LEVEL", level, "_", names(ncells)[1])]] <- treemap
         return(output)
       
       }
@@ -410,7 +389,7 @@ voronoiTreemap <- function(
   # and order by hierarchical level
   tm <- voronoi.core(level = 1, df = data) %>%
     .[!duplicated(.)]
-  tm <- tm[names(tm) %>% order(decreasing = TRUE)]
+  tm <- tm[names(tm) %>% order]
   cat("Treemap successfully created\n")
   return(tm)
 

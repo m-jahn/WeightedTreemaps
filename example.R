@@ -5,24 +5,23 @@ library(SysbioTreemaps)
 # generate data frame
 df <- data.frame(
   A = rep(c("a", "b", "c"), each=15),
-  B = sample(letters[4:13], 45, replace=TRUE),
-  C = sample(1:100, 45)
+  B = sample(letters[4:12], 45, replace = TRUE),
+  C = sample(10:100, 45)
 )
 
 # generate treemap
 tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
-  cell.size = "C",
-  cell.color = "B",
-  labels="C",
+  cell_size = "C",
+  custom_color = "C",
   shape = "rounded_rect", 
-  maxIteration = 20,
+  maxIteration = 100,
   seed = 123
 )
 
 # draw treemap
-drawTreemap(tm)
+drawTreemap(tm, cell_color = 3, border_size = 7)
 
 
 # ADVANCED EXAMPLE

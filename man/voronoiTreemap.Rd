@@ -5,11 +5,8 @@
 \title{voronoiTreemap}
 \usage{
 voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 0,
-  cell.size = NULL, cell.color = levels[1], color.palette = NULL,
-  border.size = 6, border.color = grey(0.9),
-  labels = levels[length(levels)], label.col = grey(0.5),
-  shape = "rectangle", maxIteration = 100, seed = NULL,
-  debug = FALSE)
+  cell_size = NULL, custom_color = NULL, shape = "rectangle",
+  maxIteration = 100, seed = NULL, debug = FALSE)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
@@ -28,24 +25,15 @@ relative target area below 0.0001, or 0.01%. The algorithm can fail
 when processing many tiny cells so it can be worthwhile to simply 
 rerun the function with a stricter filter.}
 
-\item{cell.size}{(character) Indicates the column used to control cell size. 
+\item{cell_size}{(character) The column used to control cell size. 
 Can be one of \code{levels}}
 
-\item{cell.color}{(character) Indicates the column used to control cell color. 
-Can be one of \code{levels}}
-
-\item{color.palette}{(character) A character vector of colors used to fill cells.}
-
-\item{border.size}{(character) The initial line width of the highest level 
-cells. Is reduced each level.}
-
-\item{border.color}{(numeric) Color for cell borders.}
-
-\item{labels}{(character) The column name indicating the hierarchical level 
-used for cell labels, or NULL to omit drawing labels. The default is the
-lowest level.}
-
-\item{label.col}{(character) Color for cell labels.}
+\item{custom_color}{(character) An optional column that can be specified to
+control cell color. Cell colors are determined when drawing the treemap
+using \code{\link{drawTreemap}}, but the default is to use one of 
+\code{levels} or \code{cell size}. Any other data source that shall be used
+instead has to be included in the treemap generation and explicitly 
+specified here. The default value is \code{NULL}}
 
 \item{shape}{(character) Set the initial shape of the treemap. Currently 
 supported are "rectangle", "rounded_rect", "circle" or "hexagon".}
@@ -66,7 +54,7 @@ inspection. The weights, target area, and difference are printed to the
 console. Use with care, this makes treemap generation much slower!}
 }
 \value{
-A named list with grid graphical objects for polygons and labels.
+A named list with treemap objects containing polygons and metadata
 }
 \description{
 Create nested additively weighted Voronoi treemaps.
@@ -93,7 +81,7 @@ df <- data.frame(
 tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
-  cell.size = "C",
+  cell_size = "C",
   cell.color = "A",
   maxIteration = 50,
   )

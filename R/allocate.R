@@ -195,7 +195,7 @@ allocate <- function(
     if (count == maxIteration || stop_cond$stopping) {
       return(list(
         names = names, k = k, s = s,
-        w = w, a = areas, t = target,
+        w = w, a = unlist(areas), t = target,
         count = count
       ))
     } else {

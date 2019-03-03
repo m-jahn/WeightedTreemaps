@@ -61,7 +61,6 @@ drawRegions <- function(
   names <- result$names
   k <- result$k
   sites <- result$s
-  weights <- result$w
   
   # draw polygon, pass graphical parameters to drawPoly function
   polylist <- mapply(drawPoly, k, names, fill = fill,
@@ -74,7 +73,7 @@ drawRegions <- function(
     
     # function to determine label sizes for each individual cell
     # based on cell dimension and label character length
-    cex = sqrt(unlist(result$a)) * 0.03 / nchar(names)  %>%
+    cex = sqrt(unlist(result$a)) * 0.01 / nchar(names)  %>%
       round(1)
 
     polylist$labels <- textGrob(names,
@@ -87,5 +86,4 @@ drawRegions <- function(
   }
   # return list of polygons; optionally draw them with debug=TRUE
   if (debug) {lapply(polylist, grid.draw)}
-  polylist
 }
