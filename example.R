@@ -14,24 +14,57 @@ tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
   cell_size = "C",
-  custom_color = "C",
-  shape = "rounded_rect", 
-  maxIteration = 100,
-  seed = 123
+  shape = "rounded_rect"
 )
 
 # draw treemap
-drawTreemap(tm, cell_color = 3, border_size = 7)
+drawTreemap(tm)
+
+# draw different variants of the same treemap on one page using
+# the 'layout' and 'position' arguments (indicating rows and columns)
+drawTreemap(tm, 
+  cell_color = 1, title = "treemap 1", 
+  layout = c(1,3), position = c(1, 1))
+
+drawTreemap(tm, title = "treemap 2", 
+  cell_color = 2, border_size = 6, 
+  add = TRUE, layout = c(1,3), position = c(1, 2))
+
+drawTreemap(tm, title = "treemap 3",
+  cell_color = 3, border_color = grey(0.4), 
+  label_color = grey(0.4),
+  color_palette = heat.colors(10),
+  add = TRUE, layout = c(1,3), position = c(1, 3))
 
 
 # ADVANCED EXAMPLE
 # -------------------------------------------
 # read test data set from Jahn et al., Cell Reports, 2018
+library(dplyr)
+library(colorspace)
+
 df <- Jahn_CellReports_2018 %>%
-  subset(condition=="CO2-0-15")
+  filter(condition == "CO2-0-15") %>%
+  filter(mean_mass_fraction_norm > 0)
+
+
+# Generate treemap using some more of the function's parameters.
+# We can increase maxIterations and decrease error tolerance which will lead to lower
+# errors. We can set a seed to obtain a similar arrangment of cells for similar maps, 
+# otherwise it will be random.
+tm <- voronoiTreemap(
+  data = df,
+  levels = c("Process.abbr", "Pathway.abbr", "protein"),
+  cell_size = "mean_mass_fraction_norm",
+  shape = "rectangle",
+  error_tol = 0.001,
+  maxIteration = 200,
+  seed = 13
+)
+
 
 # generate a custom color palette using colorspace
-library(colorspace); hclwizard()
+hclwizard()
 custom.pal <- sequential_hcl(n = 40, 
   h = c(-100, 100), 
   c = c(60, NA, 66), 
@@ -39,25 +72,14 @@ custom.pal <- sequential_hcl(n = 40,
   power = c(2.65, 0.7), 
   rev = TRUE)
 
-# Generate treemap using some more of the function's parameters.
-# For example, we can supply more than one level for drawing labels,
-# change label colors, encode cell size and cell color by
-# a numeric variable, use a custom color palette, 
-# and increase maxIterations which will lead to lower
-# errors in some cases. Set a seed if you want the same arrangement 
-# of cells every time, otherwise it will be random.
-tm <- voronoiTreemap(
-  data = df,
-  levels = c("Process.abbr", "Pathway.abbr", "protein"),
-  labels = c("Process.abbr", "protein"),
-  label.col = grey(0.7, 0.4),
-  border.color = grey(0.7),
-  cell.size = "mean_mass_fraction_norm",
-  cell.color = "mean_mass_fraction_norm",
-  maxIteration = 200,
-  color.palette = custom.pal
-)
 
 # draw treemap
-drawTreemap(tm)
+drawTreemap(
+  tm, 
+  color_palette = custom.pal,
+  cell_color = "cell_size",
+  labels = c(2,3),
+  label_color = grey(0.5),
+  border_color = grey(0.7)
+)
 

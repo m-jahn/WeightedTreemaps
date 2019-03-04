@@ -4,26 +4,41 @@
 \alias{drawTreemap}
 \title{drawTreemap}
 \usage{
-drawTreemap(treemap, width = 0.9, height = 0.9, cell_color = 1,
+drawTreemap(treemap, add = FALSE, width = 0.9, height = 0.9,
+  layout = c(1, 1), position = c(1, 1), cell_color = 1,
   color_palette = NULL, border_size = 6, border_color = grey(0.9),
   labels = lapply(treemap, function(x) x$level) \%>\% unlist \%>\% max,
-  label_color = grey(0.7), title = NULL)
+  label_size = 1, label_color = grey(0.9), title = NULL)
 }
 \arguments{
 \item{treemap}{(list) A list of grid polygons and text objects that is the
 output from treemap generation.}
 
-\item{width}{(numeric) The width (0 to 1) of the viewport that the treemap will occupy.}
+\item{add}{(logical) Defaults to \code{FALSE}, creating a new page when drawing
+a treemap. When multiple treemaps should be plotted on the same page, this should be
+set to TRUE, and position of treemaps specified by \code{layout} and \code{position} arguments.}
 
-\item{height}{(numeric) The height (0 to 1)of the viewport that the treemap will occupy.}
+\item{width}{(numeric) The width (0 to 0.9) of the viewport that the treemap will occupy.}
+
+\item{height}{(numeric) The height (0 to 0.9) of the viewport that the treemap will occupy.}
+
+\item{layout}{(numeric) Vector of length 2 indicationg the number of rows and columns
+that the plotting area is supposed to be subdivided in. Useful only together with
+\code{position}, which indicates the position of the specific treemap. Use \code{add = TRUE}
+to omit starting a new page every time you call \code{drawTreemap()}.}
+
+\item{position}{(numeric) Vector of length 2 indicationg the position where the current
+treemap should be drawn. Useful only together with \code{layout}, which indicates 
+the number of rows and columns the plotting area is subdivided into. Use \code{add = TRUE}
+to omit starting a new page every time you call \code{drawTreemap()}.}
 
 \item{cell_color}{(numeric or character) A number representing the hierarchical level
-that should be used for cell coloring (categorical), or 'cell_size' for using relative
-area to determine colors, or 'custom_color' to use a color index supplied during
+that should be used for cell coloring (categorical), or \code{cell_size} for using relative
+area to determine colors, or \code{custom_color} to use a color index supplied during
 treemap generation, or \code{NULL} to omit drawing colors.}
 
 \item{color_palette}{(character) A character vector of colors used to fill cells.
-The default is to use \code{\link{rainbow_hcl}} from package\code{colorspace}}
+The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}}
 
 \item{border_size}{(numeric) The initial line width of the highest level 
 cells. Is reduced each level. Default is 6 pts.}
@@ -31,12 +46,15 @@ cells. Is reduced each level. Default is 6 pts.}
 \item{border_color}{(character) Color for cell borders, default is a light grey.}
 
 \item{labels}{(numeric) A number representing the hierarchical level that should be
-used for cell labels, or NULL to omit drawing labels. The default is the
-lowest level (every cell get's a label).}
+used for drawing cell labels, or NULL to omit drawing labels. The default is the
+lowest level (every cell has a label).}
+
+\item{label_size}{(numeric) Expansion factor for labels. A simple multiplier
+that shrinks or expands all labels, regardless of their relative size.}
 
 \item{label_color}{(character) Color for cell labels.}
 
-\item{title}{(character) A title, optional.}
+\item{title}{(character) An optional title, default to \code{NULL}.}
 }
 \value{
 Creates a grid viewport and draws the treemap.

@@ -16,14 +16,37 @@
 #  http://www.gnu.org/licenses/gpl.txt
 #
 #' @importFrom grid gpar
-#' @importFrom grid polygonGrob
-#' @importFrom grid textGrob
-#' @importFrom grid grid.draw
+#' @importFrom grid grid.polygon
+#' @importFrom grid grid.text
+#' @importFrom scales rescale 
+
+# function to coerce and rescale different types of input to 
+# numeric range between 1 and 100 (for color coding)
+convertInput <- function(x, from = NULL, to = c(1, 100)) {
+  if (is.character(x)) {
+    if (all(!is.na(suppressWarnings(as.numeric(x))))) {
+      x = as.numeric(x)
+    } else {
+      x = as.factor(x) %>%
+        as.numeric
+    }
+  }
+  if (is.numeric(x)) {
+    scales::rescale(x, 
+      from = {if (!is.null(from)) from else range(x)}, 
+      to = to) %>%
+      round %>%
+      replace(., . > to[2], to[2]) %>%
+      replace(., . < to[1], to[1])
+  } else {
+    stop("Input data is not of type numeric, factor, or character. Color-coding impossible.")
+  }
+}
 
 drawPoly <- function(p, name, fill, lwd, col) {
   if (length(p@pts)) {
     pts <- getpts(p)
-    polygonGrob(
+    grid::grid.polygon(
       pts$x,
       pts$y,
       default = "native",
@@ -55,19 +78,18 @@ drawRegions <- function(
   debug = FALSE,
   label = TRUE,
   label.col = grey(0.5),
-  lwd=2, col=grey(0.8), 
-  fill=NA)
+  lwd = 2, col = grey(0.8), 
+  fill = NA)
 {
   names <- result$names
   k <- result$k
   sites <- result$s
   
   # draw polygon, pass graphical parameters to drawPoly function
-  polylist <- mapply(drawPoly, k, names, fill = fill,
+  mapply(drawPoly, k, names, fill = fill,
     SIMPLIFY=FALSE,
     MoreArgs = list(lwd = lwd, col = col)
   )
-  names(polylist) = names
   
   if (label) {
     
@@ -75,8 +97,7 @@ drawRegions <- function(
     # based on cell dimension and label character length
     cex = sqrt(unlist(result$a)) * 0.01 / nchar(names)  %>%
       round(1)
-
-    polylist$labels <- textGrob(names,
+    grid::grid.text(names,
       sites$x,
       sites$y,
       default = "native",
@@ -84,6 +105,4 @@ drawRegions <- function(
     )
     
   }
-  # return list of polygons; optionally draw them with debug=TRUE
-  if (debug) {lapply(polylist, grid.draw)}
 }

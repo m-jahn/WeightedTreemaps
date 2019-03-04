@@ -28,7 +28,11 @@
 #'   using \code{\link{drawTreemap}}, but the default is to use one of 
 #'   \code{levels} or \code{cell size}. Any other data source that shall be used
 #'   instead has to be included in the treemap generation and explicitly 
-#'   specified here. The default value is \code{NULL}
+#'   specified here. The default value is \code{NULL}.
+#' @param custom_range (numeric) A numeric vector of length 2 that can be used
+#'   to rescale the values in \code{custom_color} to the range of choice.
+#'   The default is \code{NULL} and it only has an effect if \code{custom_color}
+#'   is specified.
 #' @param shape (character) Set the initial shape of the treemap. Currently 
 #'   supported are "rectangle", "rounded_rect", "circle" or "hexagon".
 #' @param maxIteration (numeric) Force algorithm to stop at this number of iterations
@@ -36,6 +40,12 @@
 #'   solution fairly quickly, so it seems reasonable to restrict this number
 #'   in order to save computation time. However, more iterations give higher
 #'   accuracy.
+#' @param error_tol (numeric) The allowed maximum error tolerance of a cell.
+#'   The algorithm will stop when all cells have lower error than this value.
+#'   It is calculated as the absolute difference of a cell's area to its target
+#'   area. The default is 0.01 (or 1 %) of the total parental area. Note: this
+#'   is is different from a relative per-cell error, where 1 % would be more 
+#'   strict.
 #' @param seed (integer) The default seed is NULL, which will lead to a new 
 #'   random sampling of cell coordinates for each tesselation. If you want
 #'   a reproducibloe arrangement of cells, set seed to an arbitrary number.
@@ -98,8 +108,10 @@ voronoiTreemap <- function(
   filter = 0,
   cell_size = NULL,
   custom_color = NULL,
+  custom_range = NULL,
   shape = "rectangle",
   maxIteration = 100,
+  error_tol = 0.01,
   seed = NULL,
   debug = FALSE) {
 
@@ -155,6 +167,10 @@ voronoiTreemap <- function(
   if (!is.null(custom_color)) {
     if(!(custom_color %in% colnames(data)))
       stop("'custom_color' is not a colname of 'data'")
+    if (!is.null(custom_range)) {
+      if (!(is.numeric(custom_range) & length(custom_range) == 2))
+        stop("'custom_range' is not a numeric of length 2")
+    }
   }
 
   if (!is.function(fun)) {
@@ -180,24 +196,9 @@ voronoiTreemap <- function(
   }
 
   # if extra column for color values is supplied,
-  # we need to rescale it and and add to data frame
+  # we need to rescale it and add to data frame
   if (!is.null(custom_color)) {
-    data$custom_color <- with(data, {
-      
-      # if input is character or similar, we try to convert to factor 
-      # and then numeric; otherwise use numeric and rescale
-      # to a new range between 1 and 100
-      if (is.numeric(get(custom_color))) {
-        get(custom_color) %>%
-          scales::rescale(to = c(1, 100))
-        
-      } else {
-        get(custom_color) %>%
-          as.factor %>%
-          as.numeric %>%
-          scales::rescale(to = c(1, 100))
-      }
-    })
+    data$custom_color <- convertInput(data[[custom_color]], from = custom_range)
   }
   
   
@@ -319,6 +320,7 @@ voronoiTreemap <- function(
           w = weights,
           target = weights,
           maxIteration = maxIteration,
+          error_tol = error_tol,
           outer = GpcPoly,
           debug = debug
         )

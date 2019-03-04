@@ -27,6 +27,7 @@ breaking <- function(
   a, target,
   max = TRUE,
   debug = FALSE,
+  error_tol,
   prevError) {
   
   if (max) {
@@ -39,7 +40,7 @@ breaking <- function(
       cat(paste("Difference: ", err,
                 " (", abs(err - prevError), ")",
                 "\n", sep = ""))
-    stopping <- {err < 0.01}
+    stopping <- {err < error_tol}
     prevError <- err
 
   } else {
@@ -139,7 +140,9 @@ shiftWeights <- function(s, w) {
 # just give up after 'maxIteration's
 allocate <- function(
   names, s, w, outer, target,
-  maxIteration, debug = FALSE, 
+  maxIteration, 
+  error_tol,
+  debug = FALSE, 
   debugCell = FALSE)
 {
   count <- 1
@@ -189,7 +192,8 @@ allocate <- function(
     stop_cond <- breaking(
       unlist(areas), 
       target, 
-      debug = debug, 
+      debug = debug,
+      error_tol = error_tol,
       prevError = prevError)
     
     if (count == maxIteration || stop_cond$stopping) {
