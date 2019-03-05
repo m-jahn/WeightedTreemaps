@@ -83,11 +83,11 @@ to actually draw the treemap, use \code{\link{drawTreemap}}.
 \examples{
 library(SysbioTreemaps)
 
-# generate example data
+#generate data frame
 df <- data.frame(
-  A=rep(c("a", "b", "c"), each=15),
-  B=sample(letters[4:13], 45, replace=TRUE),
-  C=sample(1:100, 45)
+  A = rep(c("a", "b", "c"), each=15),
+  B = sample(letters[4:12], 45, replace = TRUE),
+  C = sample(10:100, 45)
 )
 
 # generate treemap
@@ -95,13 +95,27 @@ tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
   cell_size = "C",
-  cell.color = "A",
-  maxIteration = 50,
-  )
+  shape = "rounded_rect"
+)
 
-# plot treemap
+# draw treemap
 drawTreemap(tm)
 
+# draw different variants of the same treemap on one page using
+# the 'layout' and 'position' arguments (indicating rows and columns)
+drawTreemap(tm, 
+  cell_color = 1, title = "treemap 1", 
+  layout = c(1,3), position = c(1, 1))
+
+drawTreemap(tm, title = "treemap 2", 
+  cell_color = 2, border_size = 6, 
+  add = TRUE, layout = c(1,3), position = c(1, 2))
+
+drawTreemap(tm, title = "treemap 3",
+  cell_color = 3, border_color = grey(0.4), 
+  label_color = grey(0.4),
+  color_palette = heat.colors(10),
+  add = TRUE, layout = c(1,3), position = c(1, 3))
 
 }
 \seealso{

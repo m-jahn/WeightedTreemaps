@@ -46,11 +46,11 @@
 #' @examples
 #' library(SysbioTreemaps)
 #' 
-#' # generate example data
+#' #generate data frame
 #' df <- data.frame(
-#'   A=rep(c("a", "b", "c"), each=15),
-#'   B=sample(letters[4:13], 45, replace=TRUE),
-#'   C=sample(1:100, 45)
+#'   A = rep(c("a", "b", "c"), each=15),
+#'   B = sample(letters[4:12], 45, replace = TRUE),
+#'   C = sample(10:100, 45)
 #' )
 #' 
 #' # generate treemap
@@ -58,12 +58,27 @@
 #'   data = df,
 #'   levels = c("A", "B", "C"),
 #'   cell_size = "C",
-#'   cell_color = "A",
-#'   maxIteration = 50,
-#'   )
+#'   shape = "rounded_rect"
+#' )
 #' 
-#' # plot treemap
+#' # draw treemap
 #' drawTreemap(tm)
+#' 
+#' # draw different variants of the same treemap on one page using
+#' # the 'layout' and 'position' arguments (indicating rows and columns)
+#' drawTreemap(tm, 
+#'   cell_color = 1, title = "treemap 1", 
+#'   layout = c(1,3), position = c(1, 1))
+#' 
+#' drawTreemap(tm, title = "treemap 2", 
+#'   cell_color = 2, border_size = 6, 
+#'   add = TRUE, layout = c(1,3), position = c(1, 2))
+#' 
+#' drawTreemap(tm, title = "treemap 3",
+#'   cell_color = 3, border_color = grey(0.4), 
+#'   label_color = grey(0.4),
+#'   color_palette = heat.colors(10),
+#'   add = TRUE, layout = c(1,3), position = c(1, 3))
 #' 
 #' @import tidyr
 #' @importFrom grid grid.newpage
@@ -104,18 +119,48 @@ drawTreemap <- function(
   #
   # check layout options
   if (width > 0.9 | height > 0.9) {
-    stop("'width' or 'height' should not exceed 0.9")
+    stop("'width' or 'height' should not exceed 0.9.")
+  }
+  if ({c(layout, position) > 1} %>% any & !add) {
+    warning("Use 'add = TRUE' if you want to add more treemaps to this page.", immediate. = TRUE)
   }
   
+  # check graphical parameter input
+  if (!is.null(color_palette)) {
+    if (!is.character(color_palette)) {
+      stop("'color_palette' must be a character vector with RGB colors, like '#FFFFFF'")
+    }
+  }
   
+  if (!is.null(border_color)) {
+    if (!is.character(border_color)) {
+      stop("'border_color' must be a character with RGB color code, like '#FFFFFF'")
+    }
+  }
+  
+  if (!is.null(label_color)) {
+    if (!is.character(label_color)) {
+      stop("'border_color' must be a character with RGB color code, like '#FFFFFF'")
+    }
+  }
+  
+  if (!is.null(title)) {
+    if (!is.character(title)) {
+      stop("'title' must be a character of length 1")
+    }
+  }
   
   # check labels
-  # if (is.null(labels)) {
-  #   warning("Drawing of labels disabled.", immediate. = TRUE)
-  # } else if (!all(labels %in% levels)) {
-  #   warning("'labels' is not a colname of 'data'. Drawing of labels disabled.", immediate. = TRUE)
-  #   labels = NULL
-  # }
+  if (is.null(labels)) {
+     warning("Drawing of labels disabled.", immediate. = TRUE)
+  } else if (!is.numeric(labels)) {
+    stop("'labels' must be numeric vector indicating the level(s) for which labels should be drawn.")
+  } else if (is.numeric(labels)) {
+    all_levels <- lapply(treemap, function(x) x$level) %>% unlist %>% unique
+    if (!all(labels %in% all_levels)) {
+      stop("'labels' indicated levels that are not contained in this treemap")
+    }
+  }
   
   # new grid page is the default
   if (!add) {
@@ -232,19 +277,21 @@ drawTreemap <- function(
   
   
   # DRAWING BORDERS
-  lapply(treemap, function(tm_slot) {
-    mapply(drawPoly, tm_slot$k, tm_slot$names, fill = NA,
-      SIMPLIFY=FALSE,
-      MoreArgs = list(
-        lwd = border_size / tm_slot$level, 
-        col = border_color
+  if (!is.null(border_color) & !is.null(border_size)) {
+    lapply(treemap, function(tm_slot) {
+      mapply(drawPoly, tm_slot$k, tm_slot$names, fill = NA,
+        SIMPLIFY=FALSE,
+        MoreArgs = list(
+          lwd = border_size / tm_slot$level, 
+          col = border_color
+        )
       )
-    )
-  }) %>% invisible
+    }) %>% invisible
+  }
   
   
   # DRAWING LABELS
-  if (!is.null(labels)) {
+  if (!is.null(labels) & !is.null(label_size) & !is.null(label_color)) {
     
     lapply(treemap, function(tm_slot) {
     

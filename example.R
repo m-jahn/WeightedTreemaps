@@ -57,29 +57,35 @@ tm <- voronoiTreemap(
   levels = c("Process.abbr", "Pathway.abbr", "protein"),
   cell_size = "mean_mass_fraction_norm",
   shape = "rectangle",
-  error_tol = 0.001,
-  maxIteration = 200,
-  seed = 13
+  error_tol = 0.005,
+  maxIteration = 100,
+  seed = 5
 )
 
+# save and load very large treemaps to avoid re-computation
+#save(tm, file = "tm.Rdata")
+#load("tm.Rdata")
 
 # generate a custom color palette using colorspace
 hclwizard()
-custom.pal <- sequential_hcl(n = 40, 
-  h = c(-100, 100), 
-  c = c(60, NA, 66), 
-  l = c(42, 100), 
-  power = c(2.65, 0.7), 
-  rev = TRUE)
+custom.pal <- sequential_hcl(n = 20,
+  h = c(-46, 78),
+  c = c(61, 78, 54),
+  l = c(60, 91),
+  power = c(0.8, 1),
+  rev = TRUE
+)
 
 
 # draw treemap
+svg("vignettes/tm_heatcol.svg", 10, 10)
 drawTreemap(
   tm, 
   color_palette = custom.pal,
   cell_color = "cell_size",
-  labels = c(2,3),
+  labels = c(1,3),
+  label_size = 4,
   label_color = grey(0.5),
-  border_color = grey(0.7)
+  border_color = grey(0.65)
 )
-
+dev.off()

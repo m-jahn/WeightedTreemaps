@@ -1,7 +1,7 @@
 ---
 title: "Create Voronoi and Sunburst Treemaps from Hierarchical Data"
 author: "Michael Jahn, David Leslie"
-date: "2019-03-04"
+date: "2019-03-05"
 output: github_document
 #output: rmarkdown::html_vignette
 #vignette: >
@@ -137,12 +137,13 @@ We can generate a custom color palette using the colorspace wizard.
 
 ```
 hclwizard()
-custom.pal <- sequential_hcl(n = 40, 
-  h = c(-100, 100), 
-  c = c(60, NA, 66), 
-  l = c(42, 100), 
-  power = c(2.65, 0.7), 
-  rev = TRUE)
+custom.pal <- sequential_hcl(n = 20,
+  h = c(-46, 78),
+  c = c(61, 78, 54),
+  l = c(60, 91),
+  power = c(0.8, 1),
+  rev = TRUE
+)
 ```
 
 Draw the treemap using some custom graphical parameters.
@@ -152,9 +153,10 @@ drawTreemap(
   tm, 
   color_palette = custom.pal,
   cell_color = "cell_size",
-  labels = c(2,3),
+  labels = c(1,3),
+  label_size = 4,
   label_color = grey(0.5),
-  border_color = grey(0.7)
+  border_color = grey(0.65)
 )
 ```
 
