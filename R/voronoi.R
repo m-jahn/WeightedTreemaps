@@ -128,34 +128,41 @@ voronoiTreemap <- function(
   error_tol = 0.01,
   seed = NULL,
   debug = FALSE) {
-
+  
   # ERROR HANDLING
   #
   # check input data frame
   if (!is.data.frame(data)) {
     if (!is.matrix(data))
-      stop("'data' must be a matrix or a data frame")
+      stop("'data' must be a matrix or a data frame.")
     else if (is.null(colnames(data)))
-      stop("'data' must have column names")
+      stop("'data' must have column names.")
     else
       data <- as.data.frame(data)
+  }
+  
+  # NAs are not allowed in any input column
+  if (is.na(data[levels]) %>% any) {
+    stop("NAs are not allowed in level columns.")
   }
 
   # check variable controlling cell size
   if (is.null(cell_size)) {
-    warning("No experimental condition is given, cell size encoded by number of members", immediate. = TRUE)
+    warning("No experimental condition is given, cell size encoded by number of members.", immediate. = TRUE)
   } else {
     
     if (!(cell_size %in% colnames(data))) {
-      stop("'cell_size' is not a colname of 'data'")
+      stop("'cell_size' is not a colname of 'data'.")
     }
-    
-    if (any(data[[cell_size]] < 0)) {
-      stop("'cell_size' contains negative values, only positive target areas allowed")
+    if (is.na(data[cell_size]) %>% any) {
+      stop("'cell_size' contains NAs which is not allowed.")
+    }
+    if ((data[cell_size] <= 0) %>% any) {
+      stop("'cell_size' contains negative values or zero, only positive target areas allowed.")
     }
       
     # apply a threshold to filter out small target areas
-    if (is.numeric(filter)) {
+    if (!is.null(filter)) {
       
       filtered <- data[[cell_size]] %>% {. / sum(.)} > filter
       
@@ -169,32 +176,32 @@ voronoiTreemap <- function(
   
   # check levels/hierarchies and level options
   if (!all(levels %in% colnames(data))) {
-    stop("Not all given levels are column names of 'data'")
+    stop("Not all given levels are column names of 'data'.")
   }
   
   # check that no level columns are factors and coerce 
   # to character if necessary
-  if (lapply(df, is.factor) %>% unlist %>% any) {
+  if (lapply(data, is.factor) %>% unlist %>% any) {
     data <- data %>% dplyr::mutate_if(is.factor, as.character)
   }
 
   if (!is.null(custom_color)) {
     if(!(custom_color %in% colnames(data)))
-      stop("'custom_color' is not a colname of 'data'")
+      stop("'custom_color' is not a colname of 'data'.")
     if (!is.null(custom_range)) {
       if (!(is.numeric(custom_range) & length(custom_range) == 2))
-        stop("'custom_range' is not a numeric of length 2")
+        stop("'custom_range' is not a numeric of length 2.")
     }
   }
 
   if (!is.function(fun)) {
-    stop("'fun' must be a function")
+    stop("'fun' must be a function.")
   }
   # sort data in case it is unsorted
   if (sort) {
     data <- data[do.call("order", data[levels]),]
   } else {
-    warning("Sorting is FALSE, it is expected that the input data is sorted", immediate. = TRUE)
+    warning("Sorting is FALSE, it is expected that the input data is sorted.", immediate. = TRUE)
   }
 
   # in debug mode, open a viewport to draw iterations
