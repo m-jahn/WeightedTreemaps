@@ -1,7 +1,7 @@
 ---
 title: "Create Voronoi and Sunburst Treemaps from Hierarchical Data"
 author: "Michael Jahn, David Leslie"
-date: "2019-03-05"
+date: "2019-03-06"
 output: github_document
 #output: rmarkdown::html_vignette
 #vignette: >
@@ -84,22 +84,23 @@ drawTreemap(tm)
 
 <img src="vignettes/tm_small.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="300px" style="display: block; margin: auto;" />
 
-The voronoiTreemap() and drawTreemap() functions are separated in order to allow drawing of the same treemap object in different ways. Computation of treemaps with thousands of cells can be very time and resource consuming (minutes to hours on desktop computers). With the drawTreemap() function, we can not only plot the same treemap in different ways but also combine several treemap on one page using the 'layout' and 'position' arguments.
+The voronoiTreemap() and drawTreemap() functions are separated in order to allow drawing of the same treemap object in different ways. Computation of treemaps with thousands of cells can be very time and resource consuming (minutes to hours on desktop computers). With the drawTreemap() function, we can not only plot the same treemap in different ways but also combine several treemaps on one page using the 'layout' and 'position' arguments.
 
 ```
-drawTreemap(tm, 
-  cell_color = 1, title = "treemap 1", 
+drawTreemap(tm, title = "treemap 1", 
+  color_type = "categorical", color_level = 1, 
   layout = c(1,3), position = c(1, 1))
 
-drawTreemap(tm, title = "treemap 2", 
-  cell_color = 2, border_size = 6, 
+drawTreemap(tm, title = "treemap 2",
+  color_type = "categorical", color_level = 2, border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 2))
 
 drawTreemap(tm, title = "treemap 3",
-  cell_color = 3, border_color = grey(0.4), 
-  label_color = grey(0.4),
+  color_type = "cell_size", color_level = 3,
   color_palette = heat.colors(10),
-  add = TRUE, layout = c(1,3), position = c(1, 3))
+  border_color = grey(0.4), label_color = grey(0.4),
+  add = TRUE, layout = c(1,3), position = c(1, 3),
+  title_color = "black")
 ```
 
 <img src="vignettes/tm_multiple.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="800px" style="display: block; margin: auto;" />
@@ -152,8 +153,9 @@ Draw the treemap using some custom graphical parameters.
 drawTreemap(
   tm, 
   color_palette = custom.pal,
-  cell_color = "cell_size",
-  labels = c(1,3),
+  color_type = "cell_size",
+  color_level = 3,
+  label_level = c(1,3),
   label_size = 4,
   label_color = grey(0.5),
   border_color = grey(0.65)

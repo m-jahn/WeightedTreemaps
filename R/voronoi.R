@@ -82,19 +82,20 @@
 #' 
 #' # draw different variants of the same treemap on one page using
 #' # the 'layout' and 'position' arguments (indicating rows and columns)
-#' drawTreemap(tm, 
-#'   cell_color = 1, title = "treemap 1", 
+#' drawTreemap(tm, title = "treemap 1", 
+#'   color_type = "categorical", color_level = 1, 
 #'   layout = c(1,3), position = c(1, 1))
 #' 
-#' drawTreemap(tm, title = "treemap 2", 
-#'   cell_color = 2, border_size = 6, 
+#' drawTreemap(tm, title = "treemap 2",
+#'   color_type = "categorical", color_level = 2, border_size = 3,
 #'   add = TRUE, layout = c(1,3), position = c(1, 2))
 #' 
 #' drawTreemap(tm, title = "treemap 3",
-#'   cell_color = 3, border_color = grey(0.4), 
-#'   label_color = grey(0.4),
+#'   color_type = "cell_size", color_level = 3,
 #'   color_palette = heat.colors(10),
-#'   add = TRUE, layout = c(1,3), position = c(1, 3))
+#'   border_color = grey(0.4), label_color = grey(0.4),
+#'   add = TRUE, layout = c(1,3), position = c(1, 3),
+#'   title_color = "black")
 #' 
 #' @import gpclib
 #' @import tidyr

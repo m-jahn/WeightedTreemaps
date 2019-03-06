@@ -4,19 +4,54 @@
 \alias{drawTreemap}
 \title{drawTreemap}
 \usage{
-drawTreemap(treemap, add = FALSE, width = 0.9, height = 0.9,
-  layout = c(1, 1), position = c(1, 1), cell_color = 1,
-  color_palette = NULL, border_size = 6, border_color = grey(0.9),
-  labels = lapply(treemap, function(x) x$level) \%>\% unlist \%>\% max,
-  label_size = 1, label_color = grey(0.9), title = NULL)
+drawTreemap(treemap, levels = lapply(treemap, function(x) x$level) \%>\%
+  unlist \%>\% unique, color_type = "categorical",
+  color_level = min(levels), color_palette = NULL,
+  border_level = levels, border_size = 6, border_color = grey(0.9),
+  label_level = max(levels), label_size = 1, label_color = grey(0.9),
+  title = NULL, title_size = 1, title_color = grey(0.5),
+  width = 0.9, height = 0.9, layout = c(1, 1), position = c(1, 1),
+  add = FALSE)
 }
 \arguments{
 \item{treemap}{(list) A list of grid polygons and text objects that is the
 output from treemap generation.}
 
-\item{add}{(logical) Defaults to \code{FALSE}, creating a new page when drawing
-a treemap. When multiple treemaps should be plotted on the same page, this should be
-set to TRUE, and position of treemaps specified by \code{layout} and \code{position} arguments.}
+\item{levels}{(numeric) A numeric vector representing the hierarchical levels 
+that are drawn. The default is to draw all levels.}
+
+\item{color_type}{(character) One of "categorical", "cell_size" or "custom_color".
+For "categorical", each cell is colored with a unique color from the current palette,
+but colors will repeat if there are many cells. For "cell_size", the cells
+are colored according to their relative area. For "custom_color", a color 
+index is used that was specified by \code{custom_color} during
+treemap generation. Use \code{NULL} to omit drawing colors.}
+
+\item{color_level}{(numeric) A numeric of length 1 representing the hierarchical level 
+that should be used for cell coloring. Must be one of \code{levels}.}
+
+\item{color_palette}{(character) A character vector of colors used to fill cells.
+The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}}
+
+\item{border_size}{(numeric) The initial line width of the highest level 
+cells. Is reduced each level. Default is 6 pts.}
+
+\item{border_color}{(character) Color for cell borders, default is a light grey.}
+
+\item{label_level}{(numeric) A numeric vector representing the hierarchical level that should be
+used for drawing cell labels, or NULL to omit drawing labels. The default is the
+deepest level (every cell has a label).}
+
+\item{label_size}{(numeric) Expansion factor for labels. A simple multiplier
+that shrinks or expands all labels, regardless of their relative size.}
+
+\item{label_color}{(character) Color for cell labels.}
+
+\item{title}{(character) An optional title, default to \code{NULL}.}
+
+\item{title_size}{(numeric) The size (or 'character expansion') of the title.}
+
+\item{title_color}{(character) Color for title.}
 
 \item{width}{(numeric) The width (0 to 0.9) of the viewport that the treemap will occupy.}
 
@@ -32,29 +67,9 @@ treemap should be drawn. Useful only together with \code{layout}, which indicate
 the number of rows and columns the plotting area is subdivided into. Use \code{add = TRUE}
 to omit starting a new page every time you call \code{drawTreemap()}.}
 
-\item{cell_color}{(numeric or character) A number representing the hierarchical level
-that should be used for cell coloring (categorical), or \code{cell_size} for using relative
-area to determine colors, or \code{custom_color} to use a color index supplied during
-treemap generation, or \code{NULL} to omit drawing colors.}
-
-\item{color_palette}{(character) A character vector of colors used to fill cells.
-The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}}
-
-\item{border_size}{(numeric) The initial line width of the highest level 
-cells. Is reduced each level. Default is 6 pts.}
-
-\item{border_color}{(character) Color for cell borders, default is a light grey.}
-
-\item{labels}{(numeric) A number representing the hierarchical level that should be
-used for drawing cell labels, or NULL to omit drawing labels. The default is the
-lowest level (every cell has a label).}
-
-\item{label_size}{(numeric) Expansion factor for labels. A simple multiplier
-that shrinks or expands all labels, regardless of their relative size.}
-
-\item{label_color}{(character) Color for cell labels.}
-
-\item{title}{(character) An optional title, default to \code{NULL}.}
+\item{add}{(logical) Defaults to \code{FALSE}, creating a new page when drawing
+a treemap. When multiple treemaps should be plotted on the same page, this should be
+set to TRUE, and position of treemaps specified by \code{layout} and \code{position} arguments.}
 }
 \value{
 Creates a grid viewport and draws the treemap.
@@ -89,19 +104,20 @@ drawTreemap(tm)
 
 # draw different variants of the same treemap on one page using
 # the 'layout' and 'position' arguments (indicating rows and columns)
-drawTreemap(tm, 
-  cell_color = 1, title = "treemap 1", 
+drawTreemap(tm, title = "treemap 1", 
+  color_type = "categorical", color_level = 1, 
   layout = c(1,3), position = c(1, 1))
 
-drawTreemap(tm, title = "treemap 2", 
-  cell_color = 2, border_size = 6, 
+drawTreemap(tm, title = "treemap 2",
+  color_type = "categorical", color_level = 2, border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 2))
 
 drawTreemap(tm, title = "treemap 3",
-  cell_color = 3, border_color = grey(0.4), 
-  label_color = grey(0.4),
+  color_type = "cell_size", color_level = 3,
   color_palette = heat.colors(10),
-  add = TRUE, layout = c(1,3), position = c(1, 3))
+  border_color = grey(0.4), label_color = grey(0.4),
+  add = TRUE, layout = c(1,3), position = c(1, 3),
+  title_color = "black")
 
 }
 \seealso{
