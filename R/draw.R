@@ -32,6 +32,7 @@
 #' @param title (character) An optional title, default to \code{NULL}.
 #' @param title_size (numeric) The size (or 'character expansion') of the title.
 #' @param title_color (character) Color for title.
+#' @param legend (logical) Set to TRUE if a color key should be drawn. Default is FALSE.
 #' @param width (numeric) The width (0 to 0.9) of the viewport that the treemap will occupy.
 #' @param height (numeric) The height (0 to 0.9) of the viewport that the treemap will occupy.
 #' @param layout (numeric) Vector of length 2 indicationg the number of rows and columns
@@ -93,6 +94,8 @@
 #' @importFrom grid grid.newpage
 #' @importFrom grid grid.text
 #' @importFrom grid grid.polygon
+#' @importFrom grid grid.draw
+#' @importFrom grid grid.layout
 #' @importFrom grid gpar
 #' @importFrom grid unit
 #' @importFrom grid viewport
@@ -100,6 +103,7 @@
 #' @importFrom grid popViewport
 #' @importFrom colorspace rainbow_hcl
 #' @importFrom scales rescale
+#' @importFrom lattice draw.colorkey
 #' 
 #' @export drawTreemap
 # 
@@ -122,6 +126,7 @@ drawTreemap <- function(
   title = NULL,
   title_size = 1,
   title_color = grey(0.5),
+  legend = FALSE,
   width = 0.9,
   height = 0.9,
   layout = c(1, 1),
@@ -213,7 +218,8 @@ drawTreemap <- function(
     )
   )
   
-  # generate child viewport for drawing one treemap
+  # generate child viewport for drawing one treemap 'object' 
+  # including title and legend
   grid::pushViewport(
     grid::viewport(
       layout.pos.row = position[1],
@@ -222,13 +228,15 @@ drawTreemap <- function(
   )
   
   # generate viewport to draw treemap in, with some user-specified margins
+  # plus optional margins if legend or title is drawn
   grid::pushViewport(
     grid::viewport(
-      y = 0.475, 
-      xscale = c(0,2000),
-      yscale = c(0,2000),
-      width = width,
-      height = height
+      x = {if (legend) 0.45 else 0.5},
+      y = {if (!is.null(title)) 0.475 else 0.5},
+      xscale = c(0, 2000),
+      yscale = c(0, 2000),
+      width = {if (legend) width - 0.1 else width},
+      height = {if (!is.null(title)) height - 0.05 else height}
     )
   )
   
@@ -249,14 +257,14 @@ drawTreemap <- function(
   # CASE 1: coloring by hierarchical level (categorical)
   if (color_type == "categorical") {
     
-    # generate a color code depending on number of categories per level
+    # generate a color code depending on number of categories for selected level
+    # used for drawing legend
     color_list <- lapply(treemap, function(tm_slot) {
       if (tm_slot$level == color_level) {
         tm_slot$names
       }
     }) %>% 
-      unlist %>% 
-      unique %>%
+      unlist %>% unique %>% sort %>%
       setNames(convertInput(.), .)
     
     # go through list of treemap polygon and draw only the ones
@@ -279,6 +287,15 @@ drawTreemap <- function(
       if (tm_slot$level == color_level) tm_slot$a 
       }) %>% unlist %>% range
     
+    total_area <- lapply(treemap, function(tm_slot) {
+      if (tm_slot$level == color_level) tm_slot$a 
+      }) %>% unlist %>% sum
+    
+    # used for drawing legend
+    color_list <- seq(range_area[1], range_area[2], length.out = 7) %>%
+      {. / total_area * 100} %>% round(1) %>%
+      setNames(scales::rescale(., to = c(1, 100)), . )
+    
     # draw only polygons for the correct level
     lapply(treemap, function(tm_slot) {
       if (tm_slot$level == color_level) {
@@ -297,6 +314,9 @@ drawTreemap <- function(
   
   # CASE 3: 'custom_color' to use a color index supplied during treemap generation
   if (color_type == "custom_color") {
+    
+    # used for drawing legend
+    color_list <- c(1, 20, 40, 60, 80, 100) %>% setNames(., .)
     
     # draw only polygons for the correct level
     lapply(treemap, function(tm_slot) {
@@ -354,17 +374,56 @@ drawTreemap <- function(
   }
   
     
-  # DRAW TITLE AND LEGEND
+  # DRAW OPTIONAL TITLE
   if (!is.null(title)) {
     
     # pop viewport back to parent
     grid::popViewport()
     
-    # generate viewport for optional title and legend
+    # generate viewport for title
     grid::pushViewport(
       grid::viewport(y = 0.95, height = 0.1)
     )
-    grid::grid.text(title, y = 0.75, gp = grid::gpar(cex = title_size, col = title_color))
+    grid::grid.text(
+      title, 
+      y = 0.5, 
+      gp = grid::gpar(cex = title_size, col = title_color)
+    )
+    
+  }
+  
+  # DRAW OPTIONAL LEGEND
+  if (legend) {
+    
+    # pop viewport back to parent
+    grid::popViewport()
+    
+    # generate viewport for legend; viewport for legend is also scaled
+    # depending on title and height arguments
+    grid::pushViewport(
+      grid::viewport(
+        x = 0.95,
+        y = {if (!is.null(title)) 0.475 else 0.5},
+        width = 0.1,
+        height = {if (!is.null(title)) height - 0.05 else height}
+      )
+    )
+    
+    # make legend which is a list and 
+    colorkey <- list(
+      space = "right",
+      col = pal[color_list],
+      at = 1:(length(color_list)+1),
+      labels = c("", names(color_list) %>% substr(1, 3)),
+      width = 0.8,
+      axis.line = list(alpha = 1, col = border_color, lwd = 1, lty = 1),
+      axis.text = list(alpha = 1, cex = 0.8, col = title_color, font = 1, lineheight = 1)
+    )
+    
+    # draw using the drawKey function from lattice::levelplot
+    grid.draw(
+      lattice::draw.colorkey(key = colorkey)
+    )
     
   }
   

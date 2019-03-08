@@ -10,8 +10,8 @@ drawTreemap(treemap, levels = lapply(treemap, function(x) x$level) \%>\%
   border_level = levels, border_size = 6, border_color = grey(0.9),
   label_level = max(levels), label_size = 1, label_color = grey(0.9),
   title = NULL, title_size = 1, title_color = grey(0.5),
-  width = 0.9, height = 0.9, layout = c(1, 1), position = c(1, 1),
-  add = FALSE)
+  legend = FALSE, width = 0.9, height = 0.9, layout = c(1, 1),
+  position = c(1, 1), add = FALSE)
 }
 \arguments{
 \item{treemap}{(list) A list of grid polygons and text objects that is the
@@ -52,6 +52,8 @@ that shrinks or expands all labels, regardless of their relative size.}
 \item{title_size}{(numeric) The size (or 'character expansion') of the title.}
 
 \item{title_color}{(character) Color for title.}
+
+\item{legend}{(logical) Set to TRUE if a color key should be drawn. Default is FALSE.}
 
 \item{width}{(numeric) The width (0 to 0.9) of the viewport that the treemap will occupy.}
 
