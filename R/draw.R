@@ -1,7 +1,7 @@
 #' drawTreemap
 #'
-#' Draws the treemap from a list obtained by running [voronoiTreemap()] or
-#' [sunburstTreemap()]. Many graphical parameters can be customized but some
+#' Draws the treemap from a list obtained by running \code{\link{voronoiTreemap}} or
+#' \code{\link{sunburstTreemap}}. Many graphical parameters can be customized but some
 #' settings that determine the appearance of treemaps are already made 
 #' during treemap generation. Such parameters are primarily cell size and
 #' and initial shape of the treemap.
@@ -20,6 +20,8 @@
 #'   that should be used for cell coloring. Must be one of \code{levels}.
 #' @param color_palette (character) A character vector of colors used to fill cells.
 #'   The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}
+#' @param border_level (numeric) A numeric of length \code{levels} representing the 
+#'   hierarchical level where border should be drawn. Default is to draw all borders.
 #' @param border_size (numeric) The initial line width of the highest level 
 #'   cells. Is reduced each level. Default is 6 pts.
 #' @param border_color (character) Color for cell borders, default is a light grey.
@@ -35,7 +37,7 @@
 #' @param legend (logical) Set to TRUE if a color key should be drawn. Default is FALSE.
 #' @param width (numeric) The width (0 to 0.9) of the viewport that the treemap will occupy.
 #' @param height (numeric) The height (0 to 0.9) of the viewport that the treemap will occupy.
-#' @param layout (numeric) Vector of length 2 indicationg the number of rows and columns
+#' @param layout (numeric) Vector of length 2 indicating the number of rows and columns
 #'   that the plotting area is supposed to be subdivided in. Useful only together with
 #'   \code{position}, which indicates the position of the specific treemap. Use \code{add = TRUE}
 #'   to omit starting a new page every time you call \code{drawTreemap()}.

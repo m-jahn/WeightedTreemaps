@@ -33,6 +33,9 @@ that should be used for cell coloring. Must be one of \code{levels}.}
 \item{color_palette}{(character) A character vector of colors used to fill cells.
 The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}}
 
+\item{border_level}{(numeric) A numeric of length \code{levels} representing the 
+hierarchical level where border should be drawn. Default is to draw all borders.}
+
 \item{border_size}{(numeric) The initial line width of the highest level 
 cells. Is reduced each level. Default is 6 pts.}
 
@@ -59,7 +62,7 @@ that shrinks or expands all labels, regardless of their relative size.}
 
 \item{height}{(numeric) The height (0 to 0.9) of the viewport that the treemap will occupy.}
 
-\item{layout}{(numeric) Vector of length 2 indicationg the number of rows and columns
+\item{layout}{(numeric) Vector of length 2 indicating the number of rows and columns
 that the plotting area is supposed to be subdivided in. Useful only together with
 \code{position}, which indicates the position of the specific treemap. Use \code{add = TRUE}
 to omit starting a new page every time you call \code{drawTreemap()}.}
@@ -77,8 +80,8 @@ set to TRUE, and position of treemaps specified by \code{layout} and \code{posit
 Creates a grid viewport and draws the treemap.
 }
 \description{
-Draws the treemap from a list obtained by running [voronoiTreemap()] or
-[sunburstTreemap()]. Many graphical parameters can be customized but some
+Draws the treemap from a list obtained by running \code{\link{voronoiTreemap}} or
+\code{\link{sunburstTreemap}}. Many graphical parameters can be customized but some
 settings that determine the appearance of treemaps are already made 
 during treemap generation. Such parameters are primarily cell size and
 and initial shape of the treemap.

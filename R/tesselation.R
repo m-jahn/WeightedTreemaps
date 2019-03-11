@@ -534,3 +534,27 @@ getpts <- function(x) {
   list(x=pts[[border]]$x,
        y=pts[[border]]$y)
 }
+
+
+# generate starting coordinates within the boundary polygon
+# using sp package's spsample function. The set.seed() is important
+# here because it makes the sampling reproducible
+# (same set of coordinates for same query) which will
+# lead to similar map layout for similar input data
+samplePoints <- function(ParentPoly, n, seed) {
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
+  sampled <- sp::Polygon(coords = ParentPoly) %>%
+    sp::spsample(
+      n = n, 
+      type = "random") %>% 
+      { .@coords }
+  if (nrow(sampled) == 0) {
+    stop("Random sampling of coordinates inside parent polygon failed. Try a different seed.")
+  } else {
+    sampled
+  }
+}
+
+
