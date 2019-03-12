@@ -347,7 +347,10 @@ voronoiTreemap <- function(
           debug = debug
         )
         
+        # error handling in case of failed tesselation:
+        # try up to ten new random starting positions before finally giving up
         if (is.null(treemap) & counter <= 10) {
+          seed = seed + 1
           counter = counter + 1
           cat("Iteration failed, randomising positions...\n")
           next
