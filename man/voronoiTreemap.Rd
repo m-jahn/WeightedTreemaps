@@ -26,8 +26,12 @@ relative target area below 0.0001, or 0.01%. The algorithm can fail
 when processing many tiny cells so it can be worthwhile to simply 
 rerun the function with a stricter filter.}
 
-\item{cell_size}{(character) The column used to control cell size. 
-Can be one of \code{levels}}
+\item{cell_size}{(character) The name of the column used to control cell size. 
+Can be one of \code{levels} or any other column with numerical data. NA or
+values equal or less than zero are not allowed as the cell area needs to be positive.
+The values in this column are aggregated by the function specified by \code{fun}.
+If \code{cell_size = NULL}, cell area is simply computed by the number of members
+for the respective cell (corresponding to rows in the data.frame).}
 
 \item{custom_color}{(character) An optional column that can be specified to
 control cell color. Cell colors are determined when drawing the treemap

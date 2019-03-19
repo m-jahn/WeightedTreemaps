@@ -1,7 +1,7 @@
 #' drawTreemap
 #'
-#' Draws the treemap from a list obtained by running [voronoiTreemap()] or
-#' [sunburstTreemap()]. Many graphical parameters can be customized but some
+#' Draws the treemap from a list obtained by running \code{\link{voronoiTreemap}} or
+#' \code{\link{sunburstTreemap}}. Many graphical parameters can be customized but some
 #' settings that determine the appearance of treemaps are already made 
 #' during treemap generation. Such parameters are primarily cell size and
 #' and initial shape of the treemap.
@@ -42,7 +42,7 @@
 #'   was specified when generating the treemap.
 #' @param width (numeric) The width (0 to 0.9) of the viewport that the treemap will occupy.
 #' @param height (numeric) The height (0 to 0.9) of the viewport that the treemap will occupy.
-#' @param layout (numeric) Vector of length 2 indicationg the number of rows and columns
+#' @param layout (numeric) Vector of length 2 indicating the number of rows and columns
 #'   that the plotting area is supposed to be subdivided in. Useful only together with
 #'   \code{position}, which indicates the position of the specific treemap. Use \code{add = TRUE}
 #'   to omit starting a new page every time you call \code{drawTreemap()}.

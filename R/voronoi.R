@@ -21,8 +21,12 @@
 #'   relative target area below 0.0001, or 0.01%. The algorithm can fail
 #'   when processing many tiny cells so it can be worthwhile to simply 
 #'   rerun the function with a stricter filter.
-#' @param cell_size (character) The column used to control cell size. 
-#'   Can be one of \code{levels}
+#' @param cell_size (character) The name of the column used to control cell size. 
+#'   Can be one of \code{levels} or any other column with numerical data. NA or
+#'   values equal or less than zero are not allowed as the cell area needs to be positive.
+#'   The values in this column are aggregated by the function specified by \code{fun}.
+#'   If \code{cell_size = NULL}, cell area is simply computed by the number of members
+#'   for the respective cell (corresponding to rows in the data.frame).
 #' @param custom_color (character) An optional column that can be specified to
 #'   control cell color. Cell colors are determined when drawing the treemap
 #'   using \code{\link{drawTreemap}}, but the default is to use one of 
@@ -211,12 +215,6 @@ voronoiTreemap <- function(
   
   # CORE FUNCTION (RECURSIVE)
   voronoi.core <- function(level, df, parent = NULL, output = list()) {
-  
-    # Setting the same seed here will sample the same set of coordinates
-    # when drawing similar maps, and lead to similar layout
-    if (!is.null(seed)) { 
-      set.seed(seed) 
-    }
     
     repeat {
       
@@ -267,12 +265,14 @@ voronoiTreemap <- function(
       }
 
       # 2. generate starting coordinates within the boundary polygon
-      # using sp package's spsample function. The set.seed() is important
-      # here because it makes the sampling reproducible
-      # (same set of coordinates for same query)
+      # using sp package's spsample function.
       ncells <- df[[levels[level]]] %>% table
-      sampledPoints <- sp::Polygon(coords = ParentPoly) %>%
-        sp::spsample(n = length(ncells), type = "random") %>% { .@coords }
+
+      sampledPoints <- samplePoints(
+        ParentPoly = ParentPoly,
+        n = length(ncells),
+        seed = seed)
+      
       
       # 3. generate the weights, these are the (aggregated) scaling factors 
       # supplied by the user or simply the n members per cell
@@ -332,7 +332,10 @@ voronoiTreemap <- function(
           debug = debug
         )
         
+        # error handling in case of failed tesselation:
+        # try up to ten new random starting positions before finally giving up
         if (is.null(treemap) & counter <= 10) {
+          if (!is.null(seed)) {seed = seed + 1}
           counter = counter + 1
           cat("Iteration failed, randomising positions...\n")
           next
