@@ -29,10 +29,6 @@
 #'   \code{levels} or \code{cell size}. Any other data source that shall be used
 #'   instead has to be included in the treemap generation and explicitly 
 #'   specified here. The default value is \code{NULL}.
-#' @param custom_range (numeric) A numeric vector of length 2 that can be used
-#'   to rescale the values in \code{custom_color} to the range of choice.
-#'   The default is \code{NULL} and it only has an effect if \code{custom_color}
-#'   is specified.
 #' @param shape (character) Set the initial shape of the treemap. Currently 
 #'   supported are "rectangle", "rounded_rect", "circle" or "hexagon".
 #' @param maxIteration (numeric) Force algorithm to stop at this number of iterations
@@ -123,7 +119,6 @@ voronoiTreemap <- function(
   filter = 0,
   cell_size = NULL,
   custom_color = NULL,
-  custom_range = NULL,
   shape = "rectangle",
   maxIteration = 100,
   error_tol = 0.01,
@@ -189,10 +184,6 @@ voronoiTreemap <- function(
   if (!is.null(custom_color)) {
     if(!(custom_color %in% colnames(data)))
       stop("'custom_color' is not a colname of 'data'.")
-    if (!is.null(custom_range)) {
-      if (!(is.numeric(custom_range) & length(custom_range) == 2))
-        stop("'custom_range' is not a numeric of length 2.")
-    }
   }
 
   if (!is.function(fun)) {
@@ -215,12 +206,6 @@ voronoiTreemap <- function(
       xscale = c(0, 2000),
       yscale = c(0, 2000)
     ))
-  }
-
-  # if extra column for color values is supplied,
-  # we need to rescale it and add to data frame
-  if (!is.null(custom_color)) {
-    data$custom_color <- convertInput(data[[custom_color]], from = custom_range)
   }
   
   
@@ -310,8 +295,8 @@ voronoiTreemap <- function(
       if (!is.null(custom_color)) {
         color_value <- df %>%
           dplyr::group_by(get(levels[level])) %>%
-          dplyr::summarise(mean(custom_color)) %>% 
-          {round(.[[2]])}
+          dplyr::summarise(fun(get(custom_color))) %>% 
+          {.[[2]]}
       }
       
       # 5. generate additively weighted voronoi treemap object;
