@@ -10,8 +10,8 @@ drawTreemap(treemap, levels = lapply(treemap, function(x) x$level) \%>\%
   border_level = levels, border_size = 6, border_color = grey(0.9),
   label_level = max(levels), label_size = 1, label_color = grey(0.9),
   title = NULL, title_size = 1, title_color = grey(0.5),
-  legend = FALSE, width = 0.9, height = 0.9, layout = c(1, 1),
-  position = c(1, 1), add = FALSE)
+  legend = FALSE, custom_range = NULL, width = 0.9, height = 0.9,
+  layout = c(1, 1), position = c(1, 1), add = FALSE)
 }
 \arguments{
 \item{treemap}{(list) A list of grid polygons and text objects that is the
@@ -33,8 +33,9 @@ that should be used for cell coloring. Must be one of \code{levels}.}
 \item{color_palette}{(character) A character vector of colors used to fill cells.
 The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}}
 
-\item{border_level}{(numeric) A numeric of length \code{levels} representing the 
-hierarchical level where border should be drawn. Default is to draw all borders.}
+\item{border_level}{(numeric) A numeric vector representing the hierarchical level that should be
+used for drawing cell borders, or NULL to omit drawing borders, The default is the
+that all borders are drawn.}
 
 \item{border_size}{(numeric) The initial line width of the highest level 
 cells. Is reduced each level. Default is 6 pts.}
@@ -57,6 +58,11 @@ that shrinks or expands all labels, regardless of their relative size.}
 \item{title_color}{(character) Color for title.}
 
 \item{legend}{(logical) Set to TRUE if a color key should be drawn. Default is FALSE.}
+
+\item{custom_range}{(numeric) A numeric vector of length 2 that can be used
+to rescale the values in \code{custom_color} to the range of choice.
+The default is \code{NULL} and it only has an effect if \code{custom_color}
+was specified when generating the treemap.}
 
 \item{width}{(numeric) The width (0 to 0.9) of the viewport that the treemap will occupy.}
 

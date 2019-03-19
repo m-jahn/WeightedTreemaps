@@ -5,9 +5,8 @@
 \title{voronoiTreemap}
 \usage{
 voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 0,
-  cell_size = NULL, custom_color = NULL, custom_range = NULL,
-  shape = "rectangle", maxIteration = 100, error_tol = 0.01,
-  seed = NULL, debug = FALSE)
+  cell_size = NULL, custom_color = NULL, shape = "rectangle",
+  maxIteration = 100, error_tol = 0.01, seed = NULL, debug = FALSE)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
@@ -39,11 +38,6 @@ using \code{\link{drawTreemap}}, but the default is to use one of
 \code{levels} or \code{cell size}. Any other data source that shall be used
 instead has to be included in the treemap generation and explicitly 
 specified here. The default value is \code{NULL}.}
-
-\item{custom_range}{(numeric) A numeric vector of length 2 that can be used
-to rescale the values in \code{custom_color} to the range of choice.
-The default is \code{NULL} and it only has an effect if \code{custom_color}
-is specified.}
 
 \item{shape}{(character) Set the initial shape of the treemap. Currently 
 supported are "rectangle", "rounded_rect", "circle" or "hexagon".}
