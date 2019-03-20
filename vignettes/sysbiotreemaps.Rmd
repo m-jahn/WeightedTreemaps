@@ -1,8 +1,8 @@
 ---
 output: github_document
-#title: "SysbioTreemaps"
-#author: "Michael Jahn, David Leslie"
-#date: "`r Sys.Date()`"
+title: "SysbioTreemaps"
+author: "Michael Jahn, David Leslie"
+date: "`r Sys.Date()`"
 #output: rmarkdown::html_vignette
 #vignette: >
 #  %\VignetteIndexEntry{}

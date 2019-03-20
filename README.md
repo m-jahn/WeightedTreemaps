@@ -1,19 +1,3 @@
----
-output: github_document
-#title: "SysbioTreemaps"
-#author: "Michael Jahn, David Leslie"
-#date: "2019-03-20"
-#output: rmarkdown::html_vignette
-#vignette: >
-#  %\VignetteIndexEntry{}
-#  %\VignetteEngine{knitr::rmarkdown}
-#  %\VignetteEncoding{UTF-8}
-#
-# create README.md from R markdown source:
-# knitr::knit("vignettes/sysbiotreemaps.Rmd", "README.md")
----
-
-
 
 # SysbioTreemaps
 
