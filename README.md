@@ -1,8 +1,8 @@
 ---
-title: "Create Voronoi and Sunburst Treemaps from Hierarchical Data"
-author: "Michael Jahn, David Leslie"
-date: "2019-03-06"
 output: github_document
+#title: "SysbioTreemaps"
+#author: "Michael Jahn, David Leslie"
+#date: "2019-03-20"
 #output: rmarkdown::html_vignette
 #vignette: >
 #  %\VignetteIndexEntry{}
@@ -15,13 +15,14 @@ output: github_document
 
 
 
-
-## Description
+# SysbioTreemaps
 
 This package can be used to generate and plot **Voronoi treemaps** or
 **Sunburst treemaps** from hierarchical data. 
 
 <img src="vignettes/tm.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="700px" style="display: block; margin: auto;" />
+
+## Description
 
 A Voronoi treemap is a visually appealing graphical representation of data using a space-filling approach. The cells in the map are scaled according to an underlying metric which allows to grasp the hierarchical organization and relative importance of many objects at once.
 There are different implementations available for Voronoi tesselations in R, the simplest being the deldir() function (from package deldir). However, deldir and others do not handle nested Voronoi tesselations, nor do they perform additively weighted Voronoi tesselation. This is an important demand for systems biology and other applications where we like to scale the cell size (or area) to a set of predefined weights. The functions provided in this package allow both the additively weighted Voronoi tesselation, and the nesting of different hierarchical levels in one plot. 
