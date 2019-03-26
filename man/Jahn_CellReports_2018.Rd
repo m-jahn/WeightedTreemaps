@@ -31,6 +31,7 @@ the cyanobase hierarchical annotation:
   \item Protein - functional annotation 3rd level
   \item Process.abbr - abbreviated Process
   \item Pathway.abbr - abbreviated Pathway
+  \item Gene.names - trivial names of genes, if available
 }
 }
 \keyword{datasets}
