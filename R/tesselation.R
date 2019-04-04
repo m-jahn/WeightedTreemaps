@@ -541,19 +541,26 @@ getpts <- function(x) {
 # here because it makes the sampling reproducible
 # (same set of coordinates for same query) which will
 # lead to similar map layout for similar input data
-samplePoints <- function(ParentPoly, n, seed) {
+samplePoints <- function(ParentPoly, n, seed, positioning) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
-  sampled <- sp::Polygon(coords = ParentPoly) %>%
-    sp::spsample(
-      n = n, 
-      type = "random") %>% 
-      { .@coords }
-  if (nrow(sampled) == 0) {
-    stop("Random sampling of coordinates inside parent polygon failed. Try a different seed.")
-  } else {
-    sampled
+  repeat {
+    
+    sampled <- sp::Polygon(coords = ParentPoly) %>%
+      sp::spsample(
+        n = n, 
+        type = positioning) %>% 
+        { .@coords }
+    
+    if (nrow(sampled) != n) {
+      next
+    } else if (nrow(sampled) == 0) {
+      stop("Random sampling of coordinates inside parent polygon failed. Try a different seed.")
+    } else {
+      return(sampled)
+    }
+    
   }
 }
 

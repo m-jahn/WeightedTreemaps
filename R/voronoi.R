@@ -49,6 +49,10 @@
 #' @param seed (integer) The default seed is NULL, which will lead to a new 
 #'   random sampling of cell coordinates for each tesselation. If you want
 #'   a reproducibloe arrangement of cells, set seed to an arbitrary number.
+#' @param positioning (character) Algorithm for positioning of child cells
+#'   in parent cell, passed down to \code{spsample()}; "random" for completely
+#'   random positions, "stratified" for stratified random (cells roughly 
+#'   aligned to a grid), "clustered" for clustered sampling.
 #' @param debug (logical) If debug is TRUE (default is FALSE), the solution 
 #'   for each iteration is drawn to the viewport to allow some visual 
 #'   inspection. The weights, target area, and difference are printed to the 
@@ -127,6 +131,7 @@ voronoiTreemap <- function(
   maxIteration = 100,
   error_tol = 0.01,
   seed = NULL,
+  positioning = "random",
   debug = FALSE) {
   
   # ERROR HANDLING
@@ -271,7 +276,8 @@ voronoiTreemap <- function(
       sampledPoints <- samplePoints(
         ParentPoly = ParentPoly,
         n = length(ncells),
-        seed = seed)
+        seed = seed,
+        positioning = positioning)
       
       
       # 3. generate the weights, these are the (aggregated) scaling factors 

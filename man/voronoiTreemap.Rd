@@ -6,7 +6,8 @@
 \usage{
 voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 0,
   cell_size = NULL, custom_color = NULL, shape = "rectangle",
-  maxIteration = 100, error_tol = 0.01, seed = NULL, debug = FALSE)
+  maxIteration = 100, error_tol = 0.01, seed = NULL,
+  positioning = "random", debug = FALSE)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
@@ -58,6 +59,11 @@ strict.}
 \item{seed}{(integer) The default seed is NULL, which will lead to a new 
 random sampling of cell coordinates for each tesselation. If you want
 a reproducibloe arrangement of cells, set seed to an arbitrary number.}
+
+\item{positioning}{(character) Algorithm for positioning of child cells
+in parent cell, passed down to \code{spsample()}; "random" for completely
+random positions, "stratified" for stratified random (cells roughly 
+aligned to a grid), "clustered" for clustered sampling.}
 
 \item{debug}{(logical) If debug is TRUE (default is FALSE), the solution 
 for each iteration is drawn to the viewport to allow some visual 
