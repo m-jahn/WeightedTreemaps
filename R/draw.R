@@ -337,7 +337,7 @@ drawTreemap <- function(
     
     # used for drawing legend
     color_list <- seq(custom_range[1], custom_range[2], length.out = 7) %>%
-      round(., 1+(-floor(log10(.)))) %>%
+      round(., 1+(-floor(log10(abs(.))))) %>%
       setNames(convertInput(., from = custom_range, to = c(1, 100)), .)
     
     # draw only polygons for the correct level
