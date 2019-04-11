@@ -1,7 +1,7 @@
 ---
 output: github_document
 title: "SysbioTreemaps"
-author: "Michael Jahn, David Leslie"
+author: "Michael Jahn, David Leslie "
 date: "`r Sys.Date()`"
 #output: rmarkdown::html_vignette
 #vignette: >
@@ -28,8 +28,6 @@ This package can be used to generate and plot **Voronoi treemaps** or
 **Sunburst treemaps** from hierarchical data. 
 
 ```{r, out.width = "700px",  fig.align = 'center', echo = FALSE}
-#path = paste0(getwd(), "/vignettes/tm.png")
-#knitr::include_graphics(path)
 knitr::include_graphics("vignettes/tm.png")
 ```
 
@@ -95,8 +93,6 @@ drawTreemap(tm)
 ```
 
 ```{r, out.width = "300px",  fig.align = 'center', echo = FALSE}
-#path = paste0(getwd(), "/vignettes/tm_small.png")
-#knitr::include_graphics(path)
 knitr::include_graphics("vignettes/tm_small.png")
 ```
 
@@ -120,10 +116,47 @@ drawTreemap(tm, title = "treemap 3",
 ```
 
 ```{r, out.width = "800px",  fig.align = 'center', echo = FALSE}
-#path = paste0(getwd(), "/vignettes/tm_small.png")
-#knitr::include_graphics(path)
 knitr::include_graphics("vignettes/tm_multiple.png")
 ```
+
+## Positioning of cells
+
+Generating of a treemap is an iterative and somewhat random process. Since the cells 'move' during the iteration process, it can be difficult to control the exact position of cells. However, there are two ways to control positioning. The first is to use different algorithms for sampling initial coordinates for each cell. The second is simply setting the seed which will sample the same set of starting coordinates for the same input data. Regarding the 'positioning' argument, compare the following examples
+
+```
+tm1 <- voronoiTreemap(
+  data = df, levels = "C",
+  cell_size = "C",
+  shape = "rounded_rect",
+  positioning = "random"
+)
+
+tm2 <- voronoiTreemap(
+  data = df, levels = "C",
+  cell_size = "C",
+  shape = "rounded_rect",
+  positioning = "regular"
+)
+
+tm3 <- voronoiTreemap(
+  data = df, levels = "C",
+  cell_size = "C",
+  shape = "rounded_rect",
+  positioning = "clustered"
+)
+
+drawTreemap(tm1, title = "positioning = 'random'", border_size = 3,
+  add = TRUE, layout = c(1,3), position = c(1, 1))
+drawTreemap(tm2, title = "positioning = 'regular'", border_size = 3,
+  add = TRUE, layout = c(1,3), position = c(1, 2))
+drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
+  add = TRUE, layout = c(1,3), position = c(1, 3))
+```
+
+```{r, out.width = "800px",  fig.align = 'center', echo = FALSE}
+knitr::include_graphics("vignettes/tm_position.png")
+```
+
 
 ## Adcanced example
 

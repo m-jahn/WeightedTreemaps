@@ -38,6 +38,38 @@ drawTreemap(tm, title = "treemap 3", legend = TRUE,
   title_color = "black")
 
 
+# It is also possible to control the initial placement of cells
+# by using the "positioning" argument. Compare the following examples
+tm1 <- voronoiTreemap(
+  data = df, levels = "C",
+  cell_size = "C",
+  shape = "rounded_rect",
+  positioning = "random"
+)
+
+tm2 <- voronoiTreemap(
+  data = df, levels = "C",
+  cell_size = "C",
+  shape = "rounded_rect",
+  positioning = "regular"
+)
+
+tm3 <- voronoiTreemap(
+  data = df, levels = "C",
+  cell_size = "C",
+  shape = "rounded_rect",
+  positioning = "clustered"
+)
+
+# draw treemaps
+drawTreemap(tm1, title = "positioning = 'random'", border_size = 3,
+  add = TRUE, layout = c(1,3), position = c(1, 1))
+drawTreemap(tm2, title = "positioning = 'regular'", border_size = 3,
+  add = TRUE, layout = c(1,3), position = c(1, 2))
+drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
+  add = TRUE, layout = c(1,3), position = c(1, 3))
+
+
 # ADVANCED EXAMPLE
 # -------------------------------------------
 # read test data set from Jahn et al., Cell Reports, 2018

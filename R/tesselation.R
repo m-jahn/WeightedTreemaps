@@ -545,22 +545,27 @@ samplePoints <- function(ParentPoly, n, seed, positioning) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
+  
+  # This loop keeps repeating until the correct number of coordinates 
+  # is sampled. The reason is that sp::spsample() does not always samples
+  # the correct number of coordinates, but too few or too many
   repeat {
     
     sampled <- sp::Polygon(coords = ParentPoly) %>%
-      sp::spsample(
-        n = n, 
-        type = positioning) %>% 
-        { .@coords }
-    
+      sp::spsample(n = n, 
+        type = ifelse(positioning == "random", "random", "nonaligned")
+      ) %>% { .@coords }
+      
     if (nrow(sampled) != n) {
       next
-    } else if (nrow(sampled) == 0) {
-      stop("Random sampling of coordinates inside parent polygon failed. Try a different seed.")
     } else {
+      if (positioning %in% c("clustered", "clustered_by_area")) {
+        sampled <- sampled %>% scale %>%
+          apply(1, function(x) sum(abs(x))) %>%
+          order(decreasing = TRUE) %>% sampled[., ]
+      }
       return(sampled)
     }
-    
   }
 }
 

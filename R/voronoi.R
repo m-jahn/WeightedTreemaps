@@ -49,10 +49,13 @@
 #' @param seed (integer) The default seed is NULL, which will lead to a new 
 #'   random sampling of cell coordinates for each tesselation. If you want
 #'   a reproducibloe arrangement of cells, set seed to an arbitrary number.
-#' @param positioning (character) Algorithm for positioning of child cells
-#'   in parent cell, passed down to \code{spsample()}; "random" for completely
-#'   random positions, "stratified" for stratified random (cells roughly 
-#'   aligned to a grid), "clustered" for clustered sampling.
+#' @param positioning (character) Algorithm for positioning of starting 
+#'   coordinates of child cells in the parental cell using \code{spsample()};
+#'   "random" for completely random positions, "regular" for positions aligned 
+#'   to a grid with cells sorted from bottom to top, "clustered" with regular 
+#'   positions of cells but sorted from inside out. Two variants "regular_by_area"
+#'   and "clustered_by_area" will work as their counterparts but will sort by cell
+#'   target area instead of cell name.
 #' @param debug (logical) If debug is TRUE (default is FALSE), the solution 
 #'   for each iteration is drawn to the viewport to allow some visual 
 #'   inspection. The weights, target area, and difference are printed to the 
@@ -131,7 +134,7 @@ voronoiTreemap <- function(
   maxIteration = 100,
   error_tol = 0.01,
   seed = NULL,
-  positioning = "random",
+  positioning = "regular",
   debug = FALSE) {
   
   # ERROR HANDLING
@@ -221,11 +224,11 @@ voronoiTreemap <- function(
   # CORE FUNCTION (RECURSIVE)
   voronoi.core <- function(level, df, parent = NULL, output = list()) {
     
-    repeat {
+    # set counter for number of maximum tries to not get stuck
+    # in repeat loop
+    counter = 1
       
-      # set counter for number of maximum tries to not get stuck
-      # in repeat loop
-      counter = 1
+    repeat {
       
       # CREATE VORONOI TREEMAP OBJECT
       #
@@ -272,12 +275,15 @@ voronoiTreemap <- function(
       # 2. generate starting coordinates within the boundary polygon
       # using sp package's spsample function.
       ncells <- df[[levels[level]]] %>% table
-
-      sampledPoints <- samplePoints(
-        ParentPoly = ParentPoly,
-        n = length(ncells),
-        seed = seed,
-        positioning = positioning)
+      
+      if (length(ncells) != 1) {
+        sampledPoints <- samplePoints(
+          ParentPoly = ParentPoly,
+          n = length(ncells),
+          seed = seed,
+          positioning = positioning
+        )
+      }
       
       
       # 3. generate the weights, these are the (aggregated) scaling factors 
@@ -285,7 +291,6 @@ voronoiTreemap <- function(
       if (is.null(cell_size)) {
         # average cell size by number of members, if no function is given
         weights <- ncells / sum(ncells)
-
       } else {
         # average sector size by user defined function, e.g. sum of expression values
         # the cell size is calculated as aggregated relative fraction of total
@@ -295,6 +300,13 @@ voronoiTreemap <- function(
           dplyr::summarise(fun(get(cell_size))) %>% 
           { .[[2]] / sum(.[[2]]) }
       }
+      # reorder starting coordinate positions by weights (= target cell areas) 
+      # if sorting by area is toggled
+      if (length(ncells) != 1 & 
+          positioning %in% c("regular_by_area", "clustered_by_area")) {
+        sampledPoints <- sampledPoints[order(order(weights)), ]
+      }
+      
       
       # 4. generate custom color values for each cell that can be used
       # with different palettes when drawing;
@@ -340,12 +352,12 @@ voronoiTreemap <- function(
         
         # error handling in case of failed tesselation:
         # try up to ten new random starting positions before finally giving up
-        if (is.null(treemap) & counter <= 10) {
+        if (is.null(treemap) & counter < 10) {
           if (!is.null(seed)) {seed = seed + 1}
           counter = counter + 1
           cat("Iteration failed, randomising positions...\n")
           next
-        } else if (is.null(treemap) & counter > 10) {
+        } else if (is.null(treemap) & counter >= 10) {
           stop("Iteration failed after 10 randomisation trials, try to rerun treemap with new seed")
         }
 

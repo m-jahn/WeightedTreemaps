@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie
-2019-03-20
+2019-04-11
 
 ------------------------------------------------------------------------
 
@@ -81,6 +81,41 @@ The voronoiTreemap() and drawTreemap() functions are separated in order to allow
       title_color = "black")
 
 <img src="vignettes/tm_multiple.png" width="800px" style="display: block; margin: auto;" />
+
+Positioning of cells
+--------------------
+
+Generating of a treemap is an iterative and somewhat random process. Since the cells 'move' during the iteration process, it can be difficult to control the exact position of cells. However, there are two ways to control positioning. The first is to use different algorithms for sampling initial coordinates for each cell. The second is simply setting the seed which will sample the same set of starting coordinates for the same input data. Regarding the 'positioning' argument, compare the following examples
+
+    tm1 <- voronoiTreemap(
+      data = df, levels = "C",
+      cell_size = "C",
+      shape = "rounded_rect",
+      positioning = "random"
+    )
+
+    tm2 <- voronoiTreemap(
+      data = df, levels = "C",
+      cell_size = "C",
+      shape = "rounded_rect",
+      positioning = "regular"
+    )
+
+    tm3 <- voronoiTreemap(
+      data = df, levels = "C",
+      cell_size = "C",
+      shape = "rounded_rect",
+      positioning = "clustered"
+    )
+
+    drawTreemap(tm1, title = "positioning = 'random'", border_size = 3,
+      add = TRUE, layout = c(1,3), position = c(1, 1))
+    drawTreemap(tm2, title = "positioning = 'regular'", border_size = 3,
+      add = TRUE, layout = c(1,3), position = c(1, 2))
+    drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
+      add = TRUE, layout = c(1,3), position = c(1, 3))
+
+<img src="vignettes/tm_position.png" width="800px" style="display: block; margin: auto;" />
 
 Adcanced example
 ----------------
