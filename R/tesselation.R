@@ -17,7 +17,9 @@
 #
 #' @import gpclib
 #' @importFrom sp point.in.polygon
-
+#' @importFrom dplyr filter
+#' @importFrom dplyr filter_all
+#' @importFrom dplyr any_vars
 
 # Generate one iteration of the Additively Weighted Voronoi diagram
 awv <- function(
@@ -46,222 +48,56 @@ tidyCells <-
     tolerance,
     debug = FALSE,
     debugCell = FALSE) 
-  {
+  { 
     lapply(cells, tidyCell, tolerance, debug, debugCell)
   }
 
-getCellBorder <- function(
-  border,
-  seenBefore = numeric(),
-  tolerance,
-  debug,
-  debugCell = FALSE,
-  scale = 2000)
-{
-  N <- nrow(border)
-  direction <- 1
-  vx <- numeric(N)
-  vy <- numeric(N)
-  vcount <- 1
-  complete <- FALSE
-  endCondition <- FALSE
-  returning <- length(seenBefore)
-  visited <- rep(FALSE, N)
-  # Two start cases:
-  # Segment that starts on boundary
-  # No segments that start on boundary (just start with first segment)
-  start <- which(
-    border[, 1] == -2 * scale |
-    border[, 1] == 2 * scale |
-    border[, 2] == -2 * scale |
-    border[, 2] == 2 * scale)
-  # If this is a return visit, it must be a start point
-  # we have not seen before
-  start <- start[!start %in% seenBefore]
-  if (length(start)) {
-    index <- start[1]
-    startingX <- border[index, 1]
-    startingY <- border[index, 2]
-    seenBefore <- c(seenBefore, index)
-  } else {
-    # Look for segment that *ends* on boundary
-    start <- which(
-      border[, 3] == -2 * scale |
-      border[, 3] == 2 * scale |
-      border[, 4] == -2 * scale |
-      border[, 4] == 2 * scale)
-    start <- start[!start %in% seenBefore]
-    if (length(start)) {
-      index <- start[1]
-      direction <- -1
-      startingX <- border[index, 3]
-      startingY <- border[index, 4]
-      seenBefore <- c(seenBefore, index)
-    } else if (returning) {
-      # If we're returning for another look
-      # (means we ended on the boundary last time)
-      # AND we have not found another boundary to start from
-      # break straight back out
-      complete <- TRUE
-      vx <- numeric()
-      vy <- numeric()
-      endCondition <- "breakout"
-    } else {
-      # Start at first point
-      index <- 1
-      startingX <- border[index, 1]
-      startingY <- border[index, 2]
-    }
-  }
-  # Following segments:
-  # First check whether next segment follows on from current one
-  # If not, search all other segments for segment that follows on
-  # If no match, find segment that *ends* at current end and
-  #   follow that segment *backwards*
-  while (!complete) {
-    if (debug && debugCell)
-      cat(paste(index, direction, "\n"))
-    if (direction > 0) {
-      x1 <- 1
-      y1 <- 2
-      x2 <- 3
-      y2 <- 4
-    } else {
-      x1 <- 3
-      y1 <- 4
-      x2 <- 1
-      y2 <- 2
-    }
-    vx[vcount] <- border[index, x1]
-    vy[vcount] <- border[index, y1]
-    vcount <- vcount + 1
-    visited[index] <- TRUE
-    if (all(visited)) {
-      complete <- TRUE
-    } else {
-      # Try next segment
-      nextIndex <- index + direction
-      endX <- border[index, x2]
-      endY <- border[index, y2]
-      startX <- border[nextIndex, x1]
-      startY <- border[nextIndex, y1]
-      if (nextIndex > 0 && nextIndex <= N &&
-          sim(endX, startX, tolerance) &&
-          sim(endY, startY, tolerance)) {
-        index <- nextIndex
-      } else {
-        # Try segment that starts where we ended
-        newIndex <-
-          startsAt(border, endX, endY, direction, tolerance)
-        # Do NOT use visited segment
-        newIndex <- newIndex[!visited[newIndex]]
-        if (length(newIndex)) {
-          index <- newIndex[1]
-        } else {
-          # Try segment that ends where we ended
-          direction <- -direction
-          newIndex <-
-            startsAt(border, endX, endY, direction,
-                     tolerance)
-          # Do NOT use visited segment
-          newIndex <- newIndex[!visited[newIndex]]
-          if (length(newIndex)) {
-            index <- newIndex[1]
-          } else {
-            # Run out of segments
-            # cat("Found no next edge\n")
-            complete <- TRUE
-            warning("Failed to trace cell")
-            # recover()
-          }
-        }
-      }
-    }
-    # Stopping conditions:
-    # Hit boundary
-    # Got back to start
-    endCondition <-
-      stopping(border[index, x2], border[index, y2],
-               startingX, startingY, tolerance)
-    if (endCondition == "boundary") {
-      # Add boundary nodes to border
-      vx[vcount] <- border[index, x1]
-      vx[vcount + 1] <- border[index, x2]
-      vy[vcount] <- border[index, y1]
-      vy[vcount + 1] <- border[index, y2]
-      vcount <- vcount + 2
-      seenBefore <- c(seenBefore, index)
-      complete <- TRUE
-    } else if (endCondition == "start") {
-      complete <- TRUE
-    }
-  }
-  list(
-    x = vx[1:(vcount - 1)],
-    y = vy[1:(vcount - 1)],
-    end = endCondition,
-    seen = seenBefore
-  )
-}
-
 tidyCell <-
-  function(cell,
-           tolerance,
-           debug = FALSE,
-           debugCell = FALSE) {
+  function(
+    cell,
+    tolerance,
+    debug = FALSE,
+    debugCell = FALSE) 
+  {
     if (debug && debugCell)
       print(cell$vertex)
-    border <- cell$border
+    
     # Handle empty cells
-    if (is.null(border)) {
+    if (is.null(cell$border)) {
       print("One cell has NULL borders")
       return(NULL)
     }
-    ok <- !apply(cell$border, 1, function(x)
-      any(is.na(x)))
-    border <- border[ok,]
     
-    result <- getCellBorder(border,
-                            tolerance = tolerance,
-                            debug = debug,
-                            debugCell = debugCell)
-    if (result$end == "boundary") {
-      # Check for other boundaries
-      results <- list(result)
-      repeat {
-        result <- getCellBorder(
-          border,
-          seenBefore = result$seen,
-          tolerance = tolerance,
-          debug = debug,
-          debugCell = debugCell
-        )
-        if (result$end == "breakout")
-          break
-        results <- c(results, list(result))
-      }
-      if (length(results) == 1) {
-        result <- results[[1]]
-      } else {
-        result <- results
-        class(result) <- "multipleBorders"
-      }
-    }
+    # clean borders by rounding and removing duplicate points
+    # as well as NA entries and sort points in clockwise direction
+    border <- rbind(
+      setNames(cell$border[, 1:2], c("x", "y")),
+      setNames(cell$border[, 3:4], c("x", "y"))
+    )
+    clean_border <- border %>% round(4) %>%
+      as.data.frame %>% na.omit %>%
+      dplyr::filter(!(duplicated.data.frame(.))) %>%
+      sort_points(y = "y", x = "x", clockwise = TRUE, vertex = cell$vertex)
     
-    if (inherits(result, "multipleBorders") ||
-        result$end == "boundary") {
-      # Need to close the cell
-      cellBorder <- closeCell(result, cell$vertex, tolerance)
+    if (any(apply(clean_border, 2, function(x) any(x %in% c(4000, -4000))))) {
+      # if cell touches the border, we need to close it
+      # cell, vertex, tol
+      result <- closeCell(clean_border, cell$vertex, tol = tolerance)
+      
     } else {
-      # if (end == "start") {
-      # This covers two cases:
-      # end == "start" means that we have completed a loop
-      # end == FALSE means that we ran out of points
-      # The latter case may produce some unpredictable results
-      cellBorder <- list(x = c(result$x, result$x[1]),
-                         y = c(result$y, result$y[1]))
+      
+      # return a list of the polygon
+      result <- list(
+        x = clean_border$x,
+        y = clean_border$y,
+        #x = c(clean_border$x, clean_border$x[1]),
+        #y = c(clean_border$y, clean_border$y[1]),
+        end = "boundary"
+      )
+      
     }
-    cellBorder
+    
+    result
   }
 
 # SIDES
@@ -397,20 +233,24 @@ closeCell.default <- function(cell, vertex, tol, scale = 2000) {
   N <- length(x)
   startSide <- side(x[1], y[1])
   endSide <- side(x[N], y[N])
+
   
   # Start and end on same side
   if (startSide == endSide) {
+    
     # Special case:  startPOINT and endPOINT same
-    if (sim(x[1], x[N], tol) &&
-        sim(y[1], y[N], tol)) {
-      newx <- stretchX(x, y, N, startSide)
-      newy <- stretchY(x, y, N, startSide)
-      x <- newx
-      y <- newy
-    }
+    # if (sim(x[1], x[N], tol) &&
+    #     sim(y[1], y[N], tol)) {
+    #   
+    #   newx <- stretchX(x, y, N, startSide)
+    #   newy <- stretchY(x, y, N, startSide)
+    #   x <- newx
+    #   y <- newy
+    # }
     # Just join start to end
-    cell <- list(x = c(x, x[1]), y = c(y, y[1]))
-    if (point.in.polygon(vertex[1], vertex[2],
+    #cell <- list(x = c(x, x[1]), y = c(y, y[1]))
+    cell <- list(x = x, y = y)
+    if (sp::point.in.polygon(vertex[1], vertex[2],
                          cell$x, cell$y) == 0) {
       boundRect <- suppressWarnings(as(list(
         x = c(-2 * scale,-2 * scale,
@@ -434,6 +274,7 @@ closeCell.default <- function(cell, vertex, tol, scale = 2000) {
     }
     
   } else {
+    
     cell <- closeClock(x, y, startSide, endSide)
     if (sp::point.in.polygon(vertex[1], vertex[2],
                          cell$x, cell$y) == 0) {

@@ -7,16 +7,20 @@ df <- data.frame(
   A = rep(c("a", "b", "c"), each=15),
   B = sample(letters[4:12], 45, replace = TRUE),
   C = sample(10:100, 45)
-)
+) 
 
 # generate treemap
+#system.time(
 tm <- voronoiTreemap(
   data = df,
-  levels = c("A", "B", "C"),
+  levels = "C",
   cell_size = "C",
-  shape = "rounded_rect"
+  shape = "rounded_rect",
+  maxIteration = 100,
+  debug = FALSE
+  #error_tol = 0.002
 )
-
+#)
 # draw treemap
 drawTreemap(tm, title = "A treemap", legend = TRUE)
 
