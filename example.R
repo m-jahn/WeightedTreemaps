@@ -17,8 +17,8 @@ tm <- voronoiTreemap(
   cell_size = "C",
   shape = "rounded_rect",
   maxIteration = 100,
-  debug = FALSE
-  #error_tol = 0.002
+  debug = FALSE,
+  error_tol = 0.002
 )
 #)
 # draw treemap

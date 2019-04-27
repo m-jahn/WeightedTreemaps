@@ -69,7 +69,7 @@ tidyCell <-
     }
     
     # clean borders by rounding and removing duplicate points
-    # as well as NA entries and sort points in clockwise direction
+    # as well as NA entries, and sort points in clockwise direction
     border <- rbind(
       setNames(cell$border[, 1:2], c("x", "y")),
       setNames(cell$border[, 3:4], c("x", "y"))
@@ -79,9 +79,10 @@ tidyCell <-
       dplyr::filter(!(duplicated.data.frame(.))) %>%
       sort_points(y = "y", x = "x", clockwise = TRUE, vertex = cell$vertex)
     
+    # if cell touches the border, we need to close it
+    # this does not apply if both points lie on same border? Or if there is no end side
     if (any(apply(clean_border, 2, function(x) any(x %in% c(4000, -4000))))) {
-      # if cell touches the border, we need to close it
-      # cell, vertex, tol
+      
       result <- closeCell(clean_border, cell$vertex, tol = tolerance)
       
     } else {
@@ -234,7 +235,7 @@ closeCell.default <- function(cell, vertex, tol, scale = 2000) {
   startSide <- side(x[1], y[1])
   endSide <- side(x[N], y[N])
 
-  
+  print(c(startSide, endSide))
   # Start and end on same side
   if (startSide == endSide) {
     
