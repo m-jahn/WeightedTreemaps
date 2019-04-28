@@ -154,12 +154,12 @@ allocate <- function(
     # identical areas, in order to to assist finding boundaries
     if (length(unique(w)) == 1)
       w <- w * runif(length(w), 0.95, 1.05)
-    #k <- tryCatch(awv(s, w, outer, debug, debugCell), 
-    #  error=function(e) { print(e); NULL}
-    #)
-    #if (is.null(k)) {
-    #  return(NULL)
-    #}
+    k <- tryCatch(awv(s, w, outer, debug, debugCell), 
+      error=function(e) { print(e); NULL}
+    )
+    if (is.null(k)) {
+      return(NULL)
+    }
     k <- awv(s, w, outer, debug, debugCell)
     areas <- lapply(k, area.poly)
     

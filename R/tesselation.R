@@ -80,25 +80,21 @@ tidyCell <-
       sort_points(y = "y", x = "x", clockwise = TRUE, vertex = cell$vertex)
     
     # if cell touches the border, we need to close it
-    # this does not apply if both points lie on same border? Or if there is no end side
     if (any(apply(clean_border, 2, function(x) any(x %in% c(4000, -4000))))) {
       
-      result <- closeCell(clean_border, cell$vertex, tol = tolerance)
+      closeCell(clean_border, cell$vertex, tol = tolerance)
       
     } else {
       
       # return a list of the polygon
-      result <- list(
+      list(
         x = clean_border$x,
         y = clean_border$y,
-        #x = c(clean_border$x, clean_border$x[1]),
-        #y = c(clean_border$y, clean_border$y[1]),
         end = "boundary"
       )
       
     }
     
-    result
   }
 
 # SIDES
@@ -182,9 +178,6 @@ closeAnti <- function(x, y, start, end, scale = 2000) {
   list(x = x, y = y)
 }
 
-closeCell <- function(cell, vertex, tol) {
-  UseMethod("closeCell")
-}
 
 stretchX <- function(x, y, N, side, scale = 2000) {
   switch(side,
@@ -210,8 +203,8 @@ stretchY <- function(x, y, N, side, scale = 2000) {
          c(y[1], min(y), y[N]))
 }
 
-closeCell.default <- function(cell, vertex, tol, scale = 2000) {
-  # Two options:  go round clip region boundary clockwise or anit-clockwise
+closeCell <- function(cell, vertex, tol, scale = 2000) {
+  # Two options:  go round clip region boundary clockwise or anti-clockwise
   # Try first one, check if vertex is "inside" the result
   # If not, do second one (and check that vertex is "inside" that result!)
   x <- cell$x
@@ -235,21 +228,9 @@ closeCell.default <- function(cell, vertex, tol, scale = 2000) {
   startSide <- side(x[1], y[1])
   endSide <- side(x[N], y[N])
 
-  print(c(startSide, endSide))
   # Start and end on same side
   if (startSide == endSide) {
     
-    # Special case:  startPOINT and endPOINT same
-    # if (sim(x[1], x[N], tol) &&
-    #     sim(y[1], y[N], tol)) {
-    #   
-    #   newx <- stretchX(x, y, N, startSide)
-    #   newy <- stretchY(x, y, N, startSide)
-    #   x <- newx
-    #   y <- newy
-    # }
-    # Just join start to end
-    #cell <- list(x = c(x, x[1]), y = c(y, y[1]))
     cell <- list(x = x, y = y)
     if (sp::point.in.polygon(vertex[1], vertex[2],
                          cell$x, cell$y) == 0) {
@@ -289,45 +270,6 @@ closeCell.default <- function(cell, vertex, tol, scale = 2000) {
   cell
 }
 
-closeCell.multipleBorders <- function(cell, vertex, tol) {
-  result <- lapply(cell, closeCell.default, vertex, tol)
-  class(result) <- "multipleCells"
-  result
-}
-
-# Does this constant need adjusting if 'scale' in init.R
-# is altered??
-# The .0015 is fairly sensitive
-# Examples seen where .001 is (just) too small
-# Examples seen where .005 is too big
-sim <- function(a, b, tol = .0015) {
-  abs(a - b) < tol
-}
-
-stopping <- function(endX, endY, startX, startY, tol, scale = 2000) {
-  if (endX == -2 * scale || endX == 2 * scale ||
-      endY == -2 * scale || endY == 2 * scale) {
-    # cat("Hit boundary\n")
-    return("boundary")
-  }
-  if (sim(endX, startX, tol) && sim(endY, startY, tol)) {
-    # cat("Back to start\n")
-    return("start")
-  }
-  return(FALSE)
-}
-
-startsAt <- function(border, x, y, direction, tol) {
-  if (direction > 0) {
-    x1 <- 1
-    y1 <- 2
-  } else {
-    x1 <- 3
-    y1 <- 4
-  }
-  which(sim(border[, x1], x, tol) &
-          sim(border[, y1], y, tol))
-}
 
 # Take polygons from Voronoi cells and intersect them with
 # outer polygon (e.g., circle radius 1000)
@@ -358,20 +300,14 @@ trimCells <- function(cells, region) {
 
 # It is possible for us to end up with a cell containing a hole
 # (because when the cell boundary is either zero area or
-#  contains a zero-area indent, gpclib::intersect() can
-#  produce isolated islands)
+# contains a zero-area indent, gpclib::intersect() can
+# produce isolated islands)
 
 # To handle these cases, we just ignore the holes (which should
 # be zero-area anyway) and take the outer boundary.
-
-# There is defensive code in there to warn if the unexpected
-# happens and there is more than one outer boundary.
 getpts <- function(x) {
   pts <- gpclib::get.pts(x)
   nonholes <- sapply(pts, function(y) !y$hole)
-  if (sum(nonholes) < 1 || sum(nonholes) > 1) {
-    warning("Cell or region with more than one boundary")
-  }
   border <- which(nonholes)[1]
   list(x=pts[[border]]$x,
        y=pts[[border]]$y)
@@ -389,7 +325,7 @@ samplePoints <- function(ParentPoly, n, seed, positioning) {
   }
   
   # This loop keeps repeating until the correct number of coordinates 
-  # is sampled. The reason is that sp::spsample() does not always samples
+  # is sampled. The reason is that sp::spsample() does not always sample
   # the correct number of coordinates, but too few or too many
   repeat {
     
