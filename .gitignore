@@ -8,6 +8,7 @@ inst/doc
 build_packages_howto.Rmd
 SysbioTreemaps.Rproj
 tm.Rdata
+test.R
 *.o
 *.so
 *.dll

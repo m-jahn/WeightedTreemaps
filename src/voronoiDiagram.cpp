@@ -1,21 +1,3 @@
-/*
-  *  Copyright (C) 2012 Paul Murrell
-*
-  *  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-  *  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-  *  You should have received a copy of the GNU General Public License
-*  along with this program; if not, a copy is available at
-*  http://www.gnu.org/licenses/gpl.txt
-*/
-
 // This code is based on a CGAL example
 // examples/Apollonius_graph_2/ag2_exact_traits.cpp
 #include <Rcpp.h>
@@ -76,6 +58,20 @@ struct Cropped_voronoi_from_apollonius
     m_cropped_vd.erase(m_cropped_vd.begin(), m_cropped_vd.end());
   }
 };
+
+// custom ordering function
+IntegerVector order(NumericVector x) {
+  NumericVector sorted = clone(x).sort();
+  return match(sorted, x)-1;
+}
+
+// custom function to find boundary position
+IntegerVector get_boundary_pos(NumericVector x, NumericVector y){
+  IntegerVector ind = seq(0, x.size()-1);
+  IntegerVector hit = ind[abs(x) == 4000 | abs(y) == 4000];
+  return hit;
+}
+
 // roxygen export tag
 //' @export cropped_voronoi
 // [[Rcpp::export]]
@@ -94,7 +90,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
   }
   if (!ag.is_valid()) {
       ag.is_valid(true); // verbose
-      Rcout << "Invalid ag, aborting." << std::endl;
+      Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
   }
 
@@ -113,7 +109,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
   for (Apollonius_graph::Vertex_handle h : handles)
   {
     if (h == NULL || !h->is_valid()) {
-      Rcout << "Invalid ag, aborting." << std::endl;
+      Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
     }
     Apollonius_graph::Edge_circulator ec = ag.incident_edges(h), done(ec);
@@ -124,35 +120,82 @@ SEXP cropped_voronoi(NumericMatrix sites)
         ag.draw_dual_edge(*ec, vor);
       } while (++ec != done);
     }
-    //print the cropped Voronoi diagram edges as segments
-    NumericVector x1s;
-    NumericVector y1s;
-    NumericVector x2s;
-    NumericVector y2s;
+    // collect the cropped Voronoi diagram edges as single points of polygon
+    NumericVector xs;
+    NumericVector ys;
     for (auto &s : vor.m_cropped_vd)
     { 
-      x1s.push_back(s.source().x());
-      y1s.push_back(s.source().y());
-      x2s.push_back(s.target().x());
-      y2s.push_back(s.target().y());
+      xs.push_back(s.source().x());
+      ys.push_back(s.source().y());
+      xs.push_back(s.target().x());
+      ys.push_back(s.target().y());
     }
+    
+    // stop and return NULL if polygon is empty
+    if (xs.size() == 0) {
+      Rcout << "Invalid apollonius graph found" << std::endl;
+      return R_NilValue;
+    }
+    
+    // remove duplicate polygon points or NAs
+    LogicalVector dupl = duplicated(round(xs, 2)) & duplicated(round(ys, 2));
+    LogicalVector ends = floor(xs) == 3999 | floor(ys) == 3999;
+    LogicalVector NAs = is_na(xs) | is_na(ys);
+    xs = xs[!(dupl | ends | NAs)];
+    ys = ys[!(dupl | ends | NAs)];
+    
+    // for sorting polygon boundary points, determine angle from center
+    // first calculate deltas
+    auto &vertex = h->site().point();
+    NumericVector x_delta = xs - vertex.x();
+    NumericVector y_delta = ys - vertex.y();
+    // resolve angle, in radians
+    NumericVector angle;
+    for (int i = 0; i < x_delta.size(); i++)
+    {
+      angle.push_back(atan2(y_delta[i], x_delta[i]));
+    }
+    
+    // check for straight lines as polygon border. These can not be ordered from
+    // center and have random boundary positions; simply order by y value.
+    NumericVector which_unique = unique(round(angle, 2));
+    if (which_unique.size() <= 2) {
+      IntegerVector ord = order(ys);
+      xs = xs[ord]; ys = ys[ord];
+    }
+    else {
+      IntegerVector ord = order(angle);
+      xs = xs[ord]; ys = ys[ord];
+    }
+    
+    // If this is a polygon touching the boundaries, rearrange points
+    // starting with the first point on boundary, but without re-sorting df.
+    // First find positions of boundary points
+    IntegerVector boundary_pos = get_boundary_pos(xs, ys);
+    // then reorder only if boundary positions are not at the ends of the vector.
+    if (boundary_pos.length() == 2) {
+      if (boundary_pos[0] != 0 | boundary_pos[1] != xs.length()-1) {
+        IntegerVector seq1, seq2;
+        seq1 = seq(boundary_pos[1], xs.length()-1);
+        seq2 = seq(0, boundary_pos[1]-1);
+        for (int i = 0; i < seq2.size(); i++)
+        {
+          seq1.push_back(seq2[i]);
+        }
+        xs = xs[seq1]; ys = ys[seq1];
+      }
+    }
+    
+    // collect in data frame
     DataFrame border = DataFrame::create(
-      Named("x1") = x1s, 
-      Named("y1") = y1s, 
-      Named("x2") = x2s, 
-      Named("y2") = y2s
+      Named("x") = xs,
+      Named("y") = ys
     );
     
-    if (x1s.size() == 0) {
-        Rcout << "invalid cell found, aborting" << std::endl;
-        return R_NilValue;
-    } else {
-      auto &vertex = h->site().point();
-      List res = List::create(
-        Named("vertex") = NumericVector::create(vertex.x(), vertex.y()),
-        Named("border") = border);
-      results.push_back(res);
-    }
+    List res = List::create(
+      Named("vertex") = NumericVector::create(vertex.x(), vertex.y()),
+      Named("border") = border);
+    results.push_back(res);
     
     vor.reset();
   }

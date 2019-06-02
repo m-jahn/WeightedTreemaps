@@ -1,20 +1,3 @@
-
-
-#  Copyright (C) 2012 Paul Murrell
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  A copy of the GNU General Public License is available at
-#  http://www.gnu.org/licenses/gpl.txt
-#
 #' @import gpclib
 #' @importFrom sp point.in.polygon
 #' @importFrom dplyr filter
@@ -33,63 +16,33 @@ awv <- function(
   if (is.null(roughCells)) {
     return(NULL)
   }
-  tolerance <- 0.0015
-  # tolerance <- max(diff(range(s$x)), diff(range(s$y)))*.000001
-  tidyCells <- tidyCells(roughCells, tolerance, debug, debugCell)
+  tidyCells <- lapply(roughCells, tidyCell, tolerance = 0.0015)
+  if (sapply(tidyCells, is.null) %>% any) {
+    return(NULL)
+  }
   trimCells(tidyCells, region)
 }
 
 
-# Tidy the cell information
-# Return a list of lists with x/y
-tidyCells <-
-  function(
-    cells,
-    tolerance,
-    debug = FALSE,
-    debugCell = FALSE) 
-  { 
-    lapply(cells, tidyCell, tolerance, debug, debugCell)
-  }
-
 tidyCell <-
-  function(
-    cell,
-    tolerance,
-    debug = FALSE,
-    debugCell = FALSE) 
+  function(cell, tolerance) 
   {
-    if (debug && debugCell)
-      print(cell$vertex)
-    
-    # Handle empty cells
-    if (is.null(cell$border)) {
-      print("One cell has NULL borders")
-      return(NULL)
-    }
-    
-    # clean borders by rounding and removing duplicate points
-    # as well as NA entries, and sort points in clockwise direction
-    border <- rbind(
-      setNames(cell$border[, 1:2], c("x", "y")),
-      setNames(cell$border[, 3:4], c("x", "y"))
-    )
-    clean_border <- border %>% round(4) %>%
-      as.data.frame %>% na.omit %>%
-      dplyr::filter(!(duplicated.data.frame(.))) %>%
-      sort_points(y = "y", x = "x", clockwise = TRUE, vertex = cell$vertex)
-    
-    # if cell touches the border, we need to close it
-    if (any(apply(clean_border, 2, function(x) any(x %in% c(4000, -4000))))) {
+
+    # if cell touches the border at two points, we need to close it
+    # this is not necessary if cell touches border at 4 points (like a stripe)
+    if (sum(
+      cell$border$x %in% c(4000, -4000), 
+      cell$border$y %in% c(4000, -4000)) == 2
+    ) {
       
-      closeCell(clean_border, cell$vertex, tol = tolerance)
+      closeCell(cell$border, cell$vertex, tol = tolerance)
       
     } else {
       
       # return a list of the polygon
       list(
-        x = clean_border$x,
-        y = clean_border$y,
+        x = cell$border$x,
+        y = cell$border$y,
         end = "boundary"
       )
       
@@ -179,30 +132,6 @@ closeAnti <- function(x, y, start, end, scale = 2000) {
 }
 
 
-stretchX <- function(x, y, N, side, scale = 2000) {
-  switch(side,
-         c(x[1], max(x), x[N]),
-         c(max(-2 * scale, x[1] - scale * .05),
-           x[which.min(y)],
-           min(2 * scale, x[N] + scale * .05)),
-         c(x[1], min(x), x[N]),
-         c(max(-2 * scale, x[1] - scale * .05),
-           x[which.max(y)],
-           min(2 * scale, x[N] + scale * .05)))
-}
-
-stretchY <- function(x, y, N, side, scale = 2000) {
-  switch(side,
-         c(max(-2 * scale, y[1] - scale * .05),
-           y[which.max(x)],
-           min(2 * scale, y[N] + scale * .05)),
-         c(y[1], max(y), y[N]),
-         c(max(-2 * scale, y[1] - scale * .05),
-           y[which.min(x)],
-           min(2 * scale, y[N] + scale * .05)),
-         c(y[1], min(y), y[N]))
-}
-
 closeCell <- function(cell, vertex, tol, scale = 2000) {
   # Two options:  go round clip region boundary clockwise or anti-clockwise
   # Try first one, check if vertex is "inside" the result
@@ -210,24 +139,17 @@ closeCell <- function(cell, vertex, tol, scale = 2000) {
   x <- cell$x
   y <- cell$y
   
-  # It is possible to get here with a cell that STARTS on a
-  # boundary but does not end on a boundary (because voronoiDiagram
-  # is capable of producing this sort of thing sometimes;  I have seen it!)
-  # This case is characterised by cell$end being FALSE
-  # In that case, just hail mary and join start to end
-  # (so that end is also on boundary)
-  if (is.logical(cell$end)) {
-    if (!cell$end) {
-      x <- c(x, x[1])
-      y <- c(y, y[1])
-    }
-  }
   
   # ASSUME that both first and last vertices are on boundary!
   N <- length(x)
   startSide <- side(x[1], y[1])
   endSide <- side(x[N], y[N])
-
+  
+  # exit if not both end points lie on boundary
+  if (length(startSide) != 1 | length(endSide) != 1) {
+    return(NULL)
+  }
+    
   # Start and end on same side
   if (startSide == endSide) {
     
@@ -329,12 +251,14 @@ samplePoints <- function(ParentPoly, n, seed, positioning) {
   # the correct number of coordinates, but too few or too many
   repeat {
     
-    sampled <- sp::Polygon(coords = ParentPoly) %>%
+    sampled <- tryCatch(
+      sp::Polygon(coords = ParentPoly) %>%
       sp::spsample(n = n, 
         type = ifelse(positioning == "random", "random", "nonaligned")
-      ) %>% { .@coords }
-      
-    if (nrow(sampled) != n) {
+      ) %>% { .@coords }, error = function(e) NULL
+    )
+    
+    if (is.null(sampled) || nrow(sampled) != n) {
       next
     } else {
       if (positioning %in% c("clustered", "clustered_by_area")) {

@@ -1,12 +1,11 @@
+#  original author Stuart K. Grange, modified by Michael Jahn 2019
+#
 # Function to sort a set of points/coordinates in a clockwise or anti-clockwise
 # direction.
-# 
-# original author: Stuart K. Grange
-# modified by Michael Jahn
-
-
-# main sorting function
-sort_points <- function(df, y = "y", x = "x", clockwise = TRUE, vertex = NULL) {
+#
+#' @import tidyr
+#' 
+sort_points <- function(df, x = "x", y = "y", clockwise = TRUE, vertex = NULL) {
   
   # Get centre (-oid) point of points
   if (is.null(vertex)) {
@@ -24,8 +23,13 @@ sort_points <- function(df, y = "y", x = "x", clockwise = TRUE, vertex = NULL) {
   # Resolve angle, in radians
   df$angle <- atan2(df$y_delta, df$x_delta)
   
-  # Arrange by angle
-  if (clockwise) {
+  
+  # check for straight lines as polygon border. These can not be ordered from
+  # center and have random boundary positions. Simply order by y value
+  if (length(unique(round(df$angle, 2))) == 2) {
+    df <- df[order(df[[y]], decreasing = TRUE), ]
+  } else if (clockwise) {
+  # Otherwise arrange by angle
     df <- df[order(df$angle, decreasing = TRUE), ]
   } else {
     df <- df[order(df$angle, decreasing = FALSE), ]

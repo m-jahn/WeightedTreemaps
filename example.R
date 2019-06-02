@@ -10,7 +10,6 @@ df <- data.frame(
 ) 
 
 # generate treemap
-system.time(
 tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
@@ -19,7 +18,7 @@ tm <- voronoiTreemap(
   maxIteration = 100,
   debug = FALSE
 )
-)
+
 # draw treemap
 drawTreemap(tm, title = "A treemap", legend = TRUE)
 
@@ -90,12 +89,12 @@ df <- Jahn_CellReports_2018 %>%
 # otherwise it will be random.
 tm <- voronoiTreemap(
   data = df,
-  levels = c("Process.abbr", "Pathway.abbr", "protein"),
+  levels = c("Process.abbr", "protein"),
   cell_size = "mean_mass_fraction_norm",
   shape = "rectangle",
-  error_tol = 0.005,
+  error_tol = 0.01,
   maxIteration = 100,
-  seed = 5
+  positioning = "clustered_by_area"
 )
 
 # save and load very large treemaps to avoid re-computation
@@ -104,11 +103,20 @@ tm <- voronoiTreemap(
 
 # generate a custom color palette using colorspace
 hclwizard()
-custom.pal <- sequential_hcl(n = 20,
+custom_pal1 <- sequential_hcl(
+  n = 20,
   h = c(-46, 78),
   c = c(61, 78, 54),
   l = c(60, 91),
   power = c(0.8, 1),
+  rev = TRUE
+)
+custom_pal2 <- diverging_hcl(
+  n = 7, 
+  h = c(340, 128), 
+  c = c(60, 80), 
+  l = c(75, 97), 
+  power = c(0.8, 1.5),
   rev = TRUE
 )
 
@@ -117,12 +125,12 @@ custom.pal <- sequential_hcl(n = 20,
 svg("vignettes/tm_heatcol.svg", 10, 10)
 drawTreemap(
   tm, 
-  color_palette = custom.pal,
+  color_palette = custom_pal2,
   color_type = "cell_size",
-  color_level = 3,
-  label_level = c(1,3),
+  color_level = 2,
+  label_level = c(1,2),
   label_size = 4,
   label_color = grey(0.5),
-  border_color = grey(0.65)
+  border_color = grey(0.9)
 )
 dev.off()

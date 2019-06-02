@@ -1,20 +1,3 @@
-
-
-#  Copyright (C) 2012 Paul Murrell
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  A copy of the GNU General Public License is available at
-#  http://www.gnu.org/licenses/gpl.txt
-#
 #' @importFrom soiltexture TT.polygon.centroids
 
 cellError <- function(a, target) {
@@ -77,15 +60,14 @@ breaking <- function(
 # difference to original implementation: adjustment of maximal 
 # step change of weights to prevent crashing of algorithm
 adjustWeights <- function(w, a, target) {
-  # Watch out for zero-area cells (set to small value)
-  #a <- ifelse(a == 0, 10, a)
+
   normA <- a / sum(a)
-  # avoid extreme scaling values -> quadratic function
-  # added to buffer strong difference between computed area and target
-  # and another quadratic transformation to the global weight increase
+  # avoid extreme scaling values -> squareroot function
+  # to buffer strong difference between computed area and target
+  # and to buffer the global weight increase
   # these increase stability but also computation time
   scaling = ((target - normA) / target) %>%
-    ifelse(. < -1, ./ sqrt(abs(.)), .)
+    ifelse(. < -1, ./sqrt(abs(.)), .)
   w = w + sqrt(mean(abs(w))) * scaling
   w
 }
@@ -150,17 +132,14 @@ allocate <- function(
   
   repeat {
     
-    # add small artificial error in case of a tesselation with exactly
-    # identical areas, in order to to assist finding boundaries
-    if (length(unique(w)) == 1)
-      w <- w * runif(length(w), 0.95, 1.05)
-    k <- tryCatch(awv(s, w, outer, debug, debugCell), 
-      error=function(e) { print(e); NULL}
+    # call to awv function, the additively weighted voronoi tesselation,
+    # wrapped within a trycatch statement to catch errors and start over
+    k <- tryCatch(awv(s, w, outer, debug, debugCell),
+      error = function(e) { print(e); NULL}
     )
     if (is.null(k)) {
       return(NULL)
     }
-    k <- awv(s, w, outer, debug, debugCell)
     areas <- lapply(k, area.poly)
     
     # if debug=TRUE, every iteration is drawn to the viewport
