@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie
-2019-04-11
+2019-06-12
 
 ------------------------------------------------------------------------
 
@@ -141,10 +141,12 @@ Generate treemap using some more of the function's parameters. We can increase m
       seed = 13
     )
 
-We can generate a custom color palette using the colorspace wizard.
+We can generate custom color palettes using the colorspace wizard. Just browse to the R tab and copy the code to your script.
 
     hclwizard()
-    custom.pal <- sequential_hcl(n = 20,
+
+    custom_pal_1 <- sequential_hcl(
+      n = 20,
       h = c(-46, 78),
       c = c(61, 78, 54),
       l = c(60, 91),
@@ -152,11 +154,20 @@ We can generate a custom color palette using the colorspace wizard.
       rev = TRUE
     )
 
+    custom_pal_2 <- diverging_hcl(
+      n = 7, 
+      h = c(340, 128), 
+      c = c(60, 80), 
+      l = c(75, 97), 
+      power = c(0.8, 1.5),
+      rev = TRUE
+    )
+
 Draw the treemap using some custom graphical parameters.
 
     drawTreemap(
       tm, 
-      color_palette = custom.pal,
+      color_palette = custom_pal_2,
       color_type = "cell_size",
       color_level = 3,
       label_level = c(1,3),
@@ -166,6 +177,69 @@ Draw the treemap using some custom graphical parameters.
     )
 
 <img src="vignettes/tm_heatcol.png" width="700px" style="display: block; margin: auto;" />
+
+Generate treemaps with parallel computing
+-----------------------------------------
+
+Read test data set with proteomics data from 10 different conditions
+
+    library(parallel)
+
+    df <- Jahn_CellReports_2018 %>%
+      filter(mean_mass_fraction_norm > 0)
+
+Generate 10 treemaps using the parallel version of lapply, and the 'condition' annotation to subset the data frame. Note that you can adjust the 'mc.cores' parameter to the number of CPUs available on your computer.
+
+    tm <- mclapply(
+      unique(df$condition), 
+      mc.cores = 10, 
+      mc.set.seed = FALSE,
+      FUN = function(cond) {
+        
+        voronoiTreemap(
+          data = filter(df, condition == cond),
+          levels = c("Process.abbr", "protein"), 
+          cell_size = "mean_mass_fraction_norm",
+          custom_color = "mean_mass_fraction_norm",
+          shape = "rounded_rect",
+          positioning = "clustered_by_area",
+          maxIteration = 200,
+          error_tol = 0.0025
+        )
+      }
+    )
+
+Draw all 10 treemaps on one canvas using layout and position arguments.
+
+    png("10_treemaps.png", width = 3000, height = 1200)
+    lapply(1:10, function(i) {
+      
+      drawTreemap(
+        tm[[i]],
+        color_type = "custom_color",
+        color_level = 2,
+        color_palette = custom_pal2,
+        custom_range = c(0, 0.05),
+        border_size = 6,
+        border_color = grey(0.9),
+        label_level = c(1,2),
+        label_size = 2,
+        label_color = grey(0.4),
+        legend = TRUE,
+        title = unique(df$condition)[i],
+        title_size = 1.5,
+        title_color = grey(0.4),
+        layout = c(2, 5),
+        position = c(
+          ifelse(i <= 5, 1, 2),
+          ifelse(i <= 5, i, i-5)),
+        add = TRUE
+      )
+      
+    }) %>% invisible
+    dev.off()
+
+<img src="vignettes/tm_parallel.png" width="800px" style="display: block; margin: auto;" />
 
 References and other treemap packages
 -------------------------------------
