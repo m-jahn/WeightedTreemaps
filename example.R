@@ -163,7 +163,6 @@ tm <- mclapply(
       data = filter(df, condition == cond),
       levels = c("Process.abbr", "protein"), 
       cell_size = "mean_mass_fraction_norm",
-      custom_color = "mean_mass_fraction_norm",
       shape = "rounded_rect",
       positioning = "clustered_by_area",
       maxIteration = 200,
@@ -173,14 +172,16 @@ tm <- mclapply(
 )
 
 # Draw all 10 treemaps on one canvas using layout and position arguments.
-png("10_treemaps.png", width = 3000, height = 1200)
+# We can use the custom_range argument to set the same range for the color 
+# gradient for all treemaps.
+png("vignettes/tm_parallel.png", width = 3000, height = 1200)
 lapply(1:10, function(i) {
   
   drawTreemap(
     tm[[i]],
-    color_type = "custom_color",
+    color_type = "cell_size",
     color_level = 2,
-    color_palette = custom_pal2,
+    color_palette = custom_pal_2,
     custom_range = c(0, 0.05),
     border_size = 6,
     border_color = grey(0.9),

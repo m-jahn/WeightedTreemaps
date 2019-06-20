@@ -286,7 +286,7 @@ drawTreemap <- function(
       if (tm_slot$level == color_level) {
         fill = pal[color_list[tm_slot$names]]
         mapply(drawPoly, tm_slot$k, tm_slot$names, fill = fill,
-          SIMPLIFY=FALSE, MoreArgs = list(lwd = NA, col = NA)
+          SIMPLIFY = FALSE, MoreArgs = list(lwd = NA, col = NA)
         )
       }
     }) %>% invisible
@@ -296,18 +296,27 @@ drawTreemap <- function(
   # CASE 2: coloring by cell size/area
   if (color_type == "cell_size") {
     
-    range_area <- lapply(treemap, function(tm_slot) {
-      if (tm_slot$level == color_level) tm_slot$a 
-      }) %>% unlist %>% range
-    
+    # determine total area
     total_area <- lapply(treemap, function(tm_slot) {
       if (tm_slot$level == color_level) tm_slot$a 
-      }) %>% unlist %>% sum
+    }) %>% unlist %>% sum
     
+    # either the range and color code is determined from treemap, 
+    # or supplied by the user
+    if (is.null(custom_range)) {
+      
+      range_area <- lapply(treemap, function(tm_slot) {
+        if (tm_slot$level == color_level) tm_slot$a 
+      }) %>% unlist %>% range
+      
+    } else {
+      range_area = custom_range*total_area
+    }
+
     # used for drawing legend
     color_list <- seq(range_area[1], range_area[2], length.out = 7) %>%
       {. / total_area * 100} %>% round(1) %>%
-      setNames(scales::rescale(., to = c(1, 100)), . )
+      setNames(scales::rescale(., to = c(1, 100)), .)
     
     # draw only polygons for the correct level
     lapply(treemap, function(tm_slot) {
@@ -318,7 +327,7 @@ drawTreemap <- function(
             to = c(1, 100)
           ) %>% pal[.]
         mapply(drawPoly, tm_slot$k, tm_slot$names, fill = fill,
-          SIMPLIFY=FALSE, MoreArgs = list(lwd = NA, col = NA)
+          SIMPLIFY = FALSE, MoreArgs = list(lwd = NA, col = NA)
         )
       }
     }) %>% invisible
@@ -348,7 +357,7 @@ drawTreemap <- function(
           convertInput(., from = custom_range, to = c(1, 100)) %>%
           pal[.]
         mapply(drawPoly, tm_slot$k, tm_slot$names, fill = fill,
-          SIMPLIFY=FALSE, MoreArgs = list(lwd = NA, col = NA)
+          SIMPLIFY = FALSE, MoreArgs = list(lwd = NA, col = NA)
         )
       }
     }) %>% invisible
