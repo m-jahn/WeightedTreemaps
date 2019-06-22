@@ -4,7 +4,7 @@ library(SysbioTreemaps)
 # -------------------------------------------
 # generate data frame
 df <- data.frame(
-  A = rep(c("a", "b", "c"), each=15),
+  A = rep(c("a", "b", "c"), each = 15),
   B = sample(letters[4:12], 45, replace = TRUE),
   C = sample(10:100, 45)
 ) 
@@ -14,13 +14,11 @@ tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
   cell_size = "C",
-  shape = "rounded_rect",
-  maxIteration = 100,
-  debug = FALSE
+  shape = "rounded_rect"
 )
 
 # draw treemap
-drawTreemap(tm, title = "A treemap", legend = TRUE)
+drawTreemap(tm)
 
 # draw different variants of the same treemap on one page using
 # the 'layout' and 'position' arguments (indicating rows and columns)
@@ -79,8 +77,8 @@ library(dplyr)
 library(colorspace)
 
 df <- Jahn_CellReports_2018 %>%
-  filter(condition == "CO2-0-15") %>%
-  filter(mean_mass_fraction_norm > 0)
+  filter(condition == "CO2-0-15",
+    mean_mass_fraction_norm > 0)
 
 
 # Generate treemap using some more of the function's parameters.
@@ -125,7 +123,7 @@ custom_pal_2 <- diverging_hcl(
 )
 
 
-# Draw the treemap using some custom graphical parameters.
+#Draw a customized treemap using some of the graphical parameters.
 svg("vignettes/tm_heatcol.svg", 10, 10)
 drawTreemap(
   tm, 

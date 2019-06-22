@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
-Michael Jahn, David Leslie
-2019-06-12
+Michael Jahn, David Leslie,
+2019-06-22
 
 ------------------------------------------------------------------------
 
@@ -12,38 +12,40 @@ This package can be used to generate and plot **Voronoi treemaps** or **Sunburst
 Description
 -----------
 
-A Voronoi treemap is a visually appealing graphical representation of data using a space-filling approach. The cells in the map are scaled according to an underlying metric which allows to grasp the hierarchical organization and relative importance of many objects at once. There are different implementations available for Voronoi tesselations in R, the simplest being the deldir() function (from package deldir). However, deldir and others do not handle nested Voronoi tesselations, nor do they perform additively weighted Voronoi tesselation. This is an important demand for systems biology and other applications where we like to scale the cell size (or area) to a set of predefined weights. The functions provided in this package allow both the additively weighted Voronoi tesselation, and the nesting of different hierarchical levels in one plot.
+A Voronoi treemap is a visually appealing graphical representation of numerical data using a space-filling approach. The cells in the map are scaled according to an underlying metric which allows to grasp the hierarchical organization and relative importance of many objects at once. There are different implementations available for Voronoi tesselations in R, the simplest being the `deldir()` function (from package `deldir`). However, `deldir` and others do not handle nested Voronoi tesselations, nor do they perform additively weighted Voronoi tesselation. This is an important demand for systems biology and other applications where it is useful to scale the cell size (or area) to a set of predefined weights. The functions provided in this package allow both the additively weighted Voronoi tesselation, and the nesting of different hierarchical levels in one plot.
 
-The underlying functions for the tesselation were developed and published by Paul Murrell, University of Auckland, and serve as the basis for this package. They are called by a recursive wrapper function, voronoiTreemap(), which subdivides the plot area in polygonal cells according to the highest hierarchical level. It then continues with the tesselation on the next lower level uisng the child cell of the previous level as the new parental plotting cell, and so on.
+The underlying functions for the tesselation were developed and published by Paul Murrell, University of Auckland, and serve as the basis for this package. They are called by a recursive wrapper function, `voronoiTreemap()`, which subdivides the plot area in polygonal cells according to the highest hierarchical level. It then continues with the tesselation on the next lower level uisng the child cell of the previous level as the new parental cell, and so on.
 
-The sunburst treemap is a computationally less demanding treemap that does not require iterative refinement, but simply generates circle sectors that are sized according to predefined weights. It is also a arecursive algorithm and can be used to draw sectors of different hierarchical level with increasing granularity (documentation fot his function is still missing).
+The sunburst treemap is a computationally less demanding treemap that does not require iterative refinement, but simply generates circle sectors that are sized according to predefined weights. It is also a recursive algorithm and can be used to draw sectors of different hierarchical levels with increasing granularity. The documentation for his function is still missing and will be added soon.
 
 Requirements
 ------------
 
-The C++ code requires the [CGAL](https://www.cgal.org/download.html) library. For installation in (Ubuntu-like) Linux systems, type in the shell:
+The C++ code computing the actual Voronoi tesselation requires the [CGAL](https://www.cgal.org/download.html) library. For installation in (Ubuntu-like) Linux systems, open a terminal and execute:
 
     sudo apt install libcgal-dev
 
 Installation
 ------------
 
-To install the package directly from github, use this function from devtools package in your R session:
+To install the package directly from github, use this function from the `devtools` package in your R session:
 
     require(devtools)
     devtools::install_github("https://github.com/m-jahn/SysbioTreemaps")
 
-The package is not available on CRAN yet.
+The package is not available on CRAN yet but it is planned to be deposited soon.
 
 Usage
 -----
 
-Create a simple example data frame
+### Voronoi treemaps
+
+The functions to create Voronoi or Sunburst treemaps take a `data.frame` as main input. The `data.frame` should contain column(s) with numerical or categorical data (i.e. a character vector). Let's Create a simple example data frame (all following examples can also be found in `R/example.R`).
 
     library(SysbioTreemaps)
 
     df <- data.frame(
-      A = rep(c("a", "b", "c"), each=15),
+      A = rep(c("a", "b", "c"), each = 15),
       B = sample(letters[4:12], 45, replace = TRUE),
       C = sample(10:100, 45)
     )
@@ -63,7 +65,7 @@ Draw the treempap.
 
 <img src="vignettes/tm_small.png" width="300px" style="display: block; margin: auto;" />
 
-The voronoiTreemap() and drawTreemap() functions are separated in order to allow drawing of the same treemap object in different ways. Computation of treemaps with thousands of cells can be very time and resource consuming (minutes to hours on desktop computers). With the drawTreemap() function, we can not only plot the same treemap in different ways but also combine several treemaps on one page using the 'layout' and 'position' arguments.
+The `voronoiTreemap()` and `drawTreemap()` functions are separated in order to allow drawing of the same treemap object in different ways. Computation of treemaps with thousands of cells can be very time and resource consuming (around 5-10 minutes for a 2000-cell treemap on a regular desktop computer). With the `drawTreemap()` function, we can not only plot the same treemap in different ways but also combine several treemaps on one page using the `layout` and `position` arguments.
 
     drawTreemap(tm, title = "treemap 1", 
       color_type = "categorical", color_level = 1, 
@@ -82,10 +84,9 @@ The voronoiTreemap() and drawTreemap() functions are separated in order to allow
 
 <img src="vignettes/tm_multiple.png" width="800px" style="display: block; margin: auto;" />
 
-Positioning of cells
---------------------
+### Positioning of cells
 
-Generating of a treemap is an iterative and somewhat random process. Since the cells 'move' during the iteration process, it can be difficult to control the exact position of cells. However, there are two ways to control positioning. The first is to use different algorithms for sampling initial coordinates for each cell. The second is simply setting the seed which will sample the same set of starting coordinates for the same input data. Regarding the 'positioning' argument, compare the following examples
+Generating a Voronoi treemap is an iterative and somewhat random process. Since the cells 'move' during the iteration process, it can be difficult to control the exact final position of cells. However, there are two ways to influence cell positioning. The first is to use different algorithms for sampling initial coordinates for each cell. The second is simply setting a seed, which will sample the same set of starting coordinates for the same input data. Regarding the `positioning` argument, compare the following three examples where initial positions are 1) random, 2) ordered from top to bottom, or 3) ordered from center to edges.
 
     tm1 <- voronoiTreemap(
       data = df, levels = "C",
@@ -117,10 +118,9 @@ Generating of a treemap is an iterative and somewhat random process. Since the c
 
 <img src="vignettes/tm_position.png" width="800px" style="display: block; margin: auto;" />
 
-Adcanced example
-----------------
+### Adcanced example for Voronoi treemaps
 
-Read test data set from Jahn et al., Cell Reports, 2018. (<https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2>) This dataset contains thousands of protein measurements.
+This example will cover the generation of a somewhat larger treemap, as it is often useful to visualize e.g. many genes or proteins at once in molecular biology studies. However, treemaps can be used for any type of data visualizations. First we read a proteomics test data set from Jahn et al., Cell Reports, 2018. (<https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2>) This dataset contains thousands of protein measurements of the cyanobacterium *Synechocystis*.
 
     library(dplyr)
     library(colorspace)

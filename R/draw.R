@@ -1,6 +1,6 @@
 #' drawTreemap
 #'
-#' Draws the treemap from a list obtained by running \code{\link{voronoiTreemap}} or
+#' Draws the treemap object that was obtained by running \code{\link{voronoiTreemap}} or
 #' \code{\link{sunburstTreemap}}. Many graphical parameters can be customized but some
 #' settings that determine the appearance of treemaps are already made 
 #' during treemap generation. Such parameters are primarily cell size and
@@ -64,7 +64,7 @@
 #' 
 #' #generate data frame
 #' df <- data.frame(
-#'   A = rep(c("a", "b", "c"), each=15),
+#'   A = rep(c("a", "b", "c"), each = 15),
 #'   B = sample(letters[4:12], 45, replace = TRUE),
 #'   C = sample(10:100, 45)
 #' )
