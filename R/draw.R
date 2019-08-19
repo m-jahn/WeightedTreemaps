@@ -23,15 +23,21 @@
 #' @param border_level (numeric) A numeric vector representing the hierarchical level that should be
 #'   used for drawing cell borders, or NULL to omit drawing borders, The default is the
 #'   that all borders are drawn.
-#' @param border_size (numeric) The initial line width of the highest level 
-#'   cells. Is reduced each level. Default is 6 pts.
-#' @param border_color (character) Color for cell borders, default is a light grey.
+#' @param border_size (numeric) A single number indicating initial line width of the highest level 
+#'   cells. Is reduced each level, default is 6 pts. Alternatively a vector of 
+#'   \code{length(border_level)}, then each border is drawn with the specified width.
+#' @param border_color (character) A single character indicating color for cell borders, 
+#'   default is a light grey. Alternatively a vector of \code{length(border_level)}, 
+#'   then each border is drawn with the specified color.
 #' @param label_level (numeric) A numeric vector representing the hierarchical level that should be
 #'   used for drawing cell labels, or NULL to omit drawing labels. The default is the
 #'   deepest level (every cell has a label).
-#' @param label_size (numeric) Expansion factor for labels. A simple multiplier
-#'   that shrinks or expands all labels, regardless of their relative size.
-#' @param label_color (character) Color for cell labels.
+#' @param label_size (numeric) A single number indicating relative size of each label 
+#'   in relation to its parent cell. Alternatively a vector of 
+#'   \code{length(label_level)}, then each label is drawn with the specified size.
+#' @param label_color (character) A single character indicating color for cell labels.
+#'   Alternatively a vector of \code{length(label_level)}, then each label 
+#'   is drawn with the specified color.
 #' @param title (character) An optional title, default to \code{NULL}.
 #' @param title_size (numeric) The size (or 'character expansion') of the title.
 #' @param title_color (character) Color for title.

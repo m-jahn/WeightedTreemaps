@@ -22,7 +22,7 @@ going from broad to fine}
 
 \item{filter}{(logical) Filter the supplied data frame to remove very small
 cells that may not be visible. The default is to remove cells with a 
-relative target area below 0.0001, or 0.01%. The algorithm can fail
+relative target area below zero (no negative values allowed). The algorithm can fail
 when processing many tiny cells so it can be worthwhile to simply 
 rerun the function with a stricter filter.}
 
@@ -84,7 +84,7 @@ This is a recursive wrapper function, making use of the original implementation
 of the voronoi tesselation from Paul Murrell, University of Auckland.
 The original functions were obtained and slightly modified from
 \url{https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html}
-This function returns a list of graphical objects instead of a plot. In order 
+This function returns a treemap object instead of a plot. In order 
 to actually draw the treemap, use \code{\link{drawTreemap}}.
 }
 \examples{
