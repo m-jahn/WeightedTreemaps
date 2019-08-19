@@ -371,11 +371,24 @@ drawTreemap <- function(
     # draw only borders for the correct level
     lapply(treemap, function(tm_slot) {
       if (tm_slot$level %in% border_level) {
+        
+        # determine border size and color from supplied options
+        if (length(border_size) == 1) {
+          border_lwd <- border_size / tm_slot$level
+        } else {
+          border_lwd <- border_size[tm_slot$level]
+        }
+        if (length(border_color) > 1) {
+          border_col <- border_color[tm_slot$level]
+        } else {
+          border_col <- border_color
+        }
+        
         mapply(drawPoly, tm_slot$k, tm_slot$names, fill = NA,
           SIMPLIFY=FALSE,
           MoreArgs = list(
-            lwd = border_size / tm_slot$level, 
-            col = border_color
+            lwd = border_lwd, 
+            col = border_col
           )
         )
       }
@@ -390,18 +403,30 @@ drawTreemap <- function(
     lapply(treemap, function(tm_slot) {
     
       if (tm_slot$level %in% label_level) {
-        # function to determine label sizes for each individual cell
-        # based on cell dimension and label character length
-        cex = sqrt(unlist(tm_slot$a)) * label_size / (100 * nchar(tm_slot$names)) %>%
-          round(1)
+        
+        # determine label size and color from supplied options
+        if (length(label_size) == 1) {
+          # function to determine label sizes for each individual cell
+          # based on cell dimension and label character length
+          label_cex <- sqrt(unlist(tm_slot$a)) * label_size / (100 * nchar(tm_slot$names)) %>%
+            round(1)
+        } else {
+          label_cex <- label_size[tm_slot$level]
+        }
+        if (length(label_color) == 1) {
+          label_col <- label_color
+        } else {
+          label_col <- label_color[tm_slot$level]
+        }
         
         grid::grid.text(
           tm_slot$names,
           tm_slot$s$x,
           tm_slot$s$y,
           default = "native",
-          gp = gpar(cex = cex, col = label_color)
+          gp = gpar(cex = label_cex, col = label_col)
         )
+        
       }
     }) %>% invisible
   }
