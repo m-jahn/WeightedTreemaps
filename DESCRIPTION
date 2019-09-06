@@ -33,12 +33,16 @@ Description: This package can be used to generate and plot Voronoi treemaps or
     sized according to predefined weights. It is also a arecursive algorithm and can be
     used to draw sectors of different hierarchical level with increasing granularity.
 License: GPL-3
-Depends: tidyr, gpclib
+Depends: gpclib
 Imports: 
     grid,
+    methods,
     dplyr,
+    tidyr,
     colorspace,
     sp,
+    scales,
+    lattice,
     soiltexture,
     Rcpp
 Encoding: UTF-8

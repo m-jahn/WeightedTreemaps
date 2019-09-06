@@ -20,11 +20,11 @@ going from broad to fine}
 
 \item{sort}{(logical) Should the columns of the data.frame be sorted before?}
 
-\item{filter}{(logical) Filter the supplied data frame to remove very small
+\item{filter}{(numeric) Filter the supplied data frame to remove very small
 cells that may not be visible. The default is to remove cells with a 
-relative target area below zero (no negative values allowed). The algorithm can fail
-when processing many tiny cells so it can be worthwhile to simply 
-rerun the function with a stricter filter.}
+relative target area below a threshold of zero (no negative values allowed). 
+The algorithm can fail when processing many tiny cells so it can be 
+worthwhile to simply rerun the function with a stricter filter.}
 
 \item{cell_size}{(character) The name of the column used to control cell size. 
 Can be one of \code{levels} or any other column with numerical data. NA or

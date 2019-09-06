@@ -1,10 +1,10 @@
 #  original author Stuart K. Grange, modified by Michael Jahn 2019
 #
 # Function to sort a set of points/coordinates in a clockwise or anti-clockwise
-# direction.
+# direction. This function is now deprecated as its functionality has moved to
+# the C++ core function.
 #
-#' @import tidyr
-#' 
+#' @importFrom tidyr %>%
 sort_points <- function(df, x = "x", y = "y", clockwise = TRUE, vertex = NULL) {
   
   # Get centre (-oid) point of points

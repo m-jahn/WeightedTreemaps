@@ -103,7 +103,7 @@
 #'   add = TRUE, layout = c(1,3), position = c(1, 3),
 #'   title_color = "black")
 #' 
-#' @import tidyr
+#' @importFrom tidyr %>%
 #' @importFrom grid grid.newpage
 #' @importFrom grid grid.text
 #' @importFrom grid grid.polygon
@@ -117,6 +117,10 @@
 #' @importFrom colorspace rainbow_hcl
 #' @importFrom scales rescale
 #' @importFrom lattice draw.colorkey
+#' @importFrom grDevices colorRampPalette
+#' @importFrom grDevices grey
+#' @importFrom stats setNames
+#' @importFrom utils tail
 #' 
 #' @export drawTreemap
 # 
@@ -126,7 +130,7 @@
 # from grid package
 drawTreemap <- function(
   treemap, 
-  levels = lapply(treemap, function(x) x$level) %>% unlist %>% unique, 
+  levels = lapply(treemap@cells, function(x) x$level) %>% unlist %>% unique, 
   color_type = "categorical",
   color_level = min(levels),
   color_palette = NULL,
@@ -159,7 +163,7 @@ drawTreemap <- function(
   }
   
   # check level input
-  if (!all(levels %in% (lapply(treemap, function(x) x$level) %>% unlist %>% unique))) {
+  if (!all(levels %in% 1:length(treemap@call$levels))) {
     stop("Not all indicated 'levels' are contained in this treemap.")
   }
   
@@ -210,13 +214,13 @@ drawTreemap <- function(
   }
   
   # check labels
-  if (is.null(label_level)) {
-     warning("Drawing of labels disabled.", immediate. = TRUE)
-  } else if (!is.numeric(label_level)) {
-    stop("'label_level' must be numeric vector indicating the level(s) for which labels should be drawn.")
-  } else if (is.numeric(label_level)) {
-    if (!all(label_level %in% levels)) {
-      stop("'label_level' indicated levels that are not contained in this treemap")
+  if (!is.null(label_level)) {
+    if (!is.numeric(label_level)) {
+      stop("'label_level' must be numeric vector indicating the level(s) for which labels should be drawn.")
+    } else if (is.numeric(label_level)) {
+      if (!all(label_level %in% levels)) {
+        stop("'label_level' indicated levels that are not contained in this treemap")
+      }
     }
   }
   
@@ -278,7 +282,7 @@ drawTreemap <- function(
     
     # generate a color code depending on number of categories for selected level
     # used for drawing legend
-    color_list <- lapply(treemap, function(tm_slot) {
+    color_list <- lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level == color_level) {
         tm_slot$names
       }
@@ -288,7 +292,7 @@ drawTreemap <- function(
     
     # go through list of treemap polygons and draw only the ones
     # supposed to be colored (= the correct color_level)
-    lapply(treemap, function(tm_slot) {
+    lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level == color_level) {
         fill = pal[color_list[tm_slot$names]]
         mapply(drawPoly, tm_slot$k, tm_slot$names, fill = fill,
@@ -303,7 +307,7 @@ drawTreemap <- function(
   if (color_type == "cell_size") {
     
     # determine total area
-    total_area <- lapply(treemap, function(tm_slot) {
+    total_area <- lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level == color_level) tm_slot$a 
     }) %>% unlist %>% sum
     
@@ -311,7 +315,7 @@ drawTreemap <- function(
     # or supplied by the user
     if (is.null(custom_range)) {
       
-      range_area <- lapply(treemap, function(tm_slot) {
+      range_area <- lapply(treemap@cells, function(tm_slot) {
         if (tm_slot$level == color_level) tm_slot$a 
       }) %>% unlist %>% range
       
@@ -325,7 +329,7 @@ drawTreemap <- function(
       setNames(scales::rescale(., to = c(1, 100)), .)
     
     # draw only polygons for the correct level
-    lapply(treemap, function(tm_slot) {
+    lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level == color_level) {
         fill = tm_slot$a %>%
           scales::rescale(
@@ -345,7 +349,7 @@ drawTreemap <- function(
     
     # determine range of possible custom_color values
     if (is.null(custom_range)) {
-      custom_range <- lapply(treemap, function(tm_slot) {
+      custom_range <- lapply(treemap@cells, function(tm_slot) {
         if (tm_slot$level == color_level) tm_slot$custom_color
       }) %>% unlist %>% range
     }
@@ -356,7 +360,7 @@ drawTreemap <- function(
       setNames(convertInput(., from = custom_range, to = c(1, 100)), .)
     
     # draw only polygons for the correct level
-    lapply(treemap, function(tm_slot) {
+    lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level == color_level) {
         stopifnot(is.numeric(tm_slot$custom_color))
         fill = tm_slot$custom_color %>%
@@ -375,7 +379,7 @@ drawTreemap <- function(
   if (!is.null(border_color) & !is.null(border_size)) {
     
     # draw only borders for the correct level
-    lapply(treemap, function(tm_slot) {
+    lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level %in% border_level) {
         
         # determine border size and color from supplied options
@@ -406,7 +410,7 @@ drawTreemap <- function(
   # DRAWING LABELS
   if (!is.null(label_level) & !is.null(label_size) & !is.null(label_color)) {
     
-    lapply(treemap, function(tm_slot) {
+    lapply(treemap@cells, function(tm_slot) {
     
       if (tm_slot$level %in% label_level) {
         

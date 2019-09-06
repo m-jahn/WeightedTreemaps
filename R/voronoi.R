@@ -16,11 +16,11 @@
 #'   going from broad to fine 
 #' @param fun (function) Function to be used to aggregate cell sizes of parental cells
 #' @param sort (logical) Should the columns of the data.frame be sorted before?
-#' @param filter (logical) Filter the supplied data frame to remove very small
+#' @param filter (numeric) Filter the supplied data frame to remove very small
 #'   cells that may not be visible. The default is to remove cells with a 
-#'   relative target area below zero (no negative values allowed). The algorithm can fail
-#'   when processing many tiny cells so it can be worthwhile to simply 
-#'   rerun the function with a stricter filter.
+#'   relative target area below a threshold of zero (no negative values allowed). 
+#'   The algorithm can fail when processing many tiny cells so it can be 
+#'   worthwhile to simply rerun the function with a stricter filter.
 #' @param cell_size (character) The name of the column used to control cell size. 
 #'   Can be one of \code{levels} or any other column with numerical data. NA or
 #'   values equal or less than zero are not allowed as the cell area needs to be positive.
@@ -105,7 +105,7 @@
 #'   title_color = "black")
 #' 
 #' @import gpclib
-#' @import tidyr
+#' @importFrom tidyr %>%
 #' @importFrom grid grid.newpage
 #' @importFrom grid pushViewport
 #' @importFrom grid viewport
@@ -135,78 +135,14 @@ voronoiTreemap <- function(
   error_tol = 0.01,
   seed = NULL,
   positioning = "regular",
-  debug = FALSE) {
+  debug = FALSE
+) {
   
-  # ERROR HANDLING
-  #
-  # check input data frame
-  if (!is.data.frame(data)) {
-    if (!is.matrix(data))
-      stop("'data' must be a matrix or a data frame.")
-    else if (is.null(colnames(data)))
-      stop("'data' must have column names.")
-    else
-      data <- as.data.frame(data)
-  }
-  
-  # NAs are not allowed in any input column
-  if (is.na(data[levels]) %>% any) {
-    stop("NAs are not allowed in level columns.")
-  }
-
-  # check variable controlling cell size
-  if (is.null(cell_size)) {
-    warning("No experimental condition is given, cell size encoded by number of members.", immediate. = TRUE)
-  } else {
-    
-    if (!(cell_size %in% colnames(data))) {
-      stop("'cell_size' is not a colname of 'data'.")
-    }
-    if (is.na(data[cell_size]) %>% any) {
-      stop("'cell_size' contains NAs which is not allowed.")
-    }
-    if ((data[cell_size] <= 0) %>% any) {
-      stop("'cell_size' contains negative values or zero, only positive target areas allowed.")
-    }
-      
-    # apply a threshold to filter out small target areas
-    if (!is.null(filter)) {
-      
-      filtered <- data[[cell_size]] %>% {. / sum(.)} > filter
-      
-      if (sum(!filtered) > 0) {
-        data <- subset(data, filtered)
-        cat(sum(!filtered), "out of", length(filtered), 
-          "cells were filtered due to target area falling below treshold.\n")
-      }
-    }
-  }
-  
-  # check levels/hierarchies and level options
-  if (!all(levels %in% colnames(data))) {
-    stop("Not all given levels are column names of 'data'.")
-  }
-  
-  # check that no level columns are factors and coerce 
-  # to character if necessary
-  if (lapply(data, is.factor) %>% unlist %>% any) {
-    data <- data %>% dplyr::mutate_if(is.factor, as.character)
-  }
-
-  if (!is.null(custom_color)) {
-    if(!(custom_color %in% colnames(data)))
-      stop("'custom_color' is not a colname of 'data'.")
-  }
-
-  if (!is.function(fun)) {
-    stop("'fun' must be a function.")
-  }
-  # sort data in case it is unsorted
-  if (sort) {
-    data <- data[do.call("order", data[levels]),]
-  } else {
-    warning("Sorting is FALSE, it is expected that the input data is sorted.", immediate. = TRUE)
-  }
+  # validate input data and parameters
+  data <- validate_input(
+    data, levels, fun,
+    sort, filter, cell_size, 
+    custom_color)
 
   # in debug mode, open a viewport to draw iterations
   # of treemap generation called from allocate()
@@ -222,7 +158,7 @@ voronoiTreemap <- function(
   
   
   # CORE FUNCTION (RECURSIVE)
-  voronoi.core <- function(level, df, parent = NULL, output = list()) {
+  voronoi_core <- function(level, df, parent = NULL, output = list()) {
     
     # set counter for number of maximum tries to not get stuck
     # in repeat loop
@@ -292,7 +228,7 @@ voronoiTreemap <- function(
         # average cell size by number of members, if no function is given
         weights <- ncells / sum(ncells)
       } else {
-        # average sector size by user defined function, e.g. sum of expression values
+        # average cell size by user defined function, e.g. sum of expression values
         # the cell size is calculated as aggregated relative fraction of total
         stopifnot(is.numeric(df[[cell_size]]))
         weights <- df %>%
@@ -380,21 +316,23 @@ voronoiTreemap <- function(
         # also add current tesselation results to output list
         res <- lapply(1:length(ncells), function(i) {
           
-          voronoi.core(
+          voronoi_core(
             level = level + 1,
             df = subset(df, get(levels[level]) %in% names(ncells)[i]),
             parent = treemap$k[[i]],
             output = {
               output[[paste0("LEVEL", level, "_", names(ncells)[i])]] <- 
-                list(names = treemap$names[[i]], 
-                     k = treemap$k[i], 
-                     s = list(x = treemap$s$x[[i]], y = treemap$s$y[[i]]),
-                     w = treemap$w[[i]], 
-                     a = treemap$a[[i]],
-                     t = treemap$t[[i]], 
-                     count = treemap$count,
-                     level = level,
-                     custom_color = {if (!is.null(custom_color)) color_value[[i]] else NA})
+                list(
+                  names = treemap$names[[i]], 
+                  k = treemap$k[i], 
+                  s = list(x = treemap$s$x[[i]], y = treemap$s$y[[i]]),
+                  w = treemap$w[[i]], 
+                  a = treemap$a[[i]],
+                  t = treemap$t[[i]], 
+                  count = treemap$count,
+                  level = level,
+                  custom_color = {if (!is.null(custom_color)) color_value[[i]] else NA}
+                )
               output
             }
           )
@@ -414,13 +352,36 @@ voronoiTreemap <- function(
   }
 
   # MAIN FUNCTION CALL
+  # ------------------
   # iterate through all levels,
   # collect results in list, remove duplicated polygons
   # and order by hierarchical level
-  tm <- voronoi.core(level = 1, df = data) %>%
+  tm <- voronoi_core(level = 1, df = data) %>%
     .[!duplicated(.)]
   tm <- tm[names(tm) %>% order]
   cat("Treemap successfully created\n")
+  
+  
+  # set S4 class and return result
+  tm <- voronoiResult(
+    cells = tm,
+    data = data,
+    call = list(
+      levels = levels, 
+      fun = fun,
+      sort = sort,
+      filter = filter,
+      cell_size = cell_size,
+      custom_color = custom_color,
+      shape = shape,
+      maxIteration = maxIteration,
+      error_tol = error_tol,
+      seed = seed,
+      positioning = positioning
+      
+    )
+  )
+  
   return(tm)
 
 }

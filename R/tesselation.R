@@ -1,4 +1,5 @@
 #' @import gpclib
+#' @importFrom tidyr %>%
 #' @importFrom sp point.in.polygon
 #' @importFrom dplyr filter
 #' @importFrom dplyr filter_all

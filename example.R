@@ -1,6 +1,6 @@
 library(SysbioTreemaps)
 
-# SIMPLE EXAMPLE
+# VORONOI TREEMAP - SIMPLE EXAMPLE
 # -------------------------------------------
 # generate data frame
 df <- data.frame(
@@ -70,7 +70,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 
 
-# ADVANCED EXAMPLE
+# VORONOI TREEMAP - ADVANCED EXAMPLE
 # -------------------------------------------
 # read test data set from Jahn et al., Cell Reports, 2018
 library(dplyr)
@@ -200,3 +200,30 @@ lapply(1:10, function(i) {
 }) %>% invisible
 dev.off()
 
+
+# SUNBURST TREEMAP - SIMPLE EXAMPLE
+# -------------------------------------------
+# generate data frame
+df <- data.frame(
+  A = rep(c("a", "b", "c"), each = 15),
+  B = sample(letters[4:12], 45, replace = TRUE),
+  C = sample(10:100, 45)
+)
+
+# generate treemap
+tm <- sunburstTreemap(
+  sort = TRUE,
+  data = df,
+  levels = c("A", "B")
+)
+
+# draw treemap
+drawTreemap(tm, 
+  label_level = NULL,
+  legend = TRUE,
+  title = "A sunburst treemap test"
+)
+
+# TODO!
+# Many more shifitng weights errors when no cell_size option is given!
+# Problem of equal cell sizes, apparently
