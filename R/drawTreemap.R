@@ -382,12 +382,24 @@ drawTreemap <- function(
     lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level %in% border_level) {
         
-        # determine border size and color from supplied options
+        # determine border size and color from supplied options;
+        # if single value is supplied for border size
         if (length(border_size) == 1) {
-          border_lwd <- border_size / tm_slot$level
+          
+          # differentiate between voronoi treemap where we want decreasing
+          # lwd of borders with decreasing level, and sunburst treemap where
+          # we want the same size
+          if (class(treemap) == "sunburstResult") {
+            border_lwd <- border_size
+          } else {
+            border_lwd <- border_size / tm_slot$level
+          }
+          
+          # or use different sizes for each level
         } else {
           border_lwd <- border_size[tm_slot$level]
         }
+        
         if (length(border_color) > 1) {
           border_col <- border_color[tm_slot$level]
         } else {
