@@ -69,7 +69,7 @@
 #' @examples
 #' library(SysbioTreemaps)
 #' 
-#' #generate data frame
+#' # generate data frame
 #' df <- data.frame(
 #'   A = rep(c("a", "b", "c"), each=15),
 #'   B = sample(letters[4:12], 45, replace = TRUE),
@@ -250,7 +250,7 @@ voronoiTreemap <- function(
         color_value <- df %>%
           dplyr::group_by(get(levels[level])) %>%
           dplyr::summarise(fun(get(custom_color))) %>% 
-          {.[[2]]}
+          {.[[2]]} %>% setNames(names(ncells))
       }
       
       # 5. generate additively weighted voronoi treemap object;
@@ -260,17 +260,19 @@ voronoiTreemap <- function(
       # and make pseudo treemap object instead
       if (length(ncells) == 1) {
 
-        treemap <- list(
-          names = names(ncells),
-          k = list(GpcPoly),
-          s = {
+        treemap <- list(list(
+          name = names(ncells),
+          poly = GpcPoly,
+          site = {
             soiltexture::TT.polygon.centroids(ParentPoly[[1]], ParentPoly[[2]]) %>%
-            list(x = .[[1]], y = .[[2]])
-          },
-          w = weights,
-          a = gpclib::area.poly(GpcPoly),
-          t = weights
-        )
+            c(.[[1]], .[[2]])},
+          weight = weights,
+          area = gpclib::area.poly(GpcPoly),
+          target = weights,
+          count = 0
+        ))
+        names(treemap) <- names(ncells)[1]
+        
       } else {
       
         treemap <- allocate(
@@ -298,14 +300,22 @@ voronoiTreemap <- function(
         }
 
         # print summary of cell tesselation
-        tessErr <- unlist(treemap$a) %>% {(. / sum(.)) - weights } %>% abs
+        tessErr <- sapply(treemap, function(tm) tm$area) %>% 
+          {(. / sum(.)) - weights } %>% abs
         cat("Level", level, "tesselation: ",
           round(mean(tessErr) * 100, 2), "% mean error, ",
           round(max(tessErr) * 100, 2), "% max error, ",
-          treemap$count, "iterations\n"
+          treemap[[1]]$count, "iterations\n"
         )
       }
-
+      
+      # add level and custom color info to treemap
+      for (i in names(ncells)) {
+        treemap[[i]]$level <- level
+        treemap[[i]]$custom_color <- {if (!is.null(custom_color)) 
+          color_value[[i]] else NA}
+      }
+      
       
       # CALL CORE FUNCTION RECURSIVELY
       if (level != length(levels)) {
@@ -319,20 +329,9 @@ voronoiTreemap <- function(
           voronoi_core(
             level = level + 1,
             df = subset(df, get(levels[level]) %in% names(ncells)[i]),
-            parent = treemap$k[[i]],
+            parent = treemap[[i]]$poly,
             output = {
-              output[[paste0("LEVEL", level, "_", names(ncells)[i])]] <- 
-                list(
-                  names = treemap$names[[i]], 
-                  k = treemap$k[i], 
-                  s = list(x = treemap$s$x[[i]], y = treemap$s$y[[i]]),
-                  w = treemap$w[[i]], 
-                  a = treemap$a[[i]],
-                  t = treemap$t[[i]], 
-                  count = treemap$count,
-                  level = level,
-                  custom_color = {if (!is.null(custom_color)) color_value[[i]] else NA}
-                )
+              output[[paste0("LEVEL", level, "_", names(ncells)[i])]] <- treemap[[i]]
               output
             }
           )
@@ -342,10 +341,8 @@ voronoiTreemap <- function(
       
       } else {
         
-        treemap$level = level
-        treemap$custom_color = {if (!is.null(custom_color)) color_value else NA}
-        output[[paste0("LEVEL", level, "_", names(ncells)[1])]] <- treemap
-        return(output)
+        names(treemap) <- paste0("LEVEL", level, "_", names(ncells))
+        return(c(output, treemap))
       
       }
     }

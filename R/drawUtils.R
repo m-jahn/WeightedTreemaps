@@ -1,10 +1,12 @@
 #' @importFrom grid gpar
 #' @importFrom grid grid.polygon
 #' @importFrom grid grid.text
+#' @importFrom grid grid.lines
 #' @importFrom scales rescale
 #' @importFrom gpclib area.poly
 #' @importFrom methods as
 #' @importFrom methods new
+#' @importFrom stats median
 
 # function to coerce and rescale different types of input to 
 # numeric range between 1 and 100 (for color coding)
@@ -100,7 +102,8 @@ draw_sector <- function(
   upper_bound,
   diameter_inner,
   diameter_sector,
-  name) {
+  name,
+  custom_color) {
   
   # compute_sector from lower and upper bounds and diameter arguments
   segment <- c(lower_bound, upper_bound) * 2 * pi
@@ -108,56 +111,133 @@ draw_sector <- function(
   z <- seq(segment[1], segment[2], by = pi/400)
   xx <- c(a * cos(z), rev((a + diameter_sector) * cos(z)))
   yy <- c(a * sin(z), rev((a + diameter_sector) * sin(z)))
-  # rescale for canvas dimensions [0, 4000] and convert into gpclib polygon
+  # rescale for canvas dimensions [0, 2000] and convert into gpclib polygon
   poly = suppressWarnings(as(list(x = (xx+1)*1000, y = (yy+1)*1000), "gpc.poly"))
   
   # return list of polygon properties
   list(
-    names = name,
-    k = poly,
-    a = gpclib::area.poly(poly),
-    level = level
+    name = name,
+    poly = poly,
+    area = gpclib::area.poly(poly),
+    lower_bound = lower_bound,
+    upper_bound = upper_bound,
+    level = level,
+    custom_color = custom_color
   )
   
 }
 
-# # draw labels for sunburst treemap
-# # here are some possible arguments
-# lwd = 1, 
-# labels = NA,
-# label.col = grey(0.5), 
-# label.thresh = NA, 
-#
-# if (draw.label) {
-#   if (a * cos(median(z)) >= 0)
-#     side = 1
-#   else
-#     side = -1
-#   sinz <- sin(median(z))
-#   cosz <- cos(median(z))
-#   
-#   #draw label arcs
-#   z <- z[-c(1, length(z))]
-#   lines(c(0.72 * cos(z[1]), 0.75 * cos(z), 0.72 * cos(tail(z, 1))),
-#         c(0.72 * sin(z[1]), 0.75 * sin(z), 0.72 * sin(tail(z, 1))),
-#         col = label.col)
-#   
-#   #draw label lines
-#   lines(
-#     x = c(0.75 * cosz, 0.75 * cosz + 0.25 * cosz * abs(sinz), 0.8 * side),
-#     y = c(0.75 * sinz, 0.75 * sinz + 0.25 * sinz * abs(sinz), 
-#       0.75 * sinz + 0.25 * sinz * abs(sinz)),
-#     col = label.col
-#   )
-#   
-#   #draw label text
-#   text(
-#     x = 0.8 * side,
-#     y = 0.75 * sinz + 0.25 * sinz * abs(sinz),
-#     labels = substring(sector.name, 1, 18),
-#     col = label.col,
-#     pos = 3 + side,
-#     offset = 0.2,
-#     cex = 0.7
-#   )
-# }
+# function to draw labels for voronoi treemap
+draw_label_voronoi <- function(
+  cells, 
+  label_level, 
+  label_size,
+  label_color
+) {
+  
+  lapply(rev(cells), function(tm_slot) {
+    
+    if (tm_slot$level %in% label_level) {
+      
+      # determine label sizes for each individual cell
+      # based on cell dimension and label character length
+      label_cex <- sqrt(tm_slot$area) / (100 * nchar(tm_slot$name)) %>% round(1)
+        
+      # additionally scale labels size and color from supplied options
+      if (length(label_size) == 1) {
+        label_cex <- label_cex * label_size
+      } else {
+        label_cex <- label_cex * label_size[which(label_level %in% tm_slot$level)]
+      }
+      
+      # determine label color
+      if (length(label_color) == 1) {
+        label_col <- label_color
+      } else {
+        label_col <- label_color[which(label_level %in% tm_slot$level)]
+      }
+      
+      # draw labels
+      grid::grid.text(
+        tm_slot$name,
+        tm_slot$site[1],
+        tm_slot$site[2],
+        default = "native",
+        gp = gpar(cex = label_cex, col = label_col)
+      )
+      
+    }
+  }) %>% invisible
+  
+}
+
+
+# function to draw labels for sunburst treemap
+draw_label_sunburst <- function(
+  cells, 
+  label_level, 
+  label_size,
+  label_color,
+  diameter
+) {
+  
+  lapply(cells, function(tm_slot) {
+    
+    if (tm_slot$level %in% label_level) {
+      
+      # determine label size and color from supplied options
+      if (length(label_size) > 1) {
+        label_cex <- label_size[1]
+        warning("'label_size' should only have length 1. Using first argument.")
+      } else {
+        label_cex <- label_size
+      }
+      
+      if (length(label_color) > 1) {
+        label_col <- label_color[1]
+        warning("'label_color' should only have length 1. Using first argument.")
+      } else {
+        label_col <- label_color
+      }
+      
+      # compute_sector from lower and upper bounds and diameter arguments
+      segment <- c(tm_slot$lower_bound, tm_slot$upper_bound) * 2 * pi
+      z <- seq(segment[1], segment[2], by = pi/400)
+      if (diameter * cos(stats::median(z)) >= 0) side = 1 else side = -1
+      sinz <- sin(median(z))
+      cosz <- cos(median(z))
+      d1 <- diameter+0.02
+      d2 <- diameter+0.05
+      d3 <- diameter+0.10
+      
+      # draw label arcs
+      z <- z[-c(1, length(z))]
+      grid::grid.lines(
+        (c(d1 * cos(z[1]), d2 * cos(z), d1 * cos(tail(z, 1)))+1)*1000,
+        (c(d1 * sin(z[1]), d2 * sin(z), d1 * sin(tail(z, 1)))+1)*1000,
+        default.units = "native",
+        gp = gpar(lwd = label_cex, col = label_col)
+      )
+
+      # draw label lines
+      grid::grid.lines(
+        x = (c(d2 * cosz, d2 * cosz + 0.15 * cosz * abs(sinz), d3 * side)+1)*1000,
+        y = (c(d2 * sinz, d2 * sinz + 0.15 * sinz * abs(sinz),
+          d2 * sinz + 0.15 * sinz * abs(sinz))+1)*1000,
+        default.units = "native",
+        gp = gpar(lwd = label_cex, col = label_col)
+      )
+      
+      #draw label text
+      grid::grid.text(
+        label = substr(tm_slot$name, 1, 18),
+        x = ((d3+0.02) * side+1)*1000,
+        y = ((d2 * sinz + 0.15 * sinz * abs(sinz))+1)*1000,
+        just = ifelse(side == 1, "left", "right"),
+        default.units = "native",
+        gp = gpar(cex = label_cex, col = label_col)
+      )
+      
+    }
+  }) %>% invisible
+}

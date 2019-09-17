@@ -220,12 +220,12 @@ trimCells <- function(cells, region) {
 
 
 # Extracting coordinates from "gpc.poly"
-
+#
 # It is possible for us to end up with a cell containing a hole
 # (because when the cell boundary is either zero area or
 # contains a zero-area indent, gpclib::intersect() can
 # produce isolated islands)
-
+#
 # To handle these cases, we just ignore the holes (which should
 # be zero-area anyway) and take the outer boundary.
 getpts <- function(x) {

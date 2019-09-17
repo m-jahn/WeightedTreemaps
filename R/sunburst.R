@@ -36,24 +36,60 @@
 #' @seealso \code{\link{drawTreemap}} for drawing the treemap.
 #' 
 #' @examples
-#' library(SysbioTreemaps)
-#' 
-#' #generate data frame
+#' # generate data frame
 #' df <- data.frame(
-#'   A = rep(c("a", "b", "c"), each=15),
-#'   B = sample(letters[4:12], 45, replace = TRUE),
-#'   C = sample(10:100, 45)
+#'   A = rep(c("a", "b", "c"), each = 15),
+#'   B = sample(letters[4:12], 45, replace = TRUE)
 #' )
 #' 
-#' # generate treemap
+#' 
+#' # generate treemap;
+#' # by default cell (sector) size is encoded by number of members per group
 #' tm <- sunburstTreemap(
 #'   data = df,
-#'   levels = c("A", "B", "C"),
-#'   cell_size = "C",
+#'   levels = c("A", "B")
 #' )
 #' 
-#' # draw treemap
-#' drawTreemap(tm)
+#' 
+#' # draw treemap with default options
+#' drawTreemap(tm,
+#'   title = "A sunburst treemap",
+#'   legend = TRUE,
+#'   border_size = 2,
+#'   layout = c(1, 3),
+#'   position = c(1, 1),
+#'   add = TRUE
+#' )
+#' 
+#' # use custom color palette
+#' drawTreemap(tm,
+#'   title = "Use custom palette",
+#'   legend = TRUE,
+#'   color_palette = rep(c("#81E06E", "#E68CFF", "#76BBF7"), c(3, 4, 5)),
+#'   border_size = 2,
+#'   label_level = 2,
+#'   label_size = 0.7,
+#'   label_color = grey(0.5),
+#'   layout = c(1, 3),
+#'   position = c(1, 2),
+#'   add = TRUE
+#' )
+#' 
+#' # color cells (sectors) based on cell size
+#' drawTreemap(tm,
+#'   title = "Coloring encoded by cell size",
+#'   color_type = "cell_size",
+#'   legend = TRUE,
+#'   color_palette = rev(heat.colors(10)),
+#'   border_size = 3,
+#'   border_color = grey(0.3),
+#'   label_level = 1,
+#'   label_size = 2,
+#'   label_color = grey(0.5),
+#'   layout = c(1, 3),
+#'   position = c(1, 3),
+#'   add = TRUE
+#' )
 #' 
 #' @importFrom tidyr %>%
 #' @importFrom dplyr mutate_if
@@ -113,17 +149,16 @@ sunburstTreemap <- function(
       
       draw_sector(
         level = level,
-        lower_bound = lower_bound[i],
-        upper_bound = upper_bound[i],
+        lower_bound = lower_bound[[i]],
+        upper_bound = upper_bound[[i]],
         diameter_inner = diameter_inner,
         diameter_sector = (diameter_outer-diameter_inner)/length(levels),
-        name = names(ncells)[i]
+        name = names(ncells)[i],
+        custom_color = ifelse(is.null(custom_color), NA, color_value[[i]])
+        
       )
       
     })
-    
-    revert_list <- function(x) do.call(Map, c(c, x))
-    sectors <- revert_list(sectors)
     
     
     # CALL CORE FUNCTION RECURSIVELY
@@ -138,29 +173,20 @@ sunburstTreemap <- function(
         sunburst_core(
           level = level + 1,
           df = subset(df, get(levels[level]) %in% names(ncells)[i]),
-          parent = c(lower_bound[i], upper_bound[i]),
+          parent = c(lower_bound[[i]], upper_bound[[i]]),
           output = {
-            output[[paste0("LEVEL", level, "_", names(ncells)[i])]] <- 
-              list(
-                names = sectors$names[i], 
-                k = sectors$k[i],
-                a = sectors$a[i],
-                level = level,
-                custom_color = {if (!is.null(custom_color)) color_value[[i]] else NA}
-              )
+            output[[paste0("LEVEL", level, "_", names(ncells)[i])]] <- sectors[[i]]
             output
           }
         )
       }) %>%
-        unlist(recursive = FALSE)
+      unlist(recursive = FALSE)
       return(res)
       
     } else {
       
-      sectors$level = level
-      sectors$custom_color = {if (!is.null(custom_color)) color_value else NA}
-      output[[paste0("LEVEL", level, "_", names(ncells)[1])]] <- sectors
-      return(output)
+      names(sectors) <- paste0("LEVEL", level, "_", names(ncells))
+      return(c(output, sectors))
       
     }
   }

@@ -90,7 +90,7 @@ to actually draw the treemap, use \code{\link{drawTreemap}}.
 \examples{
 library(SysbioTreemaps)
 
-#generate data frame
+# generate data frame
 df <- data.frame(
   A = rep(c("a", "b", "c"), each=15),
   B = sample(letters[4:12], 45, replace = TRUE),

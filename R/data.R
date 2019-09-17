@@ -29,3 +29,14 @@
 #' @source \url{https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2}
 "Jahn_CellReports_2018"
 
+#' Coordinates to draw a rounded rectangle as parent cell for treemaps
+#' 
+#' \itemize{
+#'   \item X - coordinate
+#'   \item Y - coordinate
+#' }
+#' @docType data
+#' @usage data(Jahn_CellReports_2018)
+#' @format A data frame with 50 rows and 2 variables
+"rounded_rect"
+

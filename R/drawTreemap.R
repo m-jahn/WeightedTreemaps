@@ -4,10 +4,11 @@
 #' \code{\link{sunburstTreemap}}. Many graphical parameters can be customized but some
 #' settings that determine the appearance of treemaps are already made 
 #' during treemap generation. Such parameters are primarily cell size and
-#' and initial shape of the treemap.
+#' initial shape of the treemap.
 #'
-#' @param treemap (list) A list of grid polygons and text objects that is the
-#'   output from treemap generation.
+#' @param treemap (treemapResult) Either a \code{voronoiResult} or \code{sunburstResult}
+#'   object that contains polygons and metadata as output from running 
+#'   \code{\link{voronoiTreemap}} or \code{\link{sunburstTreemap}}.
 #' @param levels (numeric) A numeric vector representing the hierarchical levels 
 #'   that are drawn. The default is to draw all levels.
 #' @param color_type (character) One of "categorical", "cell_size" or "custom_color".
@@ -16,12 +17,14 @@
 #'   are colored according to their relative area. For "custom_color", a color 
 #'   index is used that was specified by \code{custom_color} during
 #'   treemap generation. Use \code{NULL} to omit drawing colors. 
-#' @param color_level (numeric) A numeric of length 1 representing the hierarchical level 
+#' @param color_level (numeric) A numeric vector representing the hierarchical level 
 #'   that should be used for cell coloring. Must be one of \code{levels}.
+#'   Default is to use the lowest level cells for Voronoi treemaps and all levels
+#'   for sunburst treemaps.
 #' @param color_palette (character) A character vector of colors used to fill cells.
 #'   The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}
 #' @param border_level (numeric) A numeric vector representing the hierarchical level that should be
-#'   used for drawing cell borders, or NULL to omit drawing borders, The default is the
+#'   used for drawing cell borders, or NULL to omit drawing borders, The default is
 #'   that all borders are drawn.
 #' @param border_size (numeric) A single number indicating initial line width of the highest level 
 #'   cells. Is reduced each level, default is 6 pts. Alternatively a vector of 
@@ -33,8 +36,9 @@
 #'   used for drawing cell labels, or NULL to omit drawing labels. The default is the
 #'   deepest level (every cell has a label).
 #' @param label_size (numeric) A single number indicating relative size of each label 
-#'   in relation to its parent cell. Alternatively a vector of 
-#'   \code{length(label_level)}, then each label is drawn with the specified size.
+#'   in relation to its parent cell. Alternatively a numeric vector of 
+#'   \code{length(label_level)} that specifies relative size of labels for each level 
+#'   individually.
 #' @param label_color (character) A single character indicating color for cell labels.
 #'   Alternatively a vector of \code{length(label_level)}, then each label 
 #'   is drawn with the specified color.
@@ -62,7 +66,7 @@
 #' 
 #' @return Creates a grid viewport and draws the treemap.
 #' 
-#' @seealso \code{\link{voronoiTreemap}} for generating the treemap (\code{list}) that is
+#' @seealso \code{\link{voronoiTreemap}} for generating the treemap that is
 #'   the input for the drawing function
 #'
 #' @examples
@@ -70,12 +74,12 @@
 #' 
 #' #generate data frame
 #' df <- data.frame(
-#'   A = rep(c("a", "b", "c"), each = 15),
+#'   A = rep(c("a", "b", "c"), each=15),
 #'   B = sample(letters[4:12], 45, replace = TRUE),
 #'   C = sample(10:100, 45)
 #' )
 #' 
-#' # generate treemap
+#' # generate voronoi treemap
 #' tm <- voronoiTreemap(
 #'   data = df,
 #'   levels = c("A", "B", "C"),
@@ -86,23 +90,25 @@
 #' # draw treemap
 #' drawTreemap(tm)
 #' 
-#' # draw different variants of the same treemap on one page using
-#' # the 'layout' and 'position' arguments (indicating rows and columns)
-#' drawTreemap(tm, title = "treemap 1", 
-#'   color_type = "categorical", color_level = 1, 
-#'   layout = c(1,3), position = c(1, 1))
+#' # -------------
 #' 
-#' drawTreemap(tm, title = "treemap 2",
-#'   color_type = "categorical", color_level = 2, border_size = 3,
-#'   add = TRUE, layout = c(1,3), position = c(1, 2))
+#' # generate sunburst treemap
+#' tm <- sunburstTreemap(
+#'   data = df,
+#'   levels = c("A", "B")
+#' )
 #' 
-#' drawTreemap(tm, title = "treemap 3",
-#'   color_type = "cell_size", color_level = 3,
-#'   color_palette = heat.colors(10),
-#'   border_color = grey(0.4), label_color = grey(0.4),
-#'   add = TRUE, layout = c(1,3), position = c(1, 3),
-#'   title_color = "black")
+#' # draw treemap with default options
+#' drawTreemap(tm,
+#'   title = "A sunburst treemap",
+#'   legend = TRUE,
+#'   border_size = 2,
+#'   layout = c(1, 3),
+#'   position = c(1, 1),
+#'   add = TRUE
+#' )
 #' 
+#'  
 #' @importFrom tidyr %>%
 #' @importFrom grid grid.newpage
 #' @importFrom grid grid.text
@@ -130,16 +136,16 @@
 # from grid package
 drawTreemap <- function(
   treemap, 
-  levels = lapply(treemap@cells, function(x) x$level) %>% unlist %>% unique, 
+  levels = 1:length(treemap@call$levels), 
   color_type = "categorical",
-  color_level = min(levels),
+  color_level = NULL,
   color_palette = NULL,
   border_level = levels,
   border_size = 6,
   border_color = grey(0.9),
   label_level = max(levels),
   label_size = 1,
-  label_color = grey(0.9),
+  label_color = grey(0.7),
   title = NULL,
   title_size = 1,
   title_color = grey(0.5),
@@ -153,7 +159,10 @@ drawTreemap <- function(
 {
   
   # ERROR HANDLING
-  #
+  
+  # check treemap object
+  stopifnot(class(treemap) %in% c("sunburstResult", "voronoiResult"))
+  
   # check layout options
   if (width > 0.9 | height > 0.9) {
     stop("'width' or 'height' should not exceed 0.9.")
@@ -167,11 +176,19 @@ drawTreemap <- function(
     stop("Not all indicated 'levels' are contained in this treemap.")
   }
   
+  # determine color levels to draw
   if (!is.null(color_level)) {
     if (!all(color_level %in% levels)) {
       stop("The values in 'color_level' must be contained in 'levels'")
     }
+  } else {
+    if (class(treemap) == "sunburstResult") {
+      color_level = levels
+    } else {
+      color_level = min(levels)
+    }
   }
+  
   if (!is.null(border_level)) {
     if (!all(border_level %in% levels)) {
       stop("The values in 'border_level' must be contained in 'levels'")
@@ -186,19 +203,25 @@ drawTreemap <- function(
   # check graphical parameter input
   if (!is.null(color_palette)) {
     if (!is.character(color_palette)) {
-      stop("'color_palette' must be a character vector that can be interpreted as colors")
+      stop("'color_palette' must be a character that can be interpreted as colors")
     }
   }
   
   if (!is.null(border_color)) {
     if (!is.character(border_color)) {
       stop("'border_color' must be a character that can be interpreted as colors")
+    } else {
+      if (!length(border_color) %in% c(1, length(border_level)))
+        stop("'border_color' must be length = 1 or length(border_level)")
     }
   }
   
   if (!is.null(label_color)) {
     if (!is.character(label_color)) {
-      stop("'border_color' must be a character that can be interpreted as colors")
+      stop("'label_color' must be a character that can be interpreted as colors")
+    } else {
+      if (!length(label_color) %in% c(1, length(label_level)))
+        stop("'label_color' must be length=1 or length(label_level)")
     }
   }
   
@@ -219,10 +242,11 @@ drawTreemap <- function(
       stop("'label_level' must be numeric vector indicating the level(s) for which labels should be drawn.")
     } else if (is.numeric(label_level)) {
       if (!all(label_level %in% levels)) {
-        stop("'label_level' indicated levels that are not contained in this treemap")
+        stop("levels in 'label_level' must be contained in this treemap")
       }
     }
   }
+  
   
   # new grid page is the default
   if (!add) {
@@ -280,24 +304,23 @@ drawTreemap <- function(
   # CASE 1: coloring by hierarchical level (categorical)
   if (color_type == "categorical") {
     
-    # generate a color code depending on number of categories for selected level
+    # generate color code depending on number of categories for selected level;
     # used for drawing legend
     color_list <- lapply(treemap@cells, function(tm_slot) {
-      if (tm_slot$level == color_level) {
-        tm_slot$names
+      if (tm_slot$level %in% color_level) {
+        tm_slot$name
       }
-    }) %>% 
+    }) %>%
       unlist %>% unique %>% sort %>%
       setNames(convertInput(.), .)
     
     # go through list of treemap polygons and draw only the ones
     # supposed to be colored (= the correct color_level)
     lapply(treemap@cells, function(tm_slot) {
-      if (tm_slot$level == color_level) {
-        fill = pal[color_list[tm_slot$names]]
-        mapply(drawPoly, tm_slot$k, tm_slot$names, fill = fill,
-          SIMPLIFY = FALSE, MoreArgs = list(lwd = NA, col = NA)
-        )
+      if (tm_slot$level %in% color_level) {
+        fill = pal[color_list[tm_slot$name]]
+        drawPoly(tm_slot$poly, tm_slot$name, 
+          fill = fill, lwd = NA, col = NA)
       }
     }) %>% invisible
     
@@ -308,7 +331,7 @@ drawTreemap <- function(
     
     # determine total area
     total_area <- lapply(treemap@cells, function(tm_slot) {
-      if (tm_slot$level == color_level) tm_slot$a 
+      if (tm_slot$level %in% color_level) tm_slot$area
     }) %>% unlist %>% sum
     
     # either the range and color code is determined from treemap, 
@@ -316,7 +339,7 @@ drawTreemap <- function(
     if (is.null(custom_range)) {
       
       range_area <- lapply(treemap@cells, function(tm_slot) {
-        if (tm_slot$level == color_level) tm_slot$a 
+        if (tm_slot$level %in% color_level) tm_slot$area
       }) %>% unlist %>% range
       
     } else {
@@ -330,15 +353,14 @@ drawTreemap <- function(
     
     # draw only polygons for the correct level
     lapply(treemap@cells, function(tm_slot) {
-      if (tm_slot$level == color_level) {
-        fill = tm_slot$a %>%
+      if (tm_slot$level %in% color_level) {
+        fill = tm_slot$area %>%
           scales::rescale(
             from = c(range_area[1], range_area[2]), 
             to = c(1, 100)
           ) %>% pal[.]
-        mapply(drawPoly, tm_slot$k, tm_slot$names, fill = fill,
-          SIMPLIFY = FALSE, MoreArgs = list(lwd = NA, col = NA)
-        )
+        drawPoly(tm_slot$poly, tm_slot$name, 
+          fill = fill, lwd = NA, col = NA)
       }
     }) %>% invisible
     
@@ -350,7 +372,7 @@ drawTreemap <- function(
     # determine range of possible custom_color values
     if (is.null(custom_range)) {
       custom_range <- lapply(treemap@cells, function(tm_slot) {
-        if (tm_slot$level == color_level) tm_slot$custom_color
+        if (tm_slot$level %in% color_level) tm_slot$custom_color
       }) %>% unlist %>% range
     }
     
@@ -361,14 +383,13 @@ drawTreemap <- function(
     
     # draw only polygons for the correct level
     lapply(treemap@cells, function(tm_slot) {
-      if (tm_slot$level == color_level) {
+      if (tm_slot$level %in% color_level) {
         stopifnot(is.numeric(tm_slot$custom_color))
         fill = tm_slot$custom_color %>%
           convertInput(., from = custom_range, to = c(1, 100)) %>%
           pal[.]
-        mapply(drawPoly, tm_slot$k, tm_slot$names, fill = fill,
-          SIMPLIFY = FALSE, MoreArgs = list(lwd = NA, col = NA)
-        )
+        drawPoly(tm_slot$poly, tm_slot$name, 
+          fill = fill, lwd = NA, col = NA)
       }
     }) %>% invisible
     
@@ -406,13 +427,9 @@ drawTreemap <- function(
           border_col <- border_color
         }
         
-        mapply(drawPoly, tm_slot$k, tm_slot$names, fill = NA,
-          SIMPLIFY=FALSE,
-          MoreArgs = list(
-            lwd = border_lwd, 
-            col = border_col
-          )
-        )
+        drawPoly(tm_slot$poly, tm_slot$name, 
+          fill = NA, lwd = border_lwd, col = border_col)
+
       }
     }) %>% invisible
     
@@ -420,37 +437,31 @@ drawTreemap <- function(
   
   
   # DRAWING LABELS
-  if (!is.null(label_level) & !is.null(label_size) & !is.null(label_color)) {
+  if (
+    !is.null(label_level) & 
+    !is.null(label_size) & 
+    !is.null(label_color)
+  ) {
     
-    lapply(treemap@cells, function(tm_slot) {
-    
-      if (tm_slot$level %in% label_level) {
-        
-        # determine label size and color from supplied options
-        if (length(label_size) == 1) {
-          # function to determine label sizes for each individual cell
-          # based on cell dimension and label character length
-          label_cex <- sqrt(unlist(tm_slot$a)) * label_size / (100 * nchar(tm_slot$names)) %>%
-            round(1)
-        } else {
-          label_cex <- label_size[tm_slot$level]
-        }
-        if (length(label_color) == 1) {
-          label_col <- label_color
-        } else {
-          label_col <- label_color[tm_slot$level]
-        }
-        
-        grid::grid.text(
-          tm_slot$names,
-          tm_slot$s$x,
-          tm_slot$s$y,
-          default = "native",
-          gp = gpar(cex = label_cex, col = label_col)
+    # two possible options: labels for voronoi treemaps
+    # and labels for sunburst treemaps
+    if (class(treemap) == "sunburstResult") {
+      
+      if (length(label_level) > 1) {
+        stop("'label_level' should only have length 1 (labels for one level only)")
+      } else {
+        draw_label_sunburst(
+          treemap@cells, label_level, label_size, label_color,
+          treemap@call$diameter_outer
         )
-        
       }
-    }) %>% invisible
+      
+    } else {
+      draw_label_voronoi(
+        treemap@cells, label_level, label_size, label_color
+      )
+    }
+  
   }
   
     

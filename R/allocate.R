@@ -1,4 +1,3 @@
-#' @importFrom soiltexture TT.polygon.centroids
 
 cellError <- function(a, target) {
   normA <- a / sum(a)
@@ -79,8 +78,7 @@ shiftSites <- function(s, k) {
     # Handle empty polygons
     if (length(poly@pts)) {
       pts <- getpts(poly)
-      soiltexture::TT.polygon.centroids(pts$x,
-                                        pts$y)
+      soiltexture::TT.polygon.centroids(pts$x, pts$y)
     } else {
       c(x = x, y = y)
     }
@@ -140,7 +138,7 @@ allocate <- function(
     if (is.null(k)) {
       return(NULL)
     }
-    areas <- lapply(k, area.poly)
+    areas <- lapply(k, gpclib::area.poly)
     
     # if debug=TRUE, every iteration is drawn to the viewport
     # this can be very time and resource consuming and should be used 
@@ -176,12 +174,20 @@ allocate <- function(
       error_tol = error_tol,
       prevError = prevError)
     
+    # if stop condition is fulfilled, return result in form of
+    # list of polygons and metadata
     if (count == maxIteration || stop_cond$stopping) {
-      return(list(
-        names = names, k = k, s = s,
-        w = w, a = unlist(areas), t = target,
-        count = count
-      ))
+      
+      res <- lapply(1:length(names), function(i) {
+        list(
+          name = names[i], poly = k[[i]],
+          site = c(s$x[[i]], s$y[[i]]), 
+          weight = w[i], area = unlist(areas)[i], 
+          target = target[i],
+          count = count)
+      }) %>% setNames(names)
+      return(res)
+    
     } else {
       
       w <- adjustWeights(w, unlist(areas), target)

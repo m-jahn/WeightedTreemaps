@@ -72,7 +72,22 @@ IntegerVector get_boundary_pos(NumericVector x, NumericVector y){
   return hit;
 }
 
-// roxygen export tag
+// roxygen tags
+//' cropped_voronoi
+//' 
+//' Tesselates a plane using a set of XY coordinates
+//' 
+//' @param sites The only input parameter for the function.
+//'   A set of XY coordinates that are used for tesselation
+//'   
+//' @return A list of cell coordinates; one cell for each
+//'   set of input coordinates.
+//'   
+//' @details The function is only intended for
+//'   internal use. However, one can also use it directly for 
+//'   test purposes.
+//'   
+//' 
 //' @export cropped_voronoi
 // [[Rcpp::export]]
 SEXP cropped_voronoi(NumericMatrix sites)
@@ -90,7 +105,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
   }
   if (!ag.is_valid()) {
       ag.is_valid(true); // verbose
-      Rcout << "Invalid apollonius graph found" << std::endl;
+      Rcpp::Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
   }
 
@@ -109,7 +124,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
   for (Apollonius_graph::Vertex_handle h : handles)
   {
     if (h == NULL || !h->is_valid()) {
-      Rcout << "Invalid apollonius graph found" << std::endl;
+      Rcpp::Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
     }
     Apollonius_graph::Edge_circulator ec = ag.incident_edges(h), done(ec);
@@ -133,7 +148,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
     
     // stop and return NULL if polygon is empty
     if (xs.size() == 0) {
-      Rcout << "Invalid apollonius graph found" << std::endl;
+      Rcpp::Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
     }
     

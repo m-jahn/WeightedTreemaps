@@ -53,24 +53,60 @@ This function returns a treemap object instead of a plot. In order
 to actually draw the treemap, use \code{\link{drawTreemap}}.
 }
 \examples{
-library(SysbioTreemaps)
-
-#generate data frame
+# generate data frame
 df <- data.frame(
-  A = rep(c("a", "b", "c"), each=15),
-  B = sample(letters[4:12], 45, replace = TRUE),
-  C = sample(10:100, 45)
+  A = rep(c("a", "b", "c"), each = 15),
+  B = sample(letters[4:12], 45, replace = TRUE)
 )
 
-# generate treemap
+
+# generate treemap;
+# by default cell (sector) size is encoded by number of members per group
 tm <- sunburstTreemap(
   data = df,
-  levels = c("A", "B", "C"),
-  cell_size = "C",
+  levels = c("A", "B")
 )
 
-# draw treemap
-drawTreemap(tm)
+
+# draw treemap with default options
+drawTreemap(tm,
+  title = "A sunburst treemap",
+  legend = TRUE,
+  border_size = 2,
+  layout = c(1, 3),
+  position = c(1, 1),
+  add = TRUE
+)
+
+# use custom color palette
+drawTreemap(tm,
+  title = "Use custom palette",
+  legend = TRUE,
+  color_palette = rep(c("#81E06E", "#E68CFF", "#76BBF7"), c(3, 4, 5)),
+  border_size = 2,
+  label_level = 2,
+  label_size = 0.7,
+  label_color = grey(0.5),
+  layout = c(1, 3),
+  position = c(1, 2),
+  add = TRUE
+)
+
+# color cells (sectors) based on cell size
+drawTreemap(tm,
+  title = "Coloring encoded by cell size",
+  color_type = "cell_size",
+  legend = TRUE,
+  color_palette = rev(heat.colors(10)),
+  border_size = 3,
+  border_color = grey(0.3),
+  label_level = 1,
+  label_size = 2,
+  label_color = grey(0.5),
+  layout = c(1, 3),
+  position = c(1, 3),
+  add = TRUE
+)
 
 }
 \seealso{

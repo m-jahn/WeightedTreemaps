@@ -4,18 +4,19 @@
 \alias{drawTreemap}
 \title{drawTreemap}
 \usage{
-drawTreemap(treemap, levels = lapply(treemap@cells, function(x) x$level)
-  \%>\% unlist \%>\% unique, color_type = "categorical",
-  color_level = min(levels), color_palette = NULL,
-  border_level = levels, border_size = 6, border_color = grey(0.9),
-  label_level = max(levels), label_size = 1, label_color = grey(0.9),
-  title = NULL, title_size = 1, title_color = grey(0.5),
-  legend = FALSE, custom_range = NULL, width = 0.9, height = 0.9,
-  layout = c(1, 1), position = c(1, 1), add = FALSE)
+drawTreemap(treemap, levels = 1:length(treemap@call$levels),
+  color_type = "categorical", color_level = NULL,
+  color_palette = NULL, border_level = levels, border_size = 6,
+  border_color = grey(0.9), label_level = max(levels),
+  label_size = 1, label_color = grey(0.7), title = NULL,
+  title_size = 1, title_color = grey(0.5), legend = FALSE,
+  custom_range = NULL, width = 0.9, height = 0.9, layout = c(1, 1),
+  position = c(1, 1), add = FALSE)
 }
 \arguments{
-\item{treemap}{(list) A list of grid polygons and text objects that is the
-output from treemap generation.}
+\item{treemap}{(treemapResult) Either a \code{voronoiResult} or \code{sunburstResult}
+object that contains polygons and metadata as output from running 
+\code{\link{voronoiTreemap}} or \code{\link{sunburstTreemap}}.}
 
 \item{levels}{(numeric) A numeric vector representing the hierarchical levels 
 that are drawn. The default is to draw all levels.}
@@ -27,14 +28,16 @@ are colored according to their relative area. For "custom_color", a color
 index is used that was specified by \code{custom_color} during
 treemap generation. Use \code{NULL} to omit drawing colors.}
 
-\item{color_level}{(numeric) A numeric of length 1 representing the hierarchical level 
-that should be used for cell coloring. Must be one of \code{levels}.}
+\item{color_level}{(numeric) A numeric vector representing the hierarchical level 
+that should be used for cell coloring. Must be one of \code{levels}.
+Default is to use the lowest level cells for Voronoi treemaps and all levels
+for sunburst treemaps.}
 
 \item{color_palette}{(character) A character vector of colors used to fill cells.
 The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}}
 
 \item{border_level}{(numeric) A numeric vector representing the hierarchical level that should be
-used for drawing cell borders, or NULL to omit drawing borders, The default is the
+used for drawing cell borders, or NULL to omit drawing borders, The default is
 that all borders are drawn.}
 
 \item{border_size}{(numeric) A single number indicating initial line width of the highest level 
@@ -50,8 +53,9 @@ used for drawing cell labels, or NULL to omit drawing labels. The default is the
 deepest level (every cell has a label).}
 
 \item{label_size}{(numeric) A single number indicating relative size of each label 
-in relation to its parent cell. Alternatively a vector of 
-\code{length(label_level)}, then each label is drawn with the specified size.}
+in relation to its parent cell. Alternatively a numeric vector of 
+\code{length(label_level)} that specifies relative size of labels for each level 
+individually.}
 
 \item{label_color}{(character) A single character indicating color for cell labels.
 Alternatively a vector of \code{length(label_level)}, then each label 
@@ -96,19 +100,19 @@ Draws the treemap object that was obtained by running \code{\link{voronoiTreemap
 \code{\link{sunburstTreemap}}. Many graphical parameters can be customized but some
 settings that determine the appearance of treemaps are already made 
 during treemap generation. Such parameters are primarily cell size and
-and initial shape of the treemap.
+initial shape of the treemap.
 }
 \examples{
 library(SysbioTreemaps)
 
 #generate data frame
 df <- data.frame(
-  A = rep(c("a", "b", "c"), each = 15),
+  A = rep(c("a", "b", "c"), each=15),
   B = sample(letters[4:12], 45, replace = TRUE),
   C = sample(10:100, 45)
 )
 
-# generate treemap
+# generate voronoi treemap
 tm <- voronoiTreemap(
   data = df,
   levels = c("A", "B", "C"),
@@ -119,25 +123,27 @@ tm <- voronoiTreemap(
 # draw treemap
 drawTreemap(tm)
 
-# draw different variants of the same treemap on one page using
-# the 'layout' and 'position' arguments (indicating rows and columns)
-drawTreemap(tm, title = "treemap 1", 
-  color_type = "categorical", color_level = 1, 
-  layout = c(1,3), position = c(1, 1))
+# -------------
 
-drawTreemap(tm, title = "treemap 2",
-  color_type = "categorical", color_level = 2, border_size = 3,
-  add = TRUE, layout = c(1,3), position = c(1, 2))
+# generate sunburst treemap
+tm <- sunburstTreemap(
+  data = df,
+  levels = c("A", "B")
+)
 
-drawTreemap(tm, title = "treemap 3",
-  color_type = "cell_size", color_level = 3,
-  color_palette = heat.colors(10),
-  border_color = grey(0.4), label_color = grey(0.4),
-  add = TRUE, layout = c(1,3), position = c(1, 3),
-  title_color = "black")
+# draw treemap with default options
+drawTreemap(tm,
+  title = "A sunburst treemap",
+  legend = TRUE,
+  border_size = 2,
+  layout = c(1, 3),
+  position = c(1, 1),
+  add = TRUE
+)
 
+ 
 }
 \seealso{
-\code{\link{voronoiTreemap}} for generating the treemap (\code{list}) that is
+\code{\link{voronoiTreemap}} for generating the treemap that is
   the input for the drawing function
 }

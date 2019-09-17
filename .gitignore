@@ -5,7 +5,6 @@ inst/doc
 .RData
 .Ruserdata
 .vscode
-build_packages_howto.Rmd
 SysbioTreemaps.Rproj
 tm.Rdata
 test.R
