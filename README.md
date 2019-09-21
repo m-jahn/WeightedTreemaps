@@ -7,7 +7,7 @@ Michael Jahn, David Leslie
 
 Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from hierarchical data.
 
-<img src="png/unnamed-chunk-2-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-2-1.png" width="50%" style="display: block; margin: auto;" />
 
 Description
 -----------
@@ -84,7 +84,7 @@ Draw the treemap.
 drawTreemap(tm)
 ```
 
-<img src="png/unnamed-chunk-7-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-7-1.png" width="50%" style="display: block; margin: auto;" />
 
 The `voronoiTreemap()` and `drawTreemap()` functions are separated in order to allow drawing of the same treemap object in different ways. Computation of treemaps with thousands of cells can be very time and resource consuming (around 5-10 minutes for a 2000-cell treemap on a regular desktop computer). With the `drawTreemap()` function, we can not only plot the same treemap in different ways but also combine several treemaps on one page using the `layout` and `position` arguments.
 
@@ -105,7 +105,7 @@ drawTreemap(tm, title = "treemap 3",
   title_color = "black")
 ```
 
-<img src="png/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Positioning of cells
 
@@ -145,7 +145,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="png/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Adcanced example for Voronoi treemaps
 
@@ -234,7 +234,7 @@ drawTreemap(
 )
 ```
 
-<img src="png/unnamed-chunk-14-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-14-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Generate treemaps with parallel computing
 
@@ -302,7 +302,7 @@ lapply(1:10, function(i) {
 }) %>% invisible
 ```
 
-<img src="png/unnamed-chunk-17-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-17-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Sunburst treemaps
 
@@ -380,7 +380,7 @@ drawTreemap(tm,
 )
 ```
 
-<img src="png/unnamed-chunk-20-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-20-1.png" width="100%" style="display: block; margin: auto;" />
 
 References and other treemap packages
 -------------------------------------
