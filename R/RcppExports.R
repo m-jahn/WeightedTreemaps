@@ -5,8 +5,9 @@
 #' 
 #' Tesselates a plane using a set of XY coordinates
 #' 
-#' @param sites The only input parameter for the function.
-#'   A set of XY coordinates that are used for tesselation
+#' @param sites (numeric matrix) The only input parameter for the function.
+#'   A matrix with 3 columns: X and Y coordinates, as well as weights 
+#'   that are used for tesselation.
 #'   
 #' @return A list of cell coordinates; one cell for each
 #'   set of input coordinates.
@@ -15,7 +16,6 @@
 #'   internal use. However, one can also use it directly for 
 #'   test purposes.
 #'   
-#' 
 #' @export cropped_voronoi
 cropped_voronoi <- function(sites) {
     .Call(`_SysbioTreemaps_cropped_voronoi`, sites)

@@ -23,6 +23,7 @@
 #'   \item Pathway.abbr - abbreviated Pathway
 #'   \item Gene.names - trivial names of genes, if available
 #' }
+#' 
 #' @docType data
 #' @usage data(Jahn_CellReports_2018)
 #' @format A data frame with 19790 rows and 12 variables
@@ -31,12 +32,15 @@
 
 #' Coordinates to draw a rounded rectangle as parent cell for treemaps
 #' 
+#' Set of coordinates for a rounded rectangle as parent cell for treemaps
+#' 
 #' \itemize{
 #'   \item X - coordinate
 #'   \item Y - coordinate
 #' }
+#' 
 #' @docType data
-#' @usage data(Jahn_CellReports_2018)
+#' @usage data(rounded_rect)
 #' @format A data frame with 50 rows and 2 variables
 "rounded_rect"
 

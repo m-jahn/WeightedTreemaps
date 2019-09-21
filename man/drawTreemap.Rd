@@ -8,7 +8,7 @@ drawTreemap(treemap, levels = 1:length(treemap@call$levels),
   color_type = "categorical", color_level = NULL,
   color_palette = NULL, border_level = levels, border_size = 6,
   border_color = grey(0.9), label_level = max(levels),
-  label_size = 1, label_color = grey(0.7), title = NULL,
+  label_size = 1, label_color = grey(0.9), title = NULL,
   title_size = 1, title_color = grey(0.5), legend = FALSE,
   custom_range = NULL, width = 0.9, height = 0.9, layout = c(1, 1),
   position = c(1, 1), add = FALSE)

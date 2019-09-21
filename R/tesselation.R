@@ -1,6 +1,6 @@
 #' @import gpclib
-#' @importFrom tidyr %>%
 #' @importFrom sp point.in.polygon
+#' @importFrom dplyr %>%
 #' @importFrom dplyr filter
 #' @importFrom dplyr filter_all
 #' @importFrom dplyr any_vars

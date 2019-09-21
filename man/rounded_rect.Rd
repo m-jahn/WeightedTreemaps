@@ -6,9 +6,12 @@
 \title{Coordinates to draw a rounded rectangle as parent cell for treemaps}
 \format{A data frame with 50 rows and 2 variables}
 \usage{
-data(Jahn_CellReports_2018)
+data(rounded_rect)
 }
 \description{
+Set of coordinates for a rounded rectangle as parent cell for treemaps
+}
+\details{
 \itemize{
   \item X - coordinate
   \item Y - coordinate

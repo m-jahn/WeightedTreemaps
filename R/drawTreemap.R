@@ -109,7 +109,7 @@
 #' )
 #' 
 #'  
-#' @importFrom tidyr %>%
+#' @importFrom dplyr %>%
 #' @importFrom grid grid.newpage
 #' @importFrom grid grid.text
 #' @importFrom grid grid.polygon
@@ -145,7 +145,7 @@ drawTreemap <- function(
   border_color = grey(0.9),
   label_level = max(levels),
   label_size = 1,
-  label_color = grey(0.7),
+  label_color = grey(0.9),
   title = NULL,
   title_size = 1,
   title_color = grey(0.5),

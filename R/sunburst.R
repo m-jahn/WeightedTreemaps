@@ -91,7 +91,7 @@
 #'   add = TRUE
 #' )
 #' 
-#' @importFrom tidyr %>%
+#' @importFrom dplyr %>%
 #' @importFrom dplyr mutate_if
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarise

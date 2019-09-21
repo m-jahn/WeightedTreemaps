@@ -77,8 +77,9 @@ IntegerVector get_boundary_pos(NumericVector x, NumericVector y){
 //' 
 //' Tesselates a plane using a set of XY coordinates
 //' 
-//' @param sites The only input parameter for the function.
-//'   A set of XY coordinates that are used for tesselation
+//' @param sites (numeric matrix) The only input parameter for the function.
+//'   A matrix with 3 columns: X and Y coordinates, as well as weights 
+//'   that are used for tesselation.
 //'   
 //' @return A list of cell coordinates; one cell for each
 //'   set of input coordinates.
@@ -87,7 +88,6 @@ IntegerVector get_boundary_pos(NumericVector x, NumericVector y){
 //'   internal use. However, one can also use it directly for 
 //'   test purposes.
 //'   
-//' 
 //' @export cropped_voronoi
 // [[Rcpp::export]]
 SEXP cropped_voronoi(NumericMatrix sites)

@@ -1,4 +1,5 @@
 #' @importFrom dplyr mutate_if
+#' @importFrom dplyr %>%
 #
 # ERROR HANDLING AND DATA VALIDATION
 # ---------------------------------

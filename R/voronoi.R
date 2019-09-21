@@ -105,17 +105,16 @@
 #'   title_color = "black")
 #' 
 #' @import gpclib
-#' @importFrom tidyr %>%
 #' @importFrom grid grid.newpage
 #' @importFrom grid pushViewport
 #' @importFrom grid viewport
+#' @importFrom dplyr %>%
 #' @importFrom dplyr mutate_if
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarise
 #' @importFrom scales rescale
 #' @importFrom sp Polygon
 #' @importFrom sp spsample
-#' @importFrom soiltexture TT.polygon.centroids
 #' @importFrom Rcpp sourceCpp
 #' 
 #' @useDynLib SysbioTreemaps, .registration = TRUE
@@ -263,9 +262,7 @@ voronoiTreemap <- function(
         treemap <- list(list(
           name = names(ncells),
           poly = GpcPoly,
-          site = {
-            soiltexture::TT.polygon.centroids(ParentPoly[[1]], ParentPoly[[2]]) %>%
-            c(.[[1]], .[[2]])},
+          site = poly_centroid(ParentPoly[[1]], ParentPoly[[2]]),
           weight = weights,
           area = gpclib::area.poly(GpcPoly),
           target = weights,

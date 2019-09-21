@@ -6,8 +6,6 @@ inst/doc
 .Ruserdata
 .vscode
 SysbioTreemaps.Rproj
-tm.Rdata
-test.R
 *.o
 *.so
 *.dll

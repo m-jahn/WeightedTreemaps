@@ -1,4 +1,6 @@
-
+#' @importFrom gpclib area.poly
+#' @importFrom dplyr %>%
+#' 
 cellError <- function(a, target) {
   normA <- a / sum(a)
   diff <- abs(normA - target)
@@ -78,7 +80,7 @@ shiftSites <- function(s, k) {
     # Handle empty polygons
     if (length(poly@pts)) {
       pts <- getpts(poly)
-      soiltexture::TT.polygon.centroids(pts$x, pts$y)
+      poly_centroid(pts$x, pts$y)
     } else {
       c(x = x, y = y)
     }

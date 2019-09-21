@@ -7,8 +7,9 @@
 cropped_voronoi(sites)
 }
 \arguments{
-\item{sites}{The only input parameter for the function.
-A set of XY coordinates that are used for tesselation}
+\item{sites}{(numeric matrix) The only input parameter for the function.
+A matrix with 3 columns: X and Y coordinates, as well as weights 
+that are used for tesselation.}
 }
 \value{
 A list of cell coordinates; one cell for each
