@@ -210,6 +210,7 @@ voronoiTreemap <- function(
       # 2. generate starting coordinates within the boundary polygon
       # using sp package's spsample function.
       ncells <- df[[levels[level]]] %>% table
+      ncells <- setNames(as.numeric(ncells), names(ncells))
       
       if (length(ncells) != 1) {
         sampledPoints <- samplePoints(

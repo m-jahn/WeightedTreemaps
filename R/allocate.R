@@ -61,7 +61,7 @@ breaking <- function(
 # difference to original implementation: adjustment of maximal 
 # step change of weights to prevent crashing of algorithm
 adjustWeights <- function(w, a, target) {
-
+  
   normA <- a / sum(a)
   # avoid extreme scaling values -> squareroot function
   # to buffer strong difference between computed area and target
@@ -73,8 +73,7 @@ adjustWeights <- function(w, a, target) {
   w
 }
 
-# Use centroid finding code in 'soiltexture' for now
-# May be able to find a better source later (?)
+
 shiftSites <- function(s, k) {
   newSites <- mapply(function(poly, x, y) {
     # Handle empty polygons
@@ -104,10 +103,6 @@ shiftWeights <- function(s, w) {
         # circles even when weights are negative
         f = sqrt((s$x[i] - s$x[j]) ^ 2 +
                    (s$y[i] - s$y[j]) ^ 2) / (abs(w[i]) + abs(w[j]))
-        if (is.na(f) | is.infinite(f)) {
-          cat("Shifting weights impossible due to factor being NA\n")
-          return(NULL)
-        }
         if (f > 0 && f < 1) {
           w[i] <- w[i] * f
           w[j] <- w[j] * f
@@ -131,6 +126,12 @@ allocate <- function(
   prevError <- 1
   
   repeat {
+    
+    # if all weights are identical the CGAL algorithm often fails
+    # in this case we introduce a bit of random variation
+    if (length(unique(w)) == 1) {
+      w <- w * rnorm(length(w), mean = 1, sd = 0.01)
+    }
     
     # call to awv function, the additively weighted voronoi tesselation,
     # wrapped within a trycatch statement to catch errors and start over
@@ -195,9 +196,6 @@ allocate <- function(
       w <- adjustWeights(w, unlist(areas), target)
       s <- shiftSites(s, k)
       w <- shiftWeights(s, w)
-      if (is.null(w)) {
-        return(NULL)
-      }
     }
     count <- count + 1
     prevError = stop_cond$prevError
