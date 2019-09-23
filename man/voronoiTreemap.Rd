@@ -62,11 +62,13 @@ a reproducibloe arrangement of cells, set seed to an arbitrary number.}
 
 \item{positioning}{(character) Algorithm for positioning of starting 
 coordinates of child cells in the parental cell using \code{spsample()};
-"random" for completely random positions, "regular" for positions aligned 
-to a grid with cells sorted from bottom to top, "clustered" with regular 
-positions of cells but sorted from inside out. Two variants "regular_by_area"
-and "clustered_by_area" will work as their counterparts but will sort by cell
-target area instead of cell name.}
+"random" for completely random positions, "regular" for cells aligned 
+to a grid sorted from bottom to top by name, "clustered" with regular 
+positions of cells but sorted by name from inside out. Two variants 
+"regular_by_area" and "clustered_by_area" will work as their counterparts 
+but will sort by cell target area instead of cell name. \code{positioning}
+can be a single character or a vector of \code{length(levels)} to allow
+different positioning algorithms for each level.}
 
 \item{debug}{(logical) If debug is TRUE (default is FALSE), the solution 
 for each iteration is drawn to the viewport to allow some visual 

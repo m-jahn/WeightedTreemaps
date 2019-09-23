@@ -51,11 +51,13 @@
 #'   a reproducibloe arrangement of cells, set seed to an arbitrary number.
 #' @param positioning (character) Algorithm for positioning of starting 
 #'   coordinates of child cells in the parental cell using \code{spsample()};
-#'   "random" for completely random positions, "regular" for positions aligned 
-#'   to a grid with cells sorted from bottom to top, "clustered" with regular 
-#'   positions of cells but sorted from inside out. Two variants "regular_by_area"
-#'   and "clustered_by_area" will work as their counterparts but will sort by cell
-#'   target area instead of cell name.
+#'   "random" for completely random positions, "regular" for cells aligned 
+#'   to a grid sorted from bottom to top by name, "clustered" with regular 
+#'   positions of cells but sorted by name from inside out. Two variants 
+#'   "regular_by_area" and "clustered_by_area" will work as their counterparts 
+#'   but will sort by cell target area instead of cell name. \code{positioning}
+#'   can be a single character or a vector of \code{length(levels)} to allow
+#'   different positioning algorithms for each level.
 #' @param debug (logical) If debug is TRUE (default is FALSE), the solution 
 #'   for each iteration is drawn to the viewport to allow some visual 
 #'   inspection. The weights, target area, and difference are printed to the 
@@ -115,7 +117,6 @@
 #' @importFrom scales rescale
 #' @importFrom sp Polygon
 #' @importFrom sp spsample
-#' @importFrom Rcpp sourceCpp
 #' 
 #' @useDynLib SysbioTreemaps, .registration = TRUE
 #' 
@@ -211,6 +212,13 @@ voronoiTreemap <- function(
       # using sp package's spsample function.
       ncells <- df[[levels[level]]] %>% table
       ncells <- setNames(as.numeric(ncells), names(ncells))
+      
+      # positioning can be defined globally or for each level independently
+      positioning <- ifelse(
+        length(positioning) == 1, 
+        positioning, 
+        positioning[level]
+      )
       
       if (length(ncells) != 1) {
         sampledPoints <- samplePoints(

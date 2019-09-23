@@ -249,7 +249,7 @@ df <- Jahn_CellReports_2018 %>%
   slice(1:100)
 ```
 
-Generate 10 treemaps using the parallel version of lapply, and the `condition` annotation to subset the data frame. Note that you can adjust the `mc.cores` parameter to the number of CPUs available on your computer.
+Generate 10 treemaps using the parallel version of lapply, and the `condition` annotation to subset the data frame. Note that you can adjust the `mc.cores` parameter to the number of CPUs available on your computer. The `positioning` parameter can also take a vector of `length(levels)` to make cell positions on the first level more comparable between different treemaps.
 
 ``` r
 tmlist <- mclapply(
