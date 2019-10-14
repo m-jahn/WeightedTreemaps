@@ -103,8 +103,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
     auto handle = ag.insert(site);
     handles.push_back(handle);
   }
-  if (!ag.is_valid()) {
-      ag.is_valid(true); // verbose
+  if (!ag.is_valid(false, 0)) {
       Rcpp::Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
   }
