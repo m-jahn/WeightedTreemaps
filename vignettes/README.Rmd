@@ -182,7 +182,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
 
 ### Adcanced example for Voronoi treemaps
 
-This example will cover the generation of a somewhat larger treemap, as it is often useful to visualize e.g. many genes or proteins at once in molecular biology studies. However, treemaps can be used for any type of data visualizations. First we read a proteomics test data set from Jahn et al., Cell Reports, 2018.
+This example will cover the generation of a somewhat larger treemap, as it is often useful to visualize e.g. many genes or proteins at once in molecular biology studies. However, treemaps can be used for any type of data visualization. First we read a proteomics test data set from Jahn et al., Cell Reports, 2018.
 (https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2)
 This dataset contains thousands of protein measurements of the cyanobacterium _Synechocystis_ sp. PCC6803.
 
@@ -191,7 +191,7 @@ This dataset contains thousands of protein measurements of the cyanobacterium _S
 library(dplyr)
 library(colorspace)
 
-# pick the top most abudnant proteins
+# pick the top most abundant proteins
 df <- Jahn_CellReports_2018 %>%
   filter(condition == "CO2-0-15") %>%
   arrange(desc(mean_mass_fraction_norm)) %>%
@@ -200,7 +200,7 @@ df <- Jahn_CellReports_2018 %>%
 
 We can generate the Voronoi treemap using some more of the function's parameters. We can increase `maxIterations` and decrease `error_tol` which will lead to lower errors (difference between target cell size and actual cell size). Set a seed to obtain a similar arrangement of cells for similar maps, otherwise starting positions will be sampled more randomly. The `positioning` argument `clustered_by_area` will try to place cells with bigger target area in the middle and smaller area at the edges.
 
-```{r, message = FALSE, error = FALSE, results = 'hide'}
+```{r, eval = FALSE}
 tm <- voronoiTreemap(
   data = df,
   levels = c("Process.abbr", "protein"),
@@ -241,7 +241,7 @@ custom_pal_2 <- diverging_hcl(
 Draw a customized treemap using some of the graphical parameters.
 Compare two different color palettes.
 
-```{r, fig.width = 10, fig.height = 5, out.width = "100%", fig.align = 'center', warning = FALSE}
+```{r, eval = FALSE}
 drawTreemap(
   tm, 
   color_palette = custom_pal_1,
@@ -270,6 +270,11 @@ drawTreemap(
 )
 ```
 
+```{r, fig.width = 10, fig.height = 5, out.width = "100%", fig.align = 'center', echo = FALSE}
+# we load precomputed result to save time
+knitr::include_graphics("png/unnamed-chunk-14-1.png")
+```
+
 
 ### Generate treemaps with parallel computing
 
@@ -286,7 +291,7 @@ df <- Jahn_CellReports_2018 %>%
 
 Generate 10 treemaps using the parallel version of lapply, and the `condition` annotation to subset the data frame. Note that you can adjust the `mc.cores` parameter to the number of CPUs available on your computer. The `positioning` parameter can also take a vector of `length(levels)` to make cell positions on the first level more comparable between different treemaps.
 
-```{r}
+```{r, eval = FALSE}
 tm <- mclapply(
   unique(df$condition), 
   mc.cores = 10, 
@@ -300,8 +305,8 @@ tm <- mclapply(
       custom_color = "mean_mass_fraction_norm",
       shape = "rounded_rect",
       positioning = c("regular", "clustered_by_area"),
-      maxIteration = 200,
-      error_tol = 0.005
+      maxIteration = 50,
+      error_tol = 0.01
     )
   }
 )
@@ -309,7 +314,7 @@ tm <- mclapply(
 
 Draw all 10 treemaps on one canvas using `layout` and `position` arguments.
 
-```{r, fig.width = 20, fig.height = 8, out.width = "100%", fig.align = 'center', warning = FALSE}
+```{r, eval = FALSE}
 lapply(1:10, function(i) {
   
   drawTreemap(
@@ -337,6 +342,12 @@ lapply(1:10, function(i) {
 }) %>% invisible
 ```
 
+
+```{r, fig.width = 20, fig.height = 8, out.width = "100%", fig.align = 'center', echo = FALSE}
+# we load precomputed result to save time
+knitr::include_graphics("png/unnamed-chunk-17-1.png")
+```
+
 ### Sunburst treemaps
 
 Sunburst treemaps are generated in the same way as described above for Voronoi treemaps.
@@ -355,7 +366,6 @@ head(df)
 Generate sunburst treemap.
 
 ```{r, results = 'hide'}
-
 # by default cell (sector) size is encoded by number of members per group
 tm <- sunburstTreemap(
   data = df,
