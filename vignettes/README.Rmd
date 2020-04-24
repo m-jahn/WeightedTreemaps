@@ -1,6 +1,6 @@
 ---
-output: rmarkdown::html_vignette
-#output: github_document
+#output: rmarkdown::html_vignette
+output: github_document
 title: "SysbioTreemaps"
 author: "Michael Jahn, David Leslie"
 date: "`r Sys.Date()`"
@@ -8,9 +8,19 @@ vignette: >
   %\VignetteIndexEntry{SysbioTreemaps}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  
 ---
 
+<!-- include logo-->
+<img src="png/logo.png" align="right"/>
+
+<!-- badges start -->
+[![Build Status](https://travis-ci.com/m-jahn/SysbioTreemaps.svg?branch=master)](https://travis-ci.com/m-jahn/SysbioTreemaps)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/m-jahn)
+![GitHub issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
+![GitHub last commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)
+![Dependency](https://img.shields.io/badge/dependency-CGAL-orange)
+![Platform](https://img.shields.io/badge/platform-linux-lightgrey)
+<!-- badges end -->
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(

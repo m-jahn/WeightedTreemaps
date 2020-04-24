@@ -1,7 +1,24 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie
-2019-11-10
+2020-04-24
+
+<!-- include logo-->
+
+<img src="vignettes/png/logo.png" align="right"/>
+
+<!-- badges start -->
+
+[![Build
+Status](https://travis-ci.com/m-jahn/SysbioTreemaps.svg?branch=master)](https://travis-ci.com/m-jahn/SysbioTreemaps)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/m-jahn)
+![GitHub
+issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
+![GitHub last
+commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)
+![Dependency](https://img.shields.io/badge/dependency-CGAL-orange)
+![Platform](https://img.shields.io/badge/platform-linux-lightgrey)
+<!-- badges end -->
 
 -----
 
@@ -91,12 +108,12 @@ df <- data.frame(
 
 head(df)
 #>   A B  C
-#> 1 a l 76
-#> 2 a k 75
-#> 3 a e 23
-#> 4 a g 57
-#> 5 a f 31
-#> 6 a h 15
+#> 1 a j 71
+#> 2 a d 83
+#> 3 a i 76
+#> 4 a f 67
+#> 5 a g 58
+#> 6 a e 22
 ```
 
 Generate the treemap. It will return a list of polygons and metadata.
@@ -405,12 +422,12 @@ df <- data.frame(
 
 head(df)
 #>   A B
-#> 1 a j
-#> 2 a f
-#> 3 a j
-#> 4 a f
+#> 1 a h
+#> 2 a l
+#> 3 a l
+#> 4 a e
 #> 5 a e
-#> 6 a d
+#> 6 a h
 ```
 
 Generate sunburst
@@ -466,7 +483,7 @@ drawTreemap(tm,
   position = c(1, 3),
   add = TRUE
 )
-```
+``` 
 
 <img src="vignettes/png/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
 
