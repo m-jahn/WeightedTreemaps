@@ -4,10 +4,21 @@
 \alias{voronoiTreemap}
 \title{voronoiTreemap}
 \usage{
-voronoiTreemap(data, levels, fun = sum, sort = TRUE, filter = 0,
-  cell_size = NULL, custom_color = NULL, shape = "rectangle",
-  maxIteration = 100, error_tol = 0.01, seed = NULL,
-  positioning = "regular", debug = FALSE)
+voronoiTreemap(
+  data,
+  levels,
+  fun = sum,
+  sort = TRUE,
+  filter = 0,
+  cell_size = NULL,
+  custom_color = NULL,
+  shape = "rectangle",
+  maxIteration = 100,
+  error_tol = 0.01,
+  seed = NULL,
+  positioning = "regular",
+  debug = FALSE
+)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}

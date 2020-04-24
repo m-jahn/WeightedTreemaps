@@ -4,7 +4,9 @@
 \name{rounded_rect}
 \alias{rounded_rect}
 \title{Coordinates to draw a rounded rectangle as parent cell for treemaps}
-\format{A data frame with 50 rows and 2 variables}
+\format{
+A data frame with 50 rows and 2 variables
+}
 \usage{
 data(rounded_rect)
 }

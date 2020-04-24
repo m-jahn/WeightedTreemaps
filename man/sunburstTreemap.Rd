@@ -4,9 +4,17 @@
 \alias{sunburstTreemap}
 \title{sunburstTreemap}
 \usage{
-sunburstTreemap(data, levels, fun = sum, sort = TRUE, filter = 0,
-  cell_size = NULL, custom_color = NULL, diameter_inner = 0.3,
-  diameter_outer = 0.8)
+sunburstTreemap(
+  data,
+  levels,
+  fun = sum,
+  sort = TRUE,
+  filter = 0,
+  cell_size = NULL,
+  custom_color = NULL,
+  diameter_inner = 0.3,
+  diameter_outer = 0.8
+)
 }
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}

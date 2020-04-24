@@ -4,8 +4,7 @@
 \alias{poly_sortpoints}
 \title{poly_sortpoints}
 \usage{
-poly_sortpoints(df, x = "x", y = "y", clockwise = TRUE,
-  vertex = NULL)
+poly_sortpoints(df, x = "x", y = "y", clockwise = TRUE, vertex = NULL)
 }
 \arguments{
 \item{df}{(data frame) A data.frame with X and Y coordinate columns}
