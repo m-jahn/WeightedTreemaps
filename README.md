@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie
-2020-04-24
+2020-05-08
 
 <!-- include logo-->
 
@@ -108,12 +108,12 @@ df <- data.frame(
 
 head(df)
 #>   A B  C
-#> 1 a j 71
-#> 2 a d 83
-#> 3 a i 76
-#> 4 a f 67
-#> 5 a g 58
-#> 6 a e 22
+#> 1 a l 11
+#> 2 a g 69
+#> 3 a d 80
+#> 4 a g 33
+#> 5 a i 59
+#> 6 a d 30
 ```
 
 Generate the treemap. It will return a list of polygons and metadata.
@@ -214,6 +214,54 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
 ```
 
 <img src="vignettes/png/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" />
+
+### Custom initial shapes
+
+Instead of using predefined shapes, we can also supply a custom set of
+coordinates to plot a treemap using the \`shape\`\`argument. The
+validity of the supplied coordinates is not checked, so all
+responsibility lies with the user (\!). The R session might even crash
+(due to C++ dependency) if a shape is supplied that is too irregular or
+edgy,a nd the tesselation becomes infeasible. Here are some stable
+examples.
+
+``` r
+# different initial shapes, the more squared the better
+house_coords <- list(
+  x = c(0, 10, 10, 5, 0),
+  y = c(0, 0, 10,15,10))
+
+rect_coords <- list(
+  x = c(0, 10, 10, 0),
+  y = c(0, 0, 3, 3))
+
+oct_coord <- list(
+  x = sin(seq(0, 2, 2/8)*pi) * 1000 + 1000,
+  y = cos(seq(0, 2, 2/8)*pi) * 1000 + 1000
+)
+```
+
+Let’s generate treemaps with the shapes of a house, a rectangle, or an
+octogon.
+
+``` r
+tm1 <- voronoiTreemap(data = df, levels = "C",
+  shape = house_coords)
+
+tm2 <- voronoiTreemap(data = df, levels = "C",
+  shape = rect_coords)
+
+tm3 <- voronoiTreemap(data = df, levels = "C",
+  shape = oct_coord)
+```
+
+``` r
+drawTreemap(tm1, layout = c(1,3), position = c(1, 1))
+drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
+drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
+```
+
+<img src="vignettes/png/unnamed-chunk-13-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Adcanced example for Voronoi treemaps
 
@@ -422,12 +470,12 @@ df <- data.frame(
 
 head(df)
 #>   A B
-#> 1 a h
-#> 2 a l
-#> 3 a l
-#> 4 a e
+#> 1 a i
+#> 2 a k
+#> 3 a f
+#> 4 a i
 #> 5 a e
-#> 6 a h
+#> 6 a k
 ```
 
 Generate sunburst
@@ -483,9 +531,9 @@ drawTreemap(tm,
   position = c(1, 3),
   add = TRUE
 )
-``` 
+```
 
-<img src="vignettes/png/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
 

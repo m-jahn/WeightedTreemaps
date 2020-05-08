@@ -102,6 +102,36 @@ drawTreemap(tm2, title = "positioning = 'regular'", border_size = 3,
 drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 
+## -----------------------------------------------------------------------------
+# different initial shapes, the more squared the better
+house_coords <- list(
+  x = c(0, 10, 10, 5, 0),
+  y = c(0, 0, 10,15,10))
+
+rect_coords <- list(
+  x = c(0, 10, 10, 0),
+  y = c(0, 0, 3, 3))
+
+oct_coord <- list(
+  x = sin(seq(0, 2, 2/8)*pi) * 1000 + 1000,
+  y = cos(seq(0, 2, 2/8)*pi) * 1000 + 1000
+)
+
+## ---- message = FALSE, error = FALSE, results = 'hide'------------------------
+tm1 <- voronoiTreemap(data = df, levels = "C",
+  shape = house_coords)
+
+tm2 <- voronoiTreemap(data = df, levels = "C",
+  shape = rect_coords)
+
+tm3 <- voronoiTreemap(data = df, levels = "C",
+  shape = oct_coord)
+
+## ---- fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
+drawTreemap(tm1, layout = c(1,3), position = c(1, 1))
+drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
+drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
+
 ## ---- message = FALSE, error = FALSE, results = 'hide'------------------------
 # additional libraries for data filtering and colors
 library(dplyr)

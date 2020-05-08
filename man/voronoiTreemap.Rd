@@ -51,8 +51,11 @@ using \code{\link{drawTreemap}}, but the default is to use one of
 instead has to be included in the treemap generation and explicitly 
 specified here. The default value is \code{NULL}.}
 
-\item{shape}{(character) Set the initial shape of the treemap. Currently 
-supported are "rectangle", "rounded_rect", "circle" or "hexagon".}
+\item{shape}{(list or character) Set the initial shape of the treemap. Currently
+supported are the keywords "rectangle", "rounded_rect", "circle" or "hexagon".
+Alternatively the user can supply a named list with coordinates for a custom polygon.
+The slots of the list must be labeled 'x' and 'y'. The coordinates are not tested
+for validity, use on your own risk.}
 
 \item{maxIteration}{(numeric) Force algorithm to stop at this number of iterations
 for each parent cell. The algorithm usually converges to an acceptable 

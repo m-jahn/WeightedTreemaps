@@ -33,8 +33,11 @@
 #'   \code{levels} or \code{cell size}. Any other data source that shall be used
 #'   instead has to be included in the treemap generation and explicitly 
 #'   specified here. The default value is \code{NULL}.
-#' @param shape (character) Set the initial shape of the treemap. Currently 
-#'   supported are "rectangle", "rounded_rect", "circle" or "hexagon".
+#' @param shape (list or character) Set the initial shape of the treemap. Currently
+#'   supported are the keywords "rectangle", "rounded_rect", "circle" or "hexagon".
+#'   Alternatively the user can supply a named list with coordinates for a custom polygon.
+#'   The slots of the list must be labeled 'x' and 'y'. The coordinates are not tested
+#'   for validity, use on your own risk.
 #' @param maxIteration (numeric) Force algorithm to stop at this number of iterations
 #'   for each parent cell. The algorithm usually converges to an acceptable 
 #'   solution fairly quickly, so it seems reasonable to restrict this number
@@ -172,28 +175,32 @@ voronoiTreemap <- function(
       # either predefined rectangular bounding box for 1st level
       if (level == 1) {
         
-        if (shape == "rectangle") {
-          ParentPoly <- list(
-            x = c(0, 0, 2000, 2000, 0),
-            y = c(0, 2000, 2000, 0, 0)
-          )
-        } else if (shape == "circle") {
-          ParentPoly <- list(
-            x = sin(seq(0, 2, 2/50)*pi) * 1000 + 1000,
-            y = cos(seq(0, 2, 2/50)*pi) * 1000 + 1000
-          )
-        } else if (shape == "hexagon") {
-          ParentPoly <- list(
-            x = sin(seq(0, 2, 2/6)*pi) * 1000 + 1000,
-            y = cos(seq(0, 2, 2/6)*pi) * 1000 + 1000
-          )
-        } else if (shape == "rounded_rect") {
-          ParentPoly <- list(
-            x = rounded_rect[[1]],
-            y = rounded_rect[[2]]
-          )
+        if (is.list(shape)) {
+          ParentPoly <- poly_transform_shape(shape)
         } else {
-          stop("shape is none of 'rectangle', 'rounded_rect', circle', or 'hexagon'.")
+          if (shape == "rectangle") {
+            ParentPoly <- list(
+              x = c(0, 0, 2000, 2000, 0),
+              y = c(0, 2000, 2000, 0, 0)
+            )
+          } else if (shape == "circle") {
+            ParentPoly <- list(
+              x = sin(seq(0, 2, 2/50)*pi) * 1000 + 1000,
+              y = cos(seq(0, 2, 2/50)*pi) * 1000 + 1000
+            )
+          } else if (shape == "hexagon") {
+            ParentPoly <- list(
+              x = sin(seq(0, 2, 2/6)*pi) * 1000 + 1000,
+              y = cos(seq(0, 2, 2/6)*pi) * 1000 + 1000
+            )
+          } else if (shape == "rounded_rect") {
+            ParentPoly <- list(
+              x = rounded_rect[[1]],
+              y = rounded_rect[[2]]
+            )
+          } else {
+            stop("shape is not a coordinate list, nor one of 'rectangle', 'rounded_rect', circle', or 'hexagon'.")
+          }
         }
         
         # turn boundary polygon into gpc.poly object for treemap generation
