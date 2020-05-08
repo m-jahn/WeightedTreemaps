@@ -1,4 +1,5 @@
 #' @importFrom gpclib area.poly
+#' @importFrom stats rnorm
 #' @importFrom dplyr %>%
 #' 
 cellError <- function(a, target) {
