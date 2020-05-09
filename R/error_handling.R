@@ -77,7 +77,9 @@ validate_input <- function(
   }
   # sort data in case it is unsorted
   if (sort) {
-    data <- data[do.call("order", data[levels]),]
+    data <- data[do.call("order", data[levels]), ]
+    # coerce back to data.frame if sorting has changed class
+    if (is.vector(data)) data <- data.frame(data) %>% setNames(levels)
   } else {
     warning("Sorting is FALSE, it is expected that the input data is sorted.", immediate. = TRUE)
   }
