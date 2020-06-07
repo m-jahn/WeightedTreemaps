@@ -8,7 +8,7 @@ cropped_voronoi(sites)
 }
 \arguments{
 \item{sites}{(numeric matrix) The only input parameter for the function.
-A matrix with 3 columns: X and Y coordinates, as well as weights 
+A matrix with 3 columns: X and Y coordinates, as well as weights
 that are used for tesselation.}
 }
 \value{
@@ -20,6 +20,6 @@ Tesselates a plane using a set of XY coordinates
 }
 \details{
 The function is only intended for
-  internal use. However, one can also use it directly for 
+  internal use. However, one can also use it directly for
   test purposes.
 }

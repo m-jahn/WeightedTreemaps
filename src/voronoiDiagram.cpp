@@ -1,5 +1,6 @@
 // This code is based on a CGAL example
 // examples/Apollonius_graph_2/ag2_exact_traits.cpp
+// [[Rcpp::depends(cgal4h)]]
 #include <Rcpp.h>
 using namespace Rcpp;
 
@@ -74,20 +75,20 @@ IntegerVector get_boundary_pos(NumericVector x, NumericVector y){
 
 // roxygen tags
 //' cropped_voronoi
-//' 
+//'
 //' Tesselates a plane using a set of XY coordinates
-//' 
+//'
 //' @param sites (numeric matrix) The only input parameter for the function.
-//'   A matrix with 3 columns: X and Y coordinates, as well as weights 
+//'   A matrix with 3 columns: X and Y coordinates, as well as weights
 //'   that are used for tesselation.
-//'   
+//'
 //' @return A list of cell coordinates; one cell for each
 //'   set of input coordinates.
-//'   
+//'
 //' @details The function is only intended for
-//'   internal use. However, one can also use it directly for 
+//'   internal use. However, one can also use it directly for
 //'   test purposes.
-//'   
+//'
 //' @export cropped_voronoi
 // [[Rcpp::export]]
 SEXP cropped_voronoi(NumericMatrix sites)
@@ -138,26 +139,26 @@ SEXP cropped_voronoi(NumericMatrix sites)
     NumericVector xs;
     NumericVector ys;
     for (auto &s : vor.m_cropped_vd)
-    { 
+    {
       xs.push_back(s.source().x());
       ys.push_back(s.source().y());
       xs.push_back(s.target().x());
       ys.push_back(s.target().y());
     }
-    
+
     // stop and return NULL if polygon is empty
     if (xs.size() == 0) {
       Rcpp::Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
     }
-    
+
     // remove duplicate polygon points or NAs
     LogicalVector dupl = duplicated(round(xs, 2)) & duplicated(round(ys, 2));
     LogicalVector ends = floor(xs) == 3999 | floor(ys) == 3999;
     LogicalVector NAs = is_na(xs) | is_na(ys);
     xs = xs[!(dupl | ends | NAs)];
     ys = ys[!(dupl | ends | NAs)];
-    
+
     // for sorting polygon boundary points, determine angle from center
     // first calculate deltas
     auto &vertex = h->site().point();
@@ -169,7 +170,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
     {
       angle.push_back(atan2(y_delta[i], x_delta[i]));
     }
-    
+
     // check for straight lines as polygon border. These can not be ordered from
     // center and have random boundary positions; simply order by y value.
     NumericVector which_unique = unique(round(angle, 2));
@@ -181,7 +182,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
       IntegerVector ord = order(angle);
       xs = xs[ord]; ys = ys[ord];
     }
-    
+
     // If this is a polygon touching the boundaries, rearrange points
     // starting with the first point on boundary, but without re-sorting df.
     // First find positions of boundary points
@@ -199,18 +200,18 @@ SEXP cropped_voronoi(NumericMatrix sites)
         xs = xs[seq1]; ys = ys[seq1];
       }
     }
-    
+
     // collect in data frame
     DataFrame border = DataFrame::create(
       Named("x") = xs,
       Named("y") = ys
     );
-    
+
     List res = List::create(
       Named("vertex") = NumericVector::create(vertex.x(), vertex.y()),
       Named("border") = border);
     results.push_back(res);
-    
+
     vor.reset();
   }
 
