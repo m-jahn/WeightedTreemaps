@@ -106,6 +106,7 @@
 #'   title_color = "black")
 #' 
 #' @import gpclib
+#' @importFrom Rcpp evalCpp
 #' @importFrom grid grid.newpage
 #' @importFrom grid pushViewport
 #' @importFrom grid viewport
