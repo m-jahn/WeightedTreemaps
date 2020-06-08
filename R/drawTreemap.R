@@ -70,8 +70,6 @@
 #'   the input for the drawing function
 #'
 #' @examples
-#' library(SysbioTreemaps)
-#' 
 #' # load example data
 #' data(mtcars)
 #' mtcars$car_name = gsub(" ", "\n", row.names(mtcars))
@@ -143,11 +141,7 @@
 #' @importFrom utils tail
 #' 
 #' @export drawTreemap
-# 
-# 
-# DRAWING FUNCTION
-# this function draws the polygons as polygonGrob objects
-# from grid package
+#' 
 drawTreemap <- function(
   treemap, 
   levels = 1:length(treemap@call$levels), 

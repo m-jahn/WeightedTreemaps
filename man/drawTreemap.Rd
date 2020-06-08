@@ -118,8 +118,6 @@ during treemap generation. Such parameters are primarily cell size and
 initial shape of the treemap.
 }
 \examples{
-library(SysbioTreemaps)
-
 # load example data
 data(mtcars)
 mtcars$car_name = gsub(" ", "\n", row.names(mtcars))

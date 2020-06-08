@@ -72,8 +72,6 @@
 #' @seealso \code{\link{drawTreemap}} for drawing the treemap.
 #'
 #' @examples
-#' library(SysbioTreemaps)
-#' 
 #' # load example data
 #' data(mtcars)
 #' mtcars$car_name = gsub(" ", "\n", row.names(mtcars))
@@ -122,7 +120,7 @@
 #' @useDynLib SysbioTreemaps, .registration = TRUE
 #' 
 #' @export voronoiTreemap
-
+#' 
 voronoiTreemap <- function(
   data,
   levels,

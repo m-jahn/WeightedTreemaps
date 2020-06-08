@@ -36,20 +36,17 @@
 #' @seealso \code{\link{drawTreemap}} for drawing the treemap.
 #' 
 #' @examples
-#' # generate data frame
-#' df <- data.frame(
-#'   A = rep(c("a", "b", "c"), each = 15),
-#'   B = sample(letters[4:12], 45, replace = TRUE)
-#' )
-#' 
+#' # load example data
+#' data(mtcars)
+#' mtcars$car_name = gsub(" ", "\n", row.names(mtcars))
 #' 
 #' # generate treemap;
 #' # by default cell (sector) size is encoded by number of members per group
 #' tm <- sunburstTreemap(
-#'   data = df,
-#'   levels = c("A", "B")
+#'   data = mtcars,
+#'   levels = c("gear", "cyl"),
+#'   cell_size = "hp"
 #' )
-#' 
 #' 
 #' # draw treemap with default options
 #' drawTreemap(tm,
@@ -57,8 +54,7 @@
 #'   legend = TRUE,
 #'   border_size = 2,
 #'   layout = c(1, 3),
-#'   position = c(1, 1),
-#'   add = TRUE
+#'   position = c(1, 1)
 #' )
 #' 
 #' # use custom color palette
@@ -99,7 +95,7 @@
 #' @importFrom scales rescale
 #' 
 #' @export sunburstTreemap
-
+#' 
 sunburstTreemap <- function(
   data, 
   levels, 

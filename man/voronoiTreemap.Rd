@@ -104,8 +104,6 @@ This function returns a treemap object instead of a plot. In order
 to actually draw the treemap, use \code{\link{drawTreemap}}.
 }
 \examples{
-library(SysbioTreemaps)
-
 # load example data
 data(mtcars)
 mtcars$car_name = gsub(" ", "\n", row.names(mtcars))
