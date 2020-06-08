@@ -74,36 +74,34 @@
 #' @examples
 #' library(SysbioTreemaps)
 #' 
-#' # generate data frame
-#' df <- data.frame(
-#'   A = rep(c("a", "b", "c"), each=15),
-#'   B = sample(letters[4:12], 45, replace = TRUE),
-#'   C = sample(10:100, 45)
-#' )
+#' # load example data
+#' data(mtcars)
+#' mtcars$car_name = gsub(" ", "\n", row.names(mtcars))
 #' 
-#' # generate treemap
+#' # generate treemap; set seed to obtain same pattern every time
 #' tm <- voronoiTreemap(
-#'   data = df,
-#'   levels = c("A", "B", "C"),
-#'   cell_size = "C",
-#'   shape = "rounded_rect"
+#'   data = mtcars,
+#'   levels = c("gear", "car_name"),
+#'   cell_size = "wt",
+#'   shape = "rounded_rect",
+#'   seed = 123
 #' )
 #' 
 #' # draw treemap
-#' drawTreemap(tm)
+#' drawTreemap(tm, label_size = 2)
 #' 
 #' # draw different variants of the same treemap on one page using
 #' # the 'layout' and 'position' arguments (indicating rows and columns)
-#' drawTreemap(tm, title = "treemap 1", 
-#'   color_type = "categorical", color_level = 1, 
+#' drawTreemap(tm, title = "treemap 1", label_size = 2,
+#'   color_type = "categorical", color_level = 1,
 #'   layout = c(1,3), position = c(1, 1))
 #' 
-#' drawTreemap(tm, title = "treemap 2",
+#' drawTreemap(tm, title = "treemap 2", label_size = 2,
 #'   color_type = "categorical", color_level = 2, border_size = 3,
 #'   add = TRUE, layout = c(1,3), position = c(1, 2))
 #' 
-#' drawTreemap(tm, title = "treemap 3",
-#'   color_type = "cell_size", color_level = 3,
+#' drawTreemap(tm, title = "treemap 3", label_size = 2,
+#'   color_type = "cell_size", color_level = 2,
 #'   color_palette = heat.colors(10),
 #'   border_color = grey(0.4), label_color = grey(0.4),
 #'   add = TRUE, layout = c(1,3), position = c(1, 3),
