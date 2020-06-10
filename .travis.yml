@@ -2,11 +2,6 @@ language: r
 cache: packages
 warnings_are_errors: false
 
-addons:
-  apt:
-    packages:
-      - libcgal-dev
-
 notifications:
   email:
     on_success: change
