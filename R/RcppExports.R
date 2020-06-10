@@ -2,20 +2,20 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' cropped_voronoi
-#' 
+#'
 #' Tesselates a plane using a set of XY coordinates
-#' 
+#'
 #' @param sites (numeric matrix) The only input parameter for the function.
-#'   A matrix with 3 columns: X and Y coordinates, as well as weights 
+#'   A matrix with 3 columns: X and Y coordinates, as well as weights
 #'   that are used for tesselation.
-#'   
+#'
 #' @return A list of cell coordinates; one cell for each
 #'   set of input coordinates.
-#'   
+#'
 #' @details The function is only intended for
-#'   internal use. However, one can also use it directly for 
+#'   internal use. However, one can also use it directly for
 #'   test purposes.
-#'   
+#'
 #' @export cropped_voronoi
 cropped_voronoi <- function(sites) {
     .Call(`_SysbioTreemaps_cropped_voronoi`, sites)
