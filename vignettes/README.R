@@ -8,86 +8,87 @@ knitr::opts_chunk$set(
 ## ---- results = 'hide', message = FALSE, echo = FALSE, warning = FALSE--------
 library(SysbioTreemaps)
 
-df <- data.frame(
-  A = rep(c("a", "b", "c"), each = 15),
-  B = sample(10:100, 45)
-) 
+# load example data
+data(mtcars)
+mtcars$car_name = gsub(" ", "\n", row.names(mtcars))
 
-# generate treemap
+# generate treemap; set seed to obtain same pattern every time
 tm <- voronoiTreemap(
-  data = df,
-  levels = c("A", "B"),
-  cell_size = "B",
+  data = mtcars,
+  levels = c("gear", "car_name"),
+  cell_size = "wt",
   shape = "rounded_rect",
-  positioning = "clustered_by_area",
-  error_tol = 0.002,
-  maxIteration = 200
+  seed = 123
 )
 
 ## ---- fig.height = 5, fig.width = 5, out.width = "50%", fig.align = 'center', echo = FALSE----
 # draw treemap
-drawTreemap(tm, label_color = "white", title = "An example")
+drawTreemap(tm, label_size = 2.5, label_color = "white", title = "An example")
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  require(devtools)
-#  devtools::install_github("https://github.com/m-jahn/SysbioTreemaps")
+#  devtools::install_gitlab("dickoa/cgal4h")
 
-## ---- message = FALSE---------------------------------------------------------
-library(SysbioTreemaps)
+## ---- eval = FALSE------------------------------------------------------------
+#  devtools::install_github("m-jahn/SysbioTreemaps")
 
-df <- data.frame(
-  A = rep(c("a", "b", "c"), each = 15),
-  B = sample(letters[4:12], 45, replace = TRUE),
-  C = sample(10:100, 45)
-)
+## ---- eval = FALSE------------------------------------------------------------
+#  library(SysbioTreemaps)
+#  
+#  # load example data
+#  data(mtcars)
+#  mtcars$car_name = gsub(" ", "\n", row.names(mtcars))
 
-head(df)
-
-## ---- message = FALSE, error = FALSE, results = 'hide'------------------------
-tm <- voronoiTreemap(
-  data = df,
-  levels = c("A", "B", "C"),
-  cell_size = "C",
-  shape = "rounded_rect"
-)
+## ---- eval = FALSE------------------------------------------------------------
+#  # generate treemap; set seed to obtain same pattern every time
+#  tm <- voronoiTreemap(
+#    data = mtcars,
+#    levels = c("gear", "car_name"),
+#    cell_size = "wt",
+#    shape = "rounded_rect",
+#    seed = 123
+#  )
 
 ## ---- fig.width = 5, fig.height = 5, out.width = "50%", fig.align = 'center'----
-drawTreemap(tm)
+drawTreemap(tm, label_size = 2.5, label_color = "white")
 
 ## ---- fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
-drawTreemap(tm, title = "treemap 1", 
-  color_type = "categorical", color_level = 1, 
+drawTreemap(tm, title = "treemap 1", label_size = 2,
+  color_type = "categorical", color_level = 1,
   layout = c(1,3), position = c(1, 1))
 
-drawTreemap(tm, title = "treemap 2",
+drawTreemap(tm, title = "treemap 2", label_size = 2,
   color_type = "categorical", color_level = 2, border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 2))
 
-drawTreemap(tm, title = "treemap 3",
-  color_type = "cell_size", color_level = 3,
+drawTreemap(tm, title = "treemap 3", label_size = 2,
+  color_type = "cell_size", color_level = 2,
   color_palette = heat.colors(10),
   border_color = grey(0.4), label_color = grey(0.4),
   add = TRUE, layout = c(1,3), position = c(1, 3),
   title_color = "black")
 
 ## ---- message = FALSE, error = FALSE, results = 'hide'------------------------
+# set seed to obtain same df every time
+set.seed(123)
+df <- data.frame(A = sample(10:100, 45))
+
 tm1 <- voronoiTreemap(
-  data = df, levels = "C",
-  cell_size = "C",
+  data = df, levels = "A",
+  cell_size = "A",
   shape = "rounded_rect",
   positioning = "random"
 )
 
 tm2 <- voronoiTreemap(
-  data = df, levels = "C",
-  cell_size = "C",
+  data = df, levels = "A",
+  cell_size = "A",
   shape = "rounded_rect",
   positioning = "regular"
 )
 
 tm3 <- voronoiTreemap(
-  data = df, levels = "C",
-  cell_size = "C",
+  data = df, levels = "A",
+  cell_size = "A",
   shape = "rounded_rect",
   positioning = "clustered"
 )
@@ -118,13 +119,13 @@ oct_coord <- list(
 )
 
 ## ---- message = FALSE, error = FALSE, results = 'hide'------------------------
-tm1 <- voronoiTreemap(data = df, levels = "C",
+tm1 <- voronoiTreemap(data = df, levels = "A",
   shape = house_coords)
 
-tm2 <- voronoiTreemap(data = df, levels = "C",
+tm2 <- voronoiTreemap(data = df, levels = "A",
   shape = rect_coords)
 
-tm3 <- voronoiTreemap(data = df, levels = "C",
+tm3 <- voronoiTreemap(data = df, levels = "A",
   shape = oct_coord)
 
 ## ---- fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
@@ -270,6 +271,7 @@ knitr::include_graphics("png/unnamed-chunk-17-1.png")
 
 ## -----------------------------------------------------------------------------
 # generate data frame
+set.seed(123)
 df <- data.frame(
   A = rep(c("a", "b", "c"), each = 15),
   B = sample(letters[4:12], 45, replace = TRUE)
