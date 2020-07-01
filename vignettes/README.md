@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie
-2020-06-10
+2020-07-01
 
 <!-- include logo-->
 
@@ -69,18 +69,14 @@ The C++ code computing the actual Voronoi tesselation requires the
 [CGAL](https://www.cgal.org/download.html) library headers. Thanks to
 [Ahmadou Dicko](https://github.com/dickoa), installing the complete CGAL
 library locally is no longer necessary. Instead, the package depends on
-the CGAL4 headers that are supplied as R package `cgal4h` on Ahmadou’s
-gitlab page. In case automatic retrieval of the package does not work
-during `SysbioTreemaps` installation, install `cgal4h` manually before.
-
-``` r
-devtools::install_gitlab("dickoa/cgal4h")
-```
+the CGAL4 headers that are now available on CRAN as R package `cgal4h`.
+The dependencies are installed automatically and manual installation of
+CGAL (headers) should not be necessary.
 
 ## Installation
 
-To install the package directly from github, use this function from the
-`devtools` package in your R session:
+To install the package directly from github, use the following function
+from the `devtools` package in your R session:
 
 ``` r
 devtools::install_github("m-jahn/SysbioTreemaps")
@@ -128,7 +124,7 @@ Draw the treemap.
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 ```
 
-<img src="png/unnamed-chunk-7-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="png/unnamed-chunk-6-1.png" width="50%" style="display: block; margin: auto;" />
 
 The `voronoiTreemap()` and `drawTreemap()` functions are separated in
 order to allow drawing of the same treemap object in different ways.
@@ -156,7 +152,7 @@ drawTreemap(tm, title = "treemap 3", label_size = 2,
   title_color = "black")
 ```
 
-<img src="png/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="png/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Positioning of cells
 
@@ -210,7 +206,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="png/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="png/unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Custom initial shapes
 
@@ -219,7 +215,7 @@ coordinates to plot a treemap using the \`shape\`\`argument. The
 validity of the supplied coordinates is not checked, so all
 responsibility lies with the user (\!). The R session might even crash
 (due to C++ dependency) if a shape is supplied that is too irregular or
-edgy,a nd the tesselation becomes infeasible. Here are some stable
+edgy, and the tesselation becomes unfeasible. Here are some stable
 examples.
 
 ``` r
@@ -259,7 +255,7 @@ drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="png/unnamed-chunk-13-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="png/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Adcanced example for Voronoi treemaps
 
@@ -532,7 +528,7 @@ drawTreemap(tm,
 )
 ```
 
-<img src="png/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="png/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
 

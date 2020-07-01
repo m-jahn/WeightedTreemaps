@@ -26,9 +26,6 @@ tm <- voronoiTreemap(
 drawTreemap(tm, label_size = 2.5, label_color = "white", title = "An example")
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  devtools::install_gitlab("dickoa/cgal4h")
-
-## ---- eval = FALSE------------------------------------------------------------
 #  devtools::install_github("m-jahn/SysbioTreemaps")
 
 ## ---- eval = FALSE------------------------------------------------------------

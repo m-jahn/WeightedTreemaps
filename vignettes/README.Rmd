@@ -69,16 +69,11 @@ The **Sunburst treemap** is a computationally less demanding treemap that does n
 
 ## Requirements
 
-The C++ code computing the actual Voronoi tesselation requires the [CGAL](https://www.cgal.org/download.html) library headers. Thanks to [Ahmadou Dicko](https://github.com/dickoa), installing the complete CGAL library locally is no longer necessary. Instead, the package depends on the CGAL4 headers that are supplied as R package `cgal4h` on Ahmadou's gitlab page. In case automatic retrieval of the package does not work during `SysbioTreemaps` installation, install `cgal4h` manually before.
-
-```{r, eval = FALSE}
-devtools::install_gitlab("dickoa/cgal4h")
-```
-
+The C++ code computing the actual Voronoi tesselation requires the [CGAL](https://www.cgal.org/download.html) library headers. Thanks to [Ahmadou Dicko](https://github.com/dickoa), installing the complete CGAL library locally is no longer necessary. Instead, the package depends on the CGAL4 headers that are now available on CRAN as R package `cgal4h`. The dependencies are installed automatically and manual installation of CGAL (headers) should not be necessary.
 
 ## Installation
 
-To install the package directly from github, use this function from the `devtools` package in your R session:
+To install the package directly from github, use the following function from the `devtools` package in your R session:
 
 ```{r, eval = FALSE}
 devtools::install_github("m-jahn/SysbioTreemaps")
@@ -188,7 +183,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
 
 ### Custom initial shapes
 
-Instead of using predefined shapes, we can also supply a custom set of coordinates to plot a treemap using the `shape``argument. The validity of the supplied coordinates is not checked, so all responsibility lies with the user (!). The R session might even crash (due to C++ dependency) if a shape is supplied that is too irregular or edgy,a nd the tesselation becomes infeasible. Here are some stable examples.
+Instead of using predefined shapes, we can also supply a custom set of coordinates to plot a treemap using the `shape``argument. The validity of the supplied coordinates is not checked, so all responsibility lies with the user (!). The R session might even crash (due to C++ dependency) if a shape is supplied that is too irregular or edgy, and the tesselation becomes unfeasible. Here are some stable examples.
 
 ```{r}
 # different initial shapes, the more squared the better
