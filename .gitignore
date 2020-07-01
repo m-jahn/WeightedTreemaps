@@ -1,7 +1,6 @@
 inst/doc
 .Rproj.user
 .Rhistory
-.Rbuildignore
 .RData
 .Ruserdata
 .vscode
