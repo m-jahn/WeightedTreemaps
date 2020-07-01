@@ -33,10 +33,9 @@ Imports:
     Rcpp
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests:
     parallel,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-Remotes: gitlab::dickoa/cgal4h
