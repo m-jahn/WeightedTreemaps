@@ -68,10 +68,9 @@ adjustWeights <- function(w, a, target) {
   # to buffer strong difference between computed area and target
   # and to buffer the global weight increase
   # these increase stability but also computation time
-  scaling = ((target - normA) / target) %>%
-    ifelse(. < -1, ./sqrt(abs(.)), .)
-  w = w + sqrt(mean(abs(w))) * scaling
-  w
+  scaling <- ((target - normA) / target)
+  scaling <- ifelse(scaling < -1, scaling/sqrt(abs(scaling)), scaling)
+  w + sqrt(mean(abs(w))) * scaling
 }
 
 

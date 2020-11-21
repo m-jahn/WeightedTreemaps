@@ -46,7 +46,7 @@ validate_input <- function(
     # apply a threshold to filter out small target areas
     if (!is.null(filter)) {
       
-      filtered <- data[[cell_size]] %>% {. / sum(.)} > filter
+      filtered <- data[[cell_size]]/sum(data[[cell_size]]) > filter
       
       if (sum(!filtered) > 0) {
         data <- subset(data, filtered)

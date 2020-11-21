@@ -252,20 +252,23 @@ samplePoints <- function(ParentPoly, n, seed, positioning) {
   # the correct number of coordinates, but too few or too many
   repeat {
     
-    sampled <- tryCatch(
-      sp::Polygon(coords = ParentPoly) %>%
-      sp::spsample(n = n, 
+    sampled <- tryCatch({
+      points <- sp::spsample(
+        sp::Polygon(coords = ParentPoly),
+        n = n, 
         type = ifelse(positioning == "random", "random", "nonaligned")
-      ) %>% { .@coords }, error = function(e) NULL
+      )
+      points@coords}, error = function(e) NULL
     )
     
     if (is.null(sampled) || nrow(sampled) != n) {
       next
     } else {
       if (positioning %in% c("clustered", "clustered_by_area")) {
-        sampled <- sampled %>% scale %>%
+        ord <- sampled %>% scale %>%
           apply(1, function(x) sum(abs(x))) %>%
-          order(decreasing = TRUE) %>% sampled[., ]
+          order(decreasing = TRUE)
+        sampled <- sampled[ord, ]
       }
       return(sampled)
     }

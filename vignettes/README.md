@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie
-2020-07-01
+2020-11-21
 
 <!-- include logo-->
 
@@ -9,8 +9,6 @@ Michael Jahn, David Leslie
 
 <!-- badges start -->
 
-[![Build
-Status](https://travis-ci.com/m-jahn/SysbioTreemaps.svg?branch=master)](https://travis-ci.com/m-jahn/SysbioTreemaps)
 ![Maintained](https://img.shields.io/badge/maintained-yes-green)
 ![GitHub
 issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)

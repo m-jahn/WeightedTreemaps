@@ -124,7 +124,8 @@ sunburstTreemap <- function(
     # supplied by the user or simply the n members per cell
     if (is.null(cell_size)) {
       # average cell size by number of members, if no function is given
-      weights <- ncells %>% cumsum %>% {./tail(., 1)}
+      weights <- ncells %>% cumsum
+      weights <- {weights/tail(weights, 1)}
     } else {
       # average cell size by user defined function, e.g. sum of expression values
       # the cell size is calculated as aggregated relative fraction of total
@@ -132,7 +133,8 @@ sunburstTreemap <- function(
       weights <- df %>%
         dplyr::group_by(get(levels[level])) %>%
         dplyr::summarise(cumfun = fun(get(cell_size))) %>% 
-        dplyr::pull(cumfun) %>% cumsum %>% {./tail(., 1)}
+        dplyr::pull(get("cumfun")) %>% cumsum
+      weights <- weights/tail(weights, 1)
     }
     
     # 3. rescale the weights to lower and upper boundary of parent
@@ -140,7 +142,17 @@ sunburstTreemap <- function(
     lower_bound <- c(parent[1], weights[-length(weights)])
     upper_bound <- weights
     
-    # 4. generate sector polygons and collect in list
+    # 4. generate custom color values for each cell that can be used
+    # with different palettes when drawing;
+    if (!is.null(custom_color)) {
+      color_value <- df %>%
+        dplyr::group_by(get(levels[level])) %>%
+        dplyr::summarise(fun(get(custom_color)))
+      color_value <- color_value [[2]]
+      color_value <- setNames(color_value, names(ncells))
+    }
+    
+    # 5. generate sector polygons and collect in list
     sectors <- lapply(1:length(ncells), function(i) {
       
       draw_sector(
@@ -192,8 +204,8 @@ sunburstTreemap <- function(
   # iterate through all levels,
   # collect results in list, remove duplicated polygons
   # and order by hierarchical level
-  tm <- sunburst_core(level = 1, df = data, parent = c(0, 1)) %>%
-    .[!duplicated(.)]
+  tm <- sunburst_core(level = 1, df = data, parent = c(0, 1))
+  tm <- tm[!duplicated(tm)]
   tm <- tm[names(tm) %>% order]
   cat("Treemap successfully created\n")
   

@@ -58,8 +58,8 @@ poly_sortpoints <- function(df, x = "x", y = "y", clockwise = TRUE, vertex = NUL
   # reorder only if boundary positions are not at the ends of the vector.
   # If several ordering possibilities exist, choose the one with lower ranked minimum
   if (!all(boundary_pos %in% c(1, nrow(df)))) {
-    c(tail(boundary_pos, 1):nrow(df), 1:(tail(boundary_pos, 1)-1)) %>%
-    df[., ]
+    pos <- c(tail(boundary_pos, 1):nrow(df), 1:(tail(boundary_pos, 1)-1))
+    df[pos, ]
   } else {
     df
   }

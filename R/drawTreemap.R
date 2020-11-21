@@ -319,8 +319,8 @@ drawTreemap <- function(
         tm_slot$name
       }
     }) %>%
-      unlist %>% unique %>% sort %>%
-      setNames(convertInput(.), .)
+      unlist %>% unique %>% sort
+    color_list <- setNames(convertInput(color_list), color_list)
     
     # go through list of treemap polygons and draw only the ones
     # supposed to be colored (= the correct color_level)
@@ -355,20 +355,22 @@ drawTreemap <- function(
     }
 
     # used for drawing legend
-    color_list <- seq(range_area[1], range_area[2], length.out = 7) %>%
-      {. / total_area * 100} %>% round(1) %>%
-      setNames(scales::rescale(., to = c(1, 100)), .)
+    color_list <- seq(range_area[1], range_area[2], length.out = 7)
+    color_list <- {color_list/total_area * 100} %>% round(1) %>%
+      scales::rescale(to = c(1, 100))
+    color_list <- setNames(color_list, color_list)
     
     # draw only polygons for the correct level
     lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level %in% color_level) {
-        fill = tm_slot$area %>%
+        fill <- tm_slot$area %>%
           scales::rescale(
             from = c(range_area[1], range_area[2]), 
             to = c(1, 100)
-          ) %>% pal[.]
+          )
+        fill <- pal[fill]
         drawPoly(tm_slot$poly, tm_slot$name, 
-          fill = fill, lwd = NA, col = NA)
+          fill <- fill, lwd = NA, col = NA)
       }
     }) %>% invisible
     
@@ -385,17 +387,18 @@ drawTreemap <- function(
     }
     
     # used for drawing legend
-    color_list <- seq(custom_range[1], custom_range[2], length.out = 7) %>%
-      round(., 1+(-floor(log10(abs(.))))) %>%
-      setNames(convertInput(., from = custom_range, to = c(1, 100)), .)
+    color_list <- seq(custom_range[1], custom_range[2], length.out = 7)
+    color_list <- round(color_list, 1+(-floor(log10(abs(color_list)))))
+    color_list <- setNames(
+      convertInput(color_list, from = custom_range, to = c(1, 100)), color_list)
     
     # draw only polygons for the correct level
     lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level %in% color_level) {
         stopifnot(is.numeric(tm_slot$custom_color))
-        fill = tm_slot$custom_color %>%
-          convertInput(., from = custom_range, to = c(1, 100)) %>%
-          pal[.]
+        fill <- convertInput(tm_slot$custom_color, 
+          from = custom_range, to = c(1, 100))
+        fill <- pal[fill]
         drawPoly(tm_slot$poly, tm_slot$name, 
           fill = fill, lwd = NA, col = NA)
       }
@@ -508,7 +511,7 @@ drawTreemap <- function(
       )
     )
     
-    # make legend which is a list and 
+    # create legend as a list of options
     colorkey <- list(
       space = "right",
       col = pal[color_list],

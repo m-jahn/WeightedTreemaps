@@ -245,8 +245,8 @@ voronoiTreemap <- function(
         stopifnot(is.numeric(df[[cell_size]]))
         weights <- df %>%
           dplyr::group_by(get(levels[level])) %>%
-          dplyr::summarise(fun(get(cell_size))) %>% 
-          { .[[2]] / sum(.[[2]]) }
+          dplyr::summarise(fun(get(cell_size)))
+        weights <- weights[[2]]/sum(weights[[2]])
       }
       # reorder starting coordinate positions by weights (= target cell areas) 
       # if sorting by area is toggled
@@ -255,14 +255,14 @@ voronoiTreemap <- function(
         sampledPoints <- sampledPoints[order(order(weights)), ]
       }
       
-      
       # 4. generate custom color values for each cell that can be used
       # with different palettes when drawing;
       if (!is.null(custom_color)) {
         color_value <- df %>%
           dplyr::group_by(get(levels[level])) %>%
-          dplyr::summarise(fun(get(custom_color))) %>% 
-          {.[[2]]} %>% setNames(names(ncells))
+          dplyr::summarise(fun(get(custom_color)))
+        color_value <- color_value [[2]]
+        color_value <- setNames(color_value, names(ncells))
       }
       
       # 5. generate additively weighted voronoi treemap object;
@@ -310,8 +310,8 @@ voronoiTreemap <- function(
         }
 
         # print summary of cell tesselation
-        tessErr <- sapply(treemap, function(tm) tm$area) %>% 
-          {(. / sum(.)) - weights } %>% abs
+        tessErr <- sapply(treemap, function(tm) tm$area)
+        tessErr <- abs(tessErr/sum(tessErr)-weights)
         cat("Level", level, "tesselation: ",
           round(mean(tessErr) * 100, 2), "% mean error, ",
           round(max(tessErr) * 100, 2), "% max error, ",
@@ -363,8 +363,8 @@ voronoiTreemap <- function(
   # iterate through all levels,
   # collect results in list, remove duplicated polygons
   # and order by hierarchical level
-  tm <- voronoi_core(level = 1, df = data) %>%
-    .[!duplicated(.)]
+  tm <- voronoi_core(level = 1, df = data)
+  tm <- tm[!duplicated(tm)]
   tm <- tm[names(tm) %>% order]
   cat("Treemap successfully created\n")
   

@@ -22,7 +22,6 @@ knitr::opts_chunk$set(
 <img src="png/logo.png" align="right"/>
 
 <!-- badges start -->
-[![Build Status](https://travis-ci.com/m-jahn/SysbioTreemaps.svg?branch=master)](https://travis-ci.com/m-jahn/SysbioTreemaps)
 ![Maintained](https://img.shields.io/badge/maintained-yes-green)
 ![GitHub issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
 ![GitHub last commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)

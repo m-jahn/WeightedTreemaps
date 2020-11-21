@@ -20,12 +20,12 @@ convertInput <- function(x, from = NULL, to = c(1, 100)) {
     }
   }
   if (is.numeric(x)) {
-    scales::rescale(x, 
+    res <- scales::rescale(x, 
       from = {if (!is.null(from)) from else range(x)}, 
-      to = to) %>%
-      round %>%
-      replace(., . > to[2], to[2]) %>%
-      replace(., . < to[1], to[1])
+      to = to) %>% round
+    res <- replace(res, res > to[2], to[2])
+    res <- replace(res, res < to[1], to[1])
+    res
   } else {
     stop("Input data is not of type numeric, factor, or character. Color-coding impossible.")
   }
