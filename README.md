@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
-Michael Jahn, David Leslie
-2020-07-01
+Michael Jahn, David Leslie, Ahmadou Dicko
+2020-11-21
 
 <!-- include logo-->
 
@@ -9,8 +9,8 @@ Michael Jahn, David Leslie
 
 <!-- badges start -->
 
-[![Build
-Status](https://travis-ci.com/m-jahn/SysbioTreemaps.svg?branch=master)](https://travis-ci.com/m-jahn/SysbioTreemaps)
+[![R build
+status](https://github.com/m-jahn/SysbioTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/SysbioTreemaps/actions)
 ![Maintained](https://img.shields.io/badge/maintained-yes-green)
 ![GitHub
 issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
@@ -215,7 +215,7 @@ coordinates to plot a treemap using the \`shape\`\`argument. The
 validity of the supplied coordinates is not checked, so all
 responsibility lies with the user (\!). The R session might even crash
 (due to C++ dependency) if a shape is supplied that is too irregular or
-edgy,a nd the tesselation becomes unfeasible. Here are some stable
+edgy, and the tesselation becomes unfeasible. Here are some stable
 examples.
 
 ``` r
@@ -365,7 +365,9 @@ drawTreemap(
 )
 ```
 
-<img src="vignettes/png/unnamed-chunk-14-1.png" width="100%" style="display: block; margin: auto;" />
+<!-- include external figure-->
+
+<img src="vignettes/png/large_treemaps.png" align="center"/>
 
 ### Generate treemaps with parallel computing
 
@@ -444,7 +446,9 @@ lapply(1:10, function(i) {
 }) %>% invisible
 ```
 
-<img src="vignettes/png/unnamed-chunk-17-1.png" width="100%" style="display: block; margin: auto;" />
+<!-- include external figure-->
+
+<img src="vignettes/png/large_treemaps_parallel.png" align="center"/>
 
 ### Sunburst treemaps
 
@@ -528,7 +532,7 @@ drawTreemap(tm,
 )
 ```
 
-<img src="vignettes/png/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="vignettes/png/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
 

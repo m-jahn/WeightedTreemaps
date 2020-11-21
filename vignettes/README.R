@@ -203,10 +203,6 @@ custom_pal_2 <- diverging_hcl(
 #    add = TRUE
 #  )
 
-## ---- fig.width = 10, fig.height = 5, out.width = "100%", fig.align = 'center', echo = FALSE----
-# we load precomputed result to save time
-knitr::include_graphics("png/unnamed-chunk-14-1.png")
-
 ## -----------------------------------------------------------------------------
 library(parallel)
 
@@ -261,10 +257,6 @@ df <- Jahn_CellReports_2018 %>%
 #    )
 #  
 #  }) %>% invisible
-
-## ---- fig.width = 20, fig.height = 8, out.width = "100%", fig.align = 'center', echo = FALSE----
-# we load precomputed result to save time
-knitr::include_graphics("png/unnamed-chunk-17-1.png")
 
 ## -----------------------------------------------------------------------------
 # generate data frame

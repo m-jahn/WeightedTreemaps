@@ -365,7 +365,9 @@ drawTreemap(
 )
 ```
 
-<img src="png/unnamed-chunk-14-1.png" width="100%" style="display: block; margin: auto;" />
+<!-- include external figure-->
+
+<img src="png/large_treemaps.png" align="center"/>
 
 ### Generate treemaps with parallel computing
 
@@ -444,7 +446,9 @@ lapply(1:10, function(i) {
 }) %>% invisible
 ```
 
-<img src="png/unnamed-chunk-17-1.png" width="100%" style="display: block; margin: auto;" />
+<!-- include external figure-->
+
+<img src="png/large_treemaps_parallel.png" align="center"/>
 
 ### Sunburst treemaps
 
@@ -528,7 +532,7 @@ drawTreemap(tm,
 )
 ```
 
-<img src="png/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="png/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
 
