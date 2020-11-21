@@ -2,7 +2,7 @@
 #output: rmarkdown::html_vignette
 output: github_document
 title: "SysbioTreemaps"
-author: "Michael Jahn, David Leslie"
+author: "Michael Jahn, David Leslie, Ahmadou Dicko"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{SysbioTreemaps}
@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 <img src="png/logo.png" align="right"/>
 
 <!-- badges start -->
+[![R build status](https://github.com/m-jahn/SysbioTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/SysbioTreemaps/actions)
 ![Maintained](https://img.shields.io/badge/maintained-yes-green)
 ![GitHub issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
 ![GitHub last commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)

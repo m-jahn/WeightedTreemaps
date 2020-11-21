@@ -1,6 +1,6 @@
 SysbioTreemaps
 ================
-Michael Jahn, David Leslie
+Michael Jahn, David Leslie, Ahmadou Dicko
 2020-11-21
 
 <!-- include logo-->
@@ -9,6 +9,8 @@ Michael Jahn, David Leslie
 
 <!-- badges start -->
 
+[![R build
+status](https://github.com/m-jahn/SysbioTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/SysbioTreemaps/actions)
 ![Maintained](https://img.shields.io/badge/maintained-yes-green)
 ![GitHub
 issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
