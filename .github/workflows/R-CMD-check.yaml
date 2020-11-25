@@ -5,11 +5,13 @@ on:
     branches:
       - master
       - dev
+      - vignette
       
   pull_request:
     branches:
       - master
       - dev
+      - vignette
 
 name: R-CMD-check
 

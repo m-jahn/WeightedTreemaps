@@ -1,11 +1,11 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2020-11-21
+2020-11-25
 
 <!-- include logo-->
 
-<img src="vignettes/png/logo.png" align="right"/>
+<img src="images/logo.png" align="right" />
 
 <!-- badges start -->
 
@@ -24,7 +24,7 @@ commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)
 Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from
 hierarchical data.
 
-<img src="vignettes/png/unnamed-chunk-2-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-2-1.png" width="50%" style="display: block; margin: auto;" />
 
 ## Description
 
@@ -124,7 +124,7 @@ Draw the treemap.
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 ```
 
-<img src="vignettes/png/unnamed-chunk-6-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-6-1.png" width="50%" style="display: block; margin: auto;" />
 
 The `voronoiTreemap()` and `drawTreemap()` functions are separated in
 order to allow drawing of the same treemap object in different ways.
@@ -152,7 +152,7 @@ drawTreemap(tm, title = "treemap 3", label_size = 2,
   title_color = "black")
 ```
 
-<img src="vignettes/png/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Positioning of cells
 
@@ -206,7 +206,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="vignettes/png/unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Custom initial shapes
 
@@ -255,7 +255,7 @@ drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="vignettes/png/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Adcanced example for Voronoi treemaps
 
@@ -367,7 +367,7 @@ drawTreemap(
 
 <!-- include external figure-->
 
-<img src="vignettes/png/large_treemaps.png" align="center"/>
+<img src="images/large_treemaps.png" align="center"/>
 
 ### Generate treemaps with parallel computing
 
@@ -448,7 +448,7 @@ lapply(1:10, function(i) {
 
 <!-- include external figure-->
 
-<img src="vignettes/png/large_treemaps_parallel.png" align="center"/>
+<img src="images/large_treemaps_parallel.png" align="center"/>
 
 ### Sunburst treemaps
 
@@ -532,7 +532,7 @@ drawTreemap(tm,
 )
 ```
 
-<img src="vignettes/png/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
 
