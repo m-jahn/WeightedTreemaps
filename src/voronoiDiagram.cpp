@@ -69,7 +69,7 @@ IntegerVector order(NumericVector x) {
 // custom function to find boundary position
 IntegerVector get_boundary_pos(NumericVector x, NumericVector y){
   IntegerVector ind = seq(0, x.size()-1);
-  IntegerVector hit = ind[abs(x) == 4000 | abs(y) == 4000];
+  IntegerVector hit = ind[(abs(x) == 4000) | (abs(y) == 4000)];
   return hit;
 }
 
@@ -154,7 +154,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
 
     // remove duplicate polygon points or NAs
     LogicalVector dupl = duplicated(round(xs, 2)) & duplicated(round(ys, 2));
-    LogicalVector ends = floor(xs) == 3999 | floor(ys) == 3999;
+    LogicalVector ends = (floor(xs) == 3999) | (floor(ys) == 3999);
     LogicalVector NAs = is_na(xs) | is_na(ys);
     xs = xs[!(dupl | ends | NAs)];
     ys = ys[!(dupl | ends | NAs)];
@@ -189,7 +189,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
     IntegerVector boundary_pos = get_boundary_pos(xs, ys);
     // then reorder only if boundary positions are not at the ends of the vector.
     if (boundary_pos.length() == 2) {
-      if (boundary_pos[0] != 0 | boundary_pos[1] != xs.length()-1) {
+      if ((boundary_pos[0] != 0) | (boundary_pos[1] != xs.length()-1)) {
         IntegerVector seq1, seq2;
         seq1 = seq(boundary_pos[1], xs.length()-1);
         seq2 = seq(0, boundary_pos[1]-1);
