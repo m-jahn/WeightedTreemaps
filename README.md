@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2020-11-25
+2020-12-13
 
 <!-- include logo-->
 
@@ -137,19 +137,19 @@ treemaps on one page using the `layout` and `position` arguments.
 ``` r
 drawTreemap(tm, title = "treemap 1", label_size = 2,
   color_type = "categorical", color_level = 1,
-  layout = c(1,3), position = c(1, 1))
+  layout = c(1,3), position = c(1, 1), legend = TRUE)
 #> Note: use 'add = TRUE' if you want to add more treemaps to this page.
 
 drawTreemap(tm, title = "treemap 2", label_size = 2,
   color_type = "categorical", color_level = 2, border_size = 3,
-  add = TRUE, layout = c(1,3), position = c(1, 2))
+  add = TRUE, layout = c(1,3), position = c(1, 2), legend = TRUE)
 
 drawTreemap(tm, title = "treemap 3", label_size = 2,
   color_type = "cell_size", color_level = 2,
   color_palette = heat.colors(10),
   border_color = grey(0.4), label_color = grey(0.4),
   add = TRUE, layout = c(1,3), position = c(1, 3),
-  title_color = "black")
+  title_color = "black", legend = TRUE)
 ```
 
 <img src="images/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />

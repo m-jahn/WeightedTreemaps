@@ -241,3 +241,83 @@ draw_label_sunburst <- function(
     }
   }) %>% invisible
 }
+
+
+# function to add colors to a treemap object
+add_color <- function(treemap, color_palette = NULL, 
+  color_type = "categorical", color_level = 1,
+  custom_range = NULL) {
+  
+  # CASE 1: CATEGORICAL
+  if (color_type == "categorical") {
+    # determine number of required colors
+    if (length(color_level) == 1) {
+      color_list <- unique(treemap@data[[treemap@call$levels[color_level]]])
+    } else {
+      color_list <- apply(treemap@data[treemap@call$levels[color_level]], 2, unique) %>%
+        unlist
+    }
+  }
+  
+  # CASE 2: CELL AREA
+  if (color_type == "cell_size") {
+    
+    # determine total area
+    total_area <- lapply(treemap@cells, function(tm_slot) {
+      if (tm_slot$level %in% color_level) tm_slot$area
+    }) %>% unlist %>% sum
+    
+    # determine number of required colors
+    color_list <- lapply(treemap@cells, function(tm_slot) {
+      if (tm_slot$level %in% color_level) tm_slot$area/total_area
+    }) %>% unlist %>% pretty(n = 10)
+  }
+  
+  # CASE 3: CUSTOM COLOR
+  # 'custom_color' to use a color index supplied during treemap generation
+  if (color_type == "custom_color") {
+    
+    # determine number of required colors
+    color_list <- lapply(treemap@cells, function(tm_slot) {
+        if (tm_slot$level %in% color_level) tm_slot$custom_color
+      }) %>% unlist %>% pretty(n = 10)
+  }
+  
+  # DEFINE PALETTE
+  # generate palette with defined number of colors
+  # use a custom data range if supplied by user (does not work for categorical)
+  if (!is.null(custom_range) & color_type != "categorical") {
+    color_list <- custom_range %>% pretty(n = 10)
+  }
+  if (is.null(color_palette)) {
+    pal <- colorspace::rainbow_hcl(length(color_list), start = 60)
+  } else {
+    pal <- colorRampPalette(color_palette)(length(color_list))
+  }
+  pal <- setNames(pal, color_list)
+  
+  # ADD COLORS TO TREEMAP OBJECT
+  treemap@cells <- lapply(treemap@cells, function(tm_slot) {
+    if (tm_slot$level %in% color_level) {
+      if (color_type == "categorical") {
+        tm_slot$color <- pal[[tm_slot$name]]
+      } else if (color_type == "cell_size") {
+        area <- tm_slot$area/total_area
+        tm_slot$color <- pal[[findInterval(area, as.numeric(names(pal)))]]
+      } else if (color_type == "custom_color") {
+        if (tm_slot$custom_color < as.numeric(names(pal))[[1]]) {
+          tm_slot$color <- pal[[1]]
+        } else {
+          tm_slot$color <- pal[[findInterval(tm_slot$custom_color, as.numeric(names(pal)))]]
+        }
+      }
+    }
+    tm_slot
+
+  })
+  
+  # return treemap with colors and palette
+  treemap@call$palette <- pal
+  treemap
+  
+}

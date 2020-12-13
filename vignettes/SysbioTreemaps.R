@@ -31,18 +31,18 @@ drawTreemap(tm, label_size = 2.5, label_color = "white")
 ## ---- fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
 drawTreemap(tm, title = "treemap 1", label_size = 2,
   color_type = "categorical", color_level = 1,
-  layout = c(1,3), position = c(1, 1))
+  layout = c(1,3), position = c(1, 1), legend = TRUE)
 
 drawTreemap(tm, title = "treemap 2", label_size = 2,
   color_type = "categorical", color_level = 2, border_size = 3,
-  add = TRUE, layout = c(1,3), position = c(1, 2))
+  add = TRUE, layout = c(1,3), position = c(1, 2), legend = TRUE)
 
 drawTreemap(tm, title = "treemap 3", label_size = 2,
   color_type = "cell_size", color_level = 2,
   color_palette = heat.colors(10),
   border_color = grey(0.4), label_color = grey(0.4),
   add = TRUE, layout = c(1,3), position = c(1, 3),
-  title_color = "black")
+  title_color = "black", legend = TRUE)
 
 ## ---- message = FALSE, error = FALSE, results = 'hide'------------------------
 # set seed to obtain same df every time
