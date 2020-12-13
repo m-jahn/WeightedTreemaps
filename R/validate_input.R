@@ -1,9 +1,7 @@
 #' @importFrom dplyr mutate_if
 #' @importFrom dplyr %>%
 #
-# ERROR HANDLING AND DATA VALIDATION
-# ---------------------------------
-
+# check input before treemap generation
 validate_input <- function(
   data,
   levels,
