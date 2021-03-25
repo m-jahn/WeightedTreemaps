@@ -249,7 +249,7 @@ add_color <- function(treemap, color_palette = NULL,
   custom_range = NULL) {
   
   # CASE 1: CATEGORICAL
-  if (color_type == "categorical") {
+  if (color_type %in% c("categorical", "both")) {
     # determine number of required colors
     if (length(color_level) == 1) {
       color_list <- unique(treemap@data[[treemap@call$levels[color_level]]])
@@ -260,14 +260,12 @@ add_color <- function(treemap, color_palette = NULL,
   }
   
   # CASE 2: CELL AREA
+  # determine total area
+  total_area <- lapply(treemap@cells, function(tm_slot) {
+    if (tm_slot$level %in% color_level) tm_slot$area
+  }) %>% unlist %>% sum
+  # determine number of required colors
   if (color_type == "cell_size") {
-    
-    # determine total area
-    total_area <- lapply(treemap@cells, function(tm_slot) {
-      if (tm_slot$level %in% color_level) tm_slot$area
-    }) %>% unlist %>% sum
-    
-    # determine number of required colors
     color_list <- lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level %in% color_level) tm_slot$area/total_area
     }) %>% unlist %>% pretty(n = 10)
@@ -286,7 +284,7 @@ add_color <- function(treemap, color_palette = NULL,
   # DEFINE PALETTE
   # generate palette with defined number of colors
   # use a custom data range if supplied by user (does not work for categorical)
-  if (!is.null(custom_range) & color_type != "categorical") {
+  if (!is.null(custom_range) & !(color_type %in% c("categorical", "both"))) {
     color_list <- custom_range %>% pretty(n = 10)
   }
   if (is.null(color_palette)) {
@@ -299,7 +297,7 @@ add_color <- function(treemap, color_palette = NULL,
   # ADD COLORS TO TREEMAP OBJECT
   treemap@cells <- lapply(treemap@cells, function(tm_slot) {
     if (tm_slot$level %in% color_level) {
-      if (color_type == "categorical") {
+      if (color_type %in% c("categorical", "both")) {
         tm_slot$color <- pal[[tm_slot$name]]
       } else if (color_type == "cell_size") {
         area <- tm_slot$area/total_area
@@ -313,8 +311,31 @@ add_color <- function(treemap, color_palette = NULL,
       }
     }
     tm_slot
-
   })
+  
+  # SPECIAL CASE "BOTH": DARKEN OR LIGHTEN LOWEST CELL LEVEL
+  if (color_type == "both") {
+    # get range of cell areas for lowest level
+    cell_area <- lapply(treemap@cells, function(tm_slot) {
+      if (tm_slot$level == length(treemap@call$levels)) tm_slot$area
+    }) %>% unlist
+    # based on that, calculate individual lightness adjustment per cell
+    treemap@cells <- lapply(treemap@cells, function(tm_slot) {
+      # only adjust lightness for cells of lowest level
+      if (tm_slot$level == length(treemap@call$levels)) {
+        area <- tm_slot$area/total_area
+        corr_factor <- scales::rescale(area, from = range(cell_area/total_area), to = c(-0.2, 0.2))
+        # if lowest level is also chosen color_level, adjust lightness of cell
+        if (tm_slot$level %in% color_level) {
+          tm_slot$color <- colorspace::lighten(tm_slot$color, corr_factor)
+        # else add a semitransparant color to the cell (parental cell is main color)
+        } else {
+          tm_slot$color <- grey(0.5+(2*corr_factor), alpha = (1.5*abs(corr_factor)))
+        }
+      }
+      tm_slot
+    })
+  }
   
   # return treemap with colors and palette
   treemap@call$palette <- pal

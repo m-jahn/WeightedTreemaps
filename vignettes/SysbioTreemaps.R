@@ -28,20 +28,24 @@ tm <- voronoiTreemap(
 ## ---- fig.width = 5, fig.height = 5, out.width = "50%", fig.align = 'center'----
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 
-## ---- fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
+## ---- fig.width = 9, fig.height = 9, out.width = "100%", fig.align = 'center', warning = FALSE----
 drawTreemap(tm, title = "treemap 1", label_size = 2,
   color_type = "categorical", color_level = 1,
-  layout = c(1,3), position = c(1, 1), legend = TRUE)
+  layout = c(2, 2), position = c(1, 1), legend = TRUE)
 
 drawTreemap(tm, title = "treemap 2", label_size = 2,
   color_type = "categorical", color_level = 2, border_size = 3,
-  add = TRUE, layout = c(1,3), position = c(1, 2), legend = TRUE)
+  add = TRUE, layout = c(2, 2), position = c(1, 2), legend = TRUE)
+
+drawTreemap(tm, title = "treemap 3", label_size = 2,
+  color_type = "both", color_level = 1,
+  add = TRUE, layout = c(2, 2), position = c(2, 1), legend = TRUE)
 
 drawTreemap(tm, title = "treemap 3", label_size = 2,
   color_type = "cell_size", color_level = 2,
   color_palette = heat.colors(10),
   border_color = grey(0.4), label_color = grey(0.4),
-  add = TRUE, layout = c(1,3), position = c(1, 3),
+  add = TRUE, layout = c(2, 2), position = c(2, 2),
   title_color = "black", legend = TRUE)
 
 ## ---- message = FALSE, error = FALSE, results = 'hide'------------------------

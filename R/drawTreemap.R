@@ -11,12 +11,13 @@
 #'   \code{\link{voronoiTreemap}} or \code{\link{sunburstTreemap}}.
 #' @param levels (numeric) A numeric vector representing the hierarchical levels 
 #'   that are drawn. The default is to draw all levels.
-#' @param color_type (character) One of "categorical", "cell_size" or "custom_color".
-#'   For "categorical", each cell is colored with a unique color from the current palette,
-#'   but colors will repeat if there are many cells. For "cell_size", the cells
-#'   are colored according to their relative area. For "custom_color", a color 
-#'   index is used that was specified by \code{custom_color} during
-#'   treemap generation. Use \code{NULL} to omit drawing colors. 
+#' @param color_type (character) One of "categorical", "cell_size", "both", or "custom_color".
+#'   For "categorical", each cell is colored based on the (parent) category it belongs.
+#'   Colors may repeat if there are many cells. For "cell_size", cells are colored
+#'   according to their relative area. For "both", cells are be colored the same
+#'   way as for "categorical", but lightness is adjusted according to cell area.
+#'   For "custom_color", a color index is used that was specified by 
+#'   \code{custom_color} during treemap generation. Use \code{NULL} to omit drawing colors. 
 #' @param color_level (numeric) A numeric vector representing the hierarchical level 
 #'   that should be used for cell coloring. Must be one of \code{levels}.
 #'   Default is to use the lowest level cells for Voronoi treemaps and all levels
@@ -232,6 +233,14 @@ drawTreemap <- function(
   # use apply function to draw the single polygons for desired level
   lapply(treemap@cells, function(tm_slot) {
     if (tm_slot$level %in% color_level) {
+      drawPoly(tm_slot$poly, tm_slot$name, 
+        fill = tm_slot$color, lwd = NA, col = NA)
+    }
+    # in case of color_type == "both" draw also lowest level
+    if (color_type == "both" & 
+        tm_slot$level == max(levels) &
+        !(tm_slot$level %in% color_level)
+    ) {
       drawPoly(tm_slot$poly, tm_slot$name, 
         fill = tm_slot$color, lwd = NA, col = NA)
     }
