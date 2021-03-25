@@ -22,10 +22,10 @@ knitr::opts_chunk$set(
 
 <!-- badges start -->
 [![R build status](https://github.com/m-jahn/SysbioTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/SysbioTreemaps/actions)
-![Maintained](https://img.shields.io/badge/maintained-yes-green)
 ![GitHub issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
 ![GitHub last commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)
 ![Platform](https://img.shields.io/badge/platform-all-green)
+![Maintained](https://img.shields.io/badge/maintained-yes-green)
 <!-- badges end -->
 
 ***
@@ -54,6 +54,12 @@ tm <- voronoiTreemap(
 # draw treemap
 drawTreemap(tm, label_size = 2.5, label_color = "white", title = "An example")
 ```
+
+## News
+
+*25 March 2021*
+
+A **Shiny app** for generating treemaps from custom data is now available on **[Shinyapps.io](https://m-jahn.shinyapps.io/ShinyTreemaps/)!**
 
 ## Description
 

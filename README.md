@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2020-12-13
+2021-03-25
 
 <!-- include logo-->
 
@@ -11,12 +11,12 @@ Michael Jahn, David Leslie, Ahmadou Dicko
 
 [![R build
 status](https://github.com/m-jahn/SysbioTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/SysbioTreemaps/actions)
-![Maintained](https://img.shields.io/badge/maintained-yes-green)
 ![GitHub
 issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
 ![GitHub last
 commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)
 ![Platform](https://img.shields.io/badge/platform-all-green)
+![Maintained](https://img.shields.io/badge/maintained-yes-green)
 <!-- badges end -->
 
 -----
@@ -25,6 +25,14 @@ Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from
 hierarchical data.
 
 <img src="images/unnamed-chunk-2-1.png" width="50%" style="display: block; margin: auto;" />
+
+## News
+
+*25 March 2021*
+
+A **Shiny app** for generating treemaps from custom data is now
+available on
+**[Shinyapps.io](https://m-jahn.shinyapps.io/ShinyTreemaps/)\!**
 
 ## Description
 
@@ -132,23 +140,31 @@ Computation of treemaps with thousands of cells can be very time and
 resource consuming (around 5-10 minutes for a 2000-cell treemap on a
 regular desktop computer). With the `drawTreemap()` function, we can not
 only plot the same treemap in different ways but also combine several
-treemaps on one page using the `layout` and `position` arguments.
+treemaps on one page using the `layout` and `position` arguments. The
+most important style element is color. Coloring can be based on cell
+category, cell size, or both, using the `color_type` argument. By
+default, the highest hierarchical level is used for coloring but that
+can be customized using the `color_level` argument.
 
 ``` r
 drawTreemap(tm, title = "treemap 1", label_size = 2,
   color_type = "categorical", color_level = 1,
-  layout = c(1,3), position = c(1, 1), legend = TRUE)
+  layout = c(2, 2), position = c(1, 1), legend = TRUE)
 #> Note: use 'add = TRUE' if you want to add more treemaps to this page.
 
 drawTreemap(tm, title = "treemap 2", label_size = 2,
   color_type = "categorical", color_level = 2, border_size = 3,
-  add = TRUE, layout = c(1,3), position = c(1, 2), legend = TRUE)
+  add = TRUE, layout = c(2, 2), position = c(1, 2), legend = TRUE)
+
+drawTreemap(tm, title = "treemap 3", label_size = 2,
+  color_type = "both", color_level = 1,
+  add = TRUE, layout = c(2, 2), position = c(2, 1), legend = TRUE)
 
 drawTreemap(tm, title = "treemap 3", label_size = 2,
   color_type = "cell_size", color_level = 2,
   color_palette = heat.colors(10),
   border_color = grey(0.4), label_color = grey(0.4),
-  add = TRUE, layout = c(1,3), position = c(1, 3),
+  add = TRUE, layout = c(2, 2), position = c(2, 2),
   title_color = "black", legend = TRUE)
 ```
 
