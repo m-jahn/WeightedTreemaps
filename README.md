@@ -1,7 +1,7 @@
 SysbioTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2021-03-25
+2021-11-27
 
 <!-- include logo-->
 
@@ -19,7 +19,7 @@ commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)
 ![Maintained](https://img.shields.io/badge/maintained-yes-green)
 <!-- badges end -->
 
------
+------------------------------------------------------------------------
 
 Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from
 hierarchical data.
@@ -32,7 +32,7 @@ hierarchical data.
 
 A **Shiny app** for generating treemaps from custom data is now
 available on
-**[Shinyapps.io](https://m-jahn.shinyapps.io/ShinyTreemaps/)\!**
+**[Shinyapps.io](https://m-jahn.shinyapps.io/ShinyTreemaps/)!**
 
 ## Description
 
@@ -52,15 +52,15 @@ Voronoi tesselations, nor do they perform additively weighted Voronoi
 tesselation. This is an important demand for systems biology and other
 applications where it is useful to scale the cell size (or area) to a
 set of predefined weights. The `voronoiTreemap()` function provided in
-this packages allow both the additively weighted Voronoi tesselation,
+this packages allows both the additively weighted Voronoi tesselation
 and the nesting of different hierarchical levels in one plot.
 
-The underlying functions for the tesselation were developed and
-published by Paul Murrell, University of Auckland, and serve as the
-basis for this package. They are called by a recursive wrapper function,
+Some of the underlying functions for the tesselation were developed by
+Paul Murrell, University of Auckland, and serve as the basis for this
+package. They are called by a recursive wrapper function,
 `voronoiTreemap()`, which subdivides the plot area in polygonal cells
 according to the highest hierarchical level. It then continues with the
-tesselation on the next lower level uisng the child cell of the previous
+tesselation on the next lower level using the child cell of the previous
 level as the new parental cell, and so on.
 
 The **Sunburst treemap** is a computationally less demanding treemap
@@ -89,9 +89,6 @@ from the `devtools` package in your R session:
 ``` r
 devtools::install_github("m-jahn/SysbioTreemaps")
 ```
-
-The package is not available on CRAN yet but it is planned to be
-deposited soon.
 
 ## Usage
 
@@ -160,7 +157,7 @@ drawTreemap(tm, title = "treemap 3", label_size = 2,
   color_type = "both", color_level = 1,
   add = TRUE, layout = c(2, 2), position = c(2, 1), legend = TRUE)
 
-drawTreemap(tm, title = "treemap 3", label_size = 2,
+drawTreemap(tm, title = "treemap 4", label_size = 2,
   color_type = "cell_size", color_level = 2,
   color_palette = heat.colors(10),
   border_color = grey(0.4), label_color = grey(0.4),
@@ -229,7 +226,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
 Instead of using predefined shapes, we can also supply a custom set of
 coordinates to plot a treemap using the \`shape\`\`argument. The
 validity of the supplied coordinates is not checked, so all
-responsibility lies with the user (\!). The R session might even crash
+responsibility lies with the user (!). The R session might even crash
 (due to C++ dependency) if a shape is supplied that is too irregular or
 edgy, and the tesselation becomes unfeasible. Here are some stable
 examples.

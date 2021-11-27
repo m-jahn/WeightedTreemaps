@@ -20,7 +20,7 @@ File ‘SysbioTreemaps/libs/SysbioTreemaps.so’:
     of to the console, nor use Fortran I/O nor system RNGs.
 ```
 
-The C++ function `voronoiDiagram.cpp` does not contain any such entry points (as far as I can see). The Note is probably caused by the upstream dependency CGAL 4 headers (R package `cgal4h`). This note appeas only when checking on Mac OS.
+The C++ function `voronoiDiagram.cpp` does not contain any such entry points. This Note is caused by the upstream dependency CGAL 4 headers (R package `cgal4h`). This note appeas only when checking on Mac OS.
 
 2. Note:
 
@@ -43,7 +43,7 @@ checking installed package size ... NOTE
     libs   7.7Mb
 ```
 
-Installed package size exceeding 5 MB is mainly caused by the compiled function `voronoiDiagram.o`. I am not aware of a method to significantly reduce this size.
+Installed package size exceeding 5 MB is mainly caused by the compiled function `voronoiDiagram.o`. The size of this function can not be easily reduced.
 
 ## Downstream dependencies
 

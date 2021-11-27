@@ -41,7 +41,7 @@ drawTreemap(tm, title = "treemap 3", label_size = 2,
   color_type = "both", color_level = 1,
   add = TRUE, layout = c(2, 2), position = c(2, 1), legend = TRUE)
 
-drawTreemap(tm, title = "treemap 3", label_size = 2,
+drawTreemap(tm, title = "treemap 4", label_size = 2,
   color_type = "cell_size", color_level = 2,
   color_palette = heat.colors(10),
   border_color = grey(0.4), label_color = grey(0.4),

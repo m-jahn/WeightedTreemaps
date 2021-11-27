@@ -26,9 +26,9 @@ Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from hierarchica
 Treemaps are a visually appealing graphical representation of numerical data using a space-filling approach. A plane or 'map' is subdivided into smaller areas called cells. The cells in the map are scaled according to an underlying metric which allows to grasp the hierarchical organization and relative importance of many objects at once.
 This package contains two different implementations of treemaps, [**Voronoi treemaps**](#voronoi-treemaps) and [**Sunburst treemaps**](#sunburst-treemaps)
 
-There are different implementations available for **Voronoi tesselations** in R, the simplest being the `deldir()` function (from package `deldir`). However, `deldir` and others do not handle nested Voronoi tesselations, nor do they perform additively weighted Voronoi tesselation. This is an important demand for systems biology and other applications where it is useful to scale the cell size (or area) to a set of predefined weights. The `voronoiTreemap()` function provided in this packages allow both the additively weighted Voronoi tesselation, and the nesting of different hierarchical levels in one plot. 
+There are different implementations available for **Voronoi tesselations** in R, the simplest being the `deldir()` function (from package `deldir`). However, `deldir` and others do not handle nested Voronoi tesselations, nor do they perform additively weighted Voronoi tesselation. This is an important demand for systems biology and other applications where it is useful to scale the cell size (or area) to a set of predefined weights. The `voronoiTreemap()` function provided in this packages allows both the additively weighted Voronoi tesselation and the nesting of different hierarchical levels in one plot.
 
-The underlying functions for the tesselation were developed and published by Paul Murrell, University of Auckland, and serve as the basis for this package. They are called by a recursive wrapper function, `voronoiTreemap()`, which subdivides the plot area in polygonal cells according to the highest hierarchical level. It then continues with the tesselation on the next lower level using the child cell of the previous level as the new parental cell, and so on. 
+Some of the underlying functions for the tesselation were developed by Paul Murrell, University of Auckland, and serve as the basis for this package. They are called by a recursive wrapper function, `voronoiTreemap()`, which subdivides the plot area in polygonal cells according to the highest hierarchical level. It then continues with the tesselation on the next lower level using the child cell of the previous level as the new parental cell, and so on.
 
 The **Sunburst treemap** is a computationally less demanding treemap that does not require iterative refinement, but simply generates circle sectors that are sized according to predefined weights. The main function to draw Sunburst treemaps is `sunburstTreemap()`. It uses the same underlying recursive algorithm under the hood and can be used to draw sectors of different hierarchical levels with increasing granularity.
 
@@ -43,8 +43,6 @@ To install the package directly from github, use the following function from the
 ```{r, eval = FALSE}
 devtools::install_github("m-jahn/SysbioTreemaps")
 ```
-
-The package is not available on CRAN yet but it is planned to be deposited soon.
 
 ## Usage
 
@@ -98,7 +96,7 @@ drawTreemap(tm, title = "treemap 3", label_size = 2,
   color_type = "both", color_level = 1,
   add = TRUE, layout = c(2, 2), position = c(2, 1), legend = TRUE)
 
-drawTreemap(tm, title = "treemap 3", label_size = 2,
+drawTreemap(tm, title = "treemap 4", label_size = 2,
   color_type = "cell_size", color_level = 2,
   color_palette = heat.colors(10),
   border_color = grey(0.4), label_color = grey(0.4),
@@ -170,7 +168,7 @@ oct_coord <- list(
 )
 ```
 
-Let's generate treemaps with the shapes of a house, a rectangle, or an octogon.
+Let's generate treemaps with the shapes of a house, a wide rectangle, and an octogon.
 
 ```{r, message = FALSE, error = FALSE, results = 'hide'}
 tm1 <- voronoiTreemap(data = df, levels = "A",

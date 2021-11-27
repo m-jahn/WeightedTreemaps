@@ -15,12 +15,12 @@
 #'   be used. The order of names must correspond to the hierarchical levels, 
 #'   going from broad to fine 
 #' @param fun (function) Function to be used to aggregate cell sizes of parental cells
-#' @param sort (logical) Should the columns of the data.frame be sorted before?
+#' @param sort (logical) Should the columns of the data.frame be sorted before treemap generation?
 #' @param filter (numeric) Filter the supplied data frame to remove very small
 #'   cells that may not be visible. The default is to remove cells with a 
 #'   relative target area below a threshold of zero (no negative values allowed). 
-#'   The algorithm can fail when processing many tiny cells so it can be 
-#'   worthwhile to simply rerun the function with a stricter filter.
+#'   Computation time can increase when many small cells are present. For example, 
+#'   a threshold of 0.01 filters out all observations/cells below 1 \% of the total area.
 #' @param cell_size (character) The name of the column used to control cell size. 
 #'   Can be one of \code{levels} or any other column with numerical data. NA or
 #'   values equal or less than zero are not allowed as the cell area needs to be positive.
@@ -46,8 +46,8 @@
 #' @param error_tol (numeric) The allowed maximum error tolerance of a cell.
 #'   The algorithm will stop when all cells have lower error than this value.
 #'   It is calculated as the absolute difference of a cell's area to its target
-#'   area. The default is 0.01 (or 1 %) of the total parental area. Note: this
-#'   is is different from a relative per-cell error, where 1 % would be more 
+#'   area. The default is 0.01 (or 1 \%) of the total parental area. Note: this
+#'   is is different from a relative per-cell error, where 1 \% would be more 
 #'   strict.
 #' @param seed (integer) The default seed is NULL, which will lead to a new 
 #'   random sampling of cell coordinates for each tesselation. If you want
