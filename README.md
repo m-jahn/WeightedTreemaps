@@ -270,7 +270,7 @@ drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 
 <img src="images/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" />
 
-### Adcanced example for Voronoi treemaps
+### Advanced example for Voronoi treemaps
 
 This example will cover the generation of a somewhat larger treemap, as
 it is often useful to visualize e.g. many genes or proteins at once in

@@ -99,7 +99,7 @@ that the plotting area is supposed to be subdivided in. Useful only together wit
 \code{position}, which indicates the position of the specific treemap. Use \code{add = TRUE}
 to omit starting a new page every time you call \code{drawTreemap()}.}
 
-\item{position}{(numeric) Vector of length 2 indicationg the position where the current
+\item{position}{(numeric) Vector of length 2 indicating the position where the current
 treemap should be drawn. Useful only together with \code{layout}, which indicates 
 the number of rows and columns the plotting area is subdivided into. Use \code{add = TRUE}
 to omit starting a new page every time you call \code{drawTreemap()}.}

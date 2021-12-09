@@ -72,7 +72,7 @@ strict.}
 
 \item{seed}{(integer) The default seed is NULL, which will lead to a new 
 random sampling of cell coordinates for each tesselation. If you want
-a reproducibloe arrangement of cells, set seed to an arbitrary number.}
+a reproducible arrangement of cells, set seed to an arbitrary number.}
 
 \item{positioning}{(character) Algorithm for positioning of starting 
 coordinates of child cells in the parental cell using \code{spsample()};
