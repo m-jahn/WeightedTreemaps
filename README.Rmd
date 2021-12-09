@@ -1,10 +1,10 @@
 ---
 output:  github_document
-title: "SysbioTreemaps"
+title: "WeightedTreemaps"
 author: "Michael Jahn, David Leslie, Ahmadou Dicko"
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{SysbioTreemaps}
+  %\VignetteIndexEntry{WeightedTreemaps}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,9 +21,9 @@ knitr::opts_chunk$set(
 <img src="images/logo.png" align="right" />
 
 <!-- badges start -->
-[![R build status](https://github.com/m-jahn/SysbioTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/SysbioTreemaps/actions)
-![GitHub issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
-![GitHub last commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)
+[![R build status](https://github.com/m-jahn/WeightedTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/WeightedTreemaps/actions)
+![GitHub issues](https://img.shields.io/github/issues/m-jahn/WeightedTreemaps)
+![GitHub last commit](https://img.shields.io/github/last-commit/m-jahn/WeightedTreemaps)
 ![Platform](https://img.shields.io/badge/platform-all-green)
 ![Maintained](https://img.shields.io/badge/maintained-yes-green)
 <!-- badges end -->
@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
 Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from hierarchical data. 
 
 ```{r, results = 'hide', message = FALSE, echo = FALSE, warning = FALSE}
-library(SysbioTreemaps)
+library(WeightedTreemaps)
 
 # load example data
 data(mtcars)
@@ -81,7 +81,7 @@ The C++ code computing the actual Voronoi tesselation requires the [CGAL](https:
 To install the package directly from github, use the following function from the `devtools` package in your R session:
 
 ```{r, eval = FALSE}
-devtools::install_github("m-jahn/SysbioTreemaps")
+devtools::install_github("m-jahn/WeightedTreemaps")
 ```
 
 ## Usage
@@ -92,7 +92,7 @@ The functions to create Voronoi (or Sunburst) treemaps take a `data.frame` as ma
 The `data.frame` should contain column(s) with numerical or categorical data (i.e. a character vector). Let's create a simple example data frame.
 
 ```{r, eval = FALSE}
-library(SysbioTreemaps)
+library(WeightedTreemaps)
 
 # load example data
 data(mtcars)

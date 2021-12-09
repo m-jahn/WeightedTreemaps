@@ -6,10 +6,10 @@ knitr::opts_chunk$set(
 )
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  devtools::install_github("m-jahn/SysbioTreemaps")
+#  devtools::install_github("m-jahn/WeightedTreemaps")
 
 ## -----------------------------------------------------------------------------
-library(SysbioTreemaps)
+library(WeightedTreemaps)
 
 # load example data
 data(mtcars)

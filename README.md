@@ -1,7 +1,7 @@
-SysbioTreemaps
+WeightedTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2021-11-27
+2021-12-09
 
 <!-- include logo-->
 
@@ -10,11 +10,11 @@ Michael Jahn, David Leslie, Ahmadou Dicko
 <!-- badges start -->
 
 [![R build
-status](https://github.com/m-jahn/SysbioTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/SysbioTreemaps/actions)
+status](https://github.com/m-jahn/WeightedTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/WeightedTreemaps/actions)
 ![GitHub
-issues](https://img.shields.io/github/issues/m-jahn/SysbioTreemaps)
+issues](https://img.shields.io/github/issues/m-jahn/WeightedTreemaps)
 ![GitHub last
-commit](https://img.shields.io/github/last-commit/m-jahn/SysbioTreemaps)
+commit](https://img.shields.io/github/last-commit/m-jahn/WeightedTreemaps)
 ![Platform](https://img.shields.io/badge/platform-all-green)
 ![Maintained](https://img.shields.io/badge/maintained-yes-green)
 <!-- badges end -->
@@ -87,7 +87,7 @@ To install the package directly from github, use the following function
 from the `devtools` package in your R session:
 
 ``` r
-devtools::install_github("m-jahn/SysbioTreemaps")
+devtools::install_github("m-jahn/WeightedTreemaps")
 ```
 
 ## Usage
@@ -100,7 +100,7 @@ with numerical or categorical data (i.e. a character vector). Let’s
 create a simple example data frame.
 
 ``` r
-library(SysbioTreemaps)
+library(WeightedTreemaps)
 
 # load example data
 data(mtcars)

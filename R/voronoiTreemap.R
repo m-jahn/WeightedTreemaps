@@ -118,7 +118,7 @@
 #' @importFrom sp Polygon
 #' @importFrom sp spsample
 #' 
-#' @useDynLib SysbioTreemaps, .registration = TRUE
+#' @useDynLib WeightedTreemaps, .registration = TRUE
 #' 
 #' @export voronoiTreemap
 #' 

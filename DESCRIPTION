@@ -1,4 +1,4 @@
-Package: SysbioTreemaps
+Package: WeightedTreemaps
 Title: Generate and Plot Voronoi or Sunburst Treemaps from Hierarchical Data
 Version: 0.1.1
 Authors@R: c(

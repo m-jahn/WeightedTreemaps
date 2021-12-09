@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // cropped_voronoi
 SEXP cropped_voronoi(NumericMatrix sites);
-RcppExport SEXP _SysbioTreemaps_cropped_voronoi(SEXP sitesSEXP) {
+RcppExport SEXP _WeightedTreemaps_cropped_voronoi(SEXP sitesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,11 +23,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_SysbioTreemaps_cropped_voronoi", (DL_FUNC) &_SysbioTreemaps_cropped_voronoi, 1},
+    {"_WeightedTreemaps_cropped_voronoi", (DL_FUNC) &_WeightedTreemaps_cropped_voronoi, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_SysbioTreemaps(DllInfo *dll) {
+RcppExport void R_init_WeightedTreemaps(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

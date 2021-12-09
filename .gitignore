@@ -4,7 +4,7 @@ inst/doc
 .RData
 .Ruserdata
 .vscode
-SysbioTreemaps.Rproj
+WeightedTreemaps.Rproj
 *.o
 *.so
 *.dll

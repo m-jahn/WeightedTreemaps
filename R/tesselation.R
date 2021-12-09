@@ -13,7 +13,7 @@ awv <- function(
   # combine X, Y coordinates and weights as input for
   # C++ tesselation function
   sites <- cbind(s$x, s$y, w)
-  roughCells <- SysbioTreemaps::cropped_voronoi(sites)
+  roughCells <- cropped_voronoi(sites)
   if (is.null(roughCells)) {
     return(NULL)
   }

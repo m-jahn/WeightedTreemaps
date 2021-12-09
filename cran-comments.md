@@ -13,7 +13,7 @@ There were 3 NOTEs:
 1. Note:
 
 ```
-File ‘SysbioTreemaps/libs/SysbioTreemaps.so’:
+File ‘WeightedTreemaps/libs/WeightedTreemaps.so’:
   Found ‘__ZNSt3__14cerrE’, possibly from ‘std::cerr’ (C++)
     Object: ‘voronoiDiagram.o’. Compiled code should not call entry 
     points which might terminate R nor write to stdout/stderr instead

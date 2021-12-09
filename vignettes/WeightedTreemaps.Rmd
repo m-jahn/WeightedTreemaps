@@ -1,10 +1,10 @@
 ---
 output:  rmarkdown::html_vignette
-title: "SysbioTreemaps"
+title: "WeightedTreemaps"
 author: "Michael Jahn, David Leslie, Ahmadou Dicko"
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{SysbioTreemaps}
+  %\VignetteIndexEntry{WeightedTreemaps}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -41,7 +41,7 @@ The C++ code computing the actual Voronoi tesselation requires the [CGAL](https:
 To install the package directly from github, use the following function from the `devtools` package in your R session:
 
 ```{r, eval = FALSE}
-devtools::install_github("m-jahn/SysbioTreemaps")
+devtools::install_github("m-jahn/WeightedTreemaps")
 ```
 
 ## Usage
@@ -52,7 +52,7 @@ The functions to create Voronoi (or Sunburst) treemaps take a `data.frame` as ma
 The `data.frame` should contain column(s) with numerical or categorical data (i.e. a character vector). Let's create a simple example data frame.
 
 ```{r}
-library(SysbioTreemaps)
+library(WeightedTreemaps)
 
 # load example data
 data(mtcars)

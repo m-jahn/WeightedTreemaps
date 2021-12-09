@@ -18,6 +18,6 @@
 #'
 #' @export cropped_voronoi
 cropped_voronoi <- function(sites) {
-    .Call(`_SysbioTreemaps_cropped_voronoi`, sites)
+    .Call(`_WeightedTreemaps_cropped_voronoi`, sites)
 }
 
