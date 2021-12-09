@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ***
 
-Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from hierarchical data. 
+Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from hierarchical data.
 
 ## Description
 
