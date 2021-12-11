@@ -29,7 +29,6 @@ Imports:
     grid,
     methods,
     dplyr,
-    tidyr,
     sp,
     sf,
     scales,
