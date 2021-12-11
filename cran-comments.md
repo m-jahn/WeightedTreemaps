@@ -1,3 +1,18 @@
+## Resubmission
+
+This package was submitted previously, but returned with the following comments:
+
+1. `Package has a FOSS license but eventually depends on the following package which restricts use: gpclib`. Pls explain how it works.
+
+2. Please omit `+ file LICENSE` and the file itself which is part of R anyway. It is only used to specify additional restrictions to the GPL such as attribution requirements.
+
+Actions taken:
+
+1. The `gpclib` dependency was removed. The respective functions from `gpclib` were replaced with similar functions from the newer `sf` package
+
+2. The license file and link in DESCRIPTION was removed.
+
+
 ## Test environments (via Github Actions)
 
 - windows-latest (release)

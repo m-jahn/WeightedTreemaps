@@ -1,6 +1,6 @@
-#' @importFrom gpclib area.poly
 #' @importFrom stats rnorm
 #' @importFrom dplyr %>%
+#' @importFrom sf st_area
 #' 
 cellError <- function(a, target) {
   normA <- a / sum(a)
@@ -77,9 +77,8 @@ adjustWeights <- function(w, a, target) {
 shiftSites <- function(s, k) {
   newSites <- mapply(function(poly, x, y) {
     # Handle empty polygons
-    if (length(poly@pts)) {
-      pts <- getpts(poly)
-      poly_centroid(pts$x, pts$y)
+    if (length(poly)) {
+      poly_centroid(poly[[1]][, 1], poly[[1]][, 2])
     } else {
       c(x = x, y = y)
     }
@@ -141,7 +140,7 @@ allocate <- function(
     if (is.null(k)) {
       return(NULL)
     }
-    areas <- lapply(k, gpclib::area.poly)
+    areas <- lapply(k, sf::st_area)
     
     # if debug=TRUE, every iteration is drawn to the viewport
     # this can be very time and resource consuming and should be used 

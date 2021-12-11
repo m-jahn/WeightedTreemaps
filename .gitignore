@@ -5,6 +5,7 @@ inst/doc
 .Ruserdata
 .vscode
 WeightedTreemaps.Rproj
+CRAN-SUBMISSION
 *.o
 *.so
 *.dll

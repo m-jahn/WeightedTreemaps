@@ -105,7 +105,6 @@
 #'   add = TRUE, layout = c(1,3), position = c(1, 3),
 #'   title_color = "black")
 #' 
-#' @import gpclib
 #' @importFrom Rcpp evalCpp
 #' @importFrom grid grid.newpage
 #' @importFrom grid pushViewport
@@ -115,6 +114,8 @@
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarise
 #' @importFrom scales rescale
+#' @importFrom sf st_polygon
+#' @importFrom sf st_area
 #' @importFrom sp Polygon
 #' @importFrom sp spsample
 #' 
@@ -200,18 +201,18 @@ voronoiTreemap <- function(
           }
         }
         
-        # turn boundary polygon into gpc.poly object for treemap generation
-        GpcPoly <- suppressWarnings(as(ParentPoly, "gpc.poly"))
-
+        # turn boundary polygon into sf polygon object for treemap generation
+        sfpoly <- to_sfpoly(ParentPoly)
+        
       } else {
-
+        
         # or the parental polygon in case of all lower levels > 1
         stopifnot(!is.null(parent))
-        GpcPoly <- parent
-        ParentPoly <- parent@pts[[1]][c("x", "y")]
-
+        sfpoly <- parent
+        ParentPoly <- list(x = parent[[1]][, 1], y = parent[[1]][, 2])
+      
       }
-
+      
       # 2. generate starting coordinates within the boundary polygon
       # using sp package's spsample function.
       ncells <- df[[levels[level]]] %>% table
@@ -274,10 +275,10 @@ voronoiTreemap <- function(
 
         treemap <- list(list(
           name = names(ncells),
-          poly = GpcPoly,
+          poly = sfpoly,
           site = poly_centroid(ParentPoly[[1]], ParentPoly[[2]]),
           weight = weights,
-          area = gpclib::area.poly(GpcPoly),
+          area = sf::st_area(sfpoly),
           target = weights,
           count = 0
         ))
@@ -294,7 +295,7 @@ voronoiTreemap <- function(
           target = weights,
           maxIteration = maxIteration,
           error_tol = error_tol,
-          outer = GpcPoly,
+          outer = sfpoly,
           debug = debug
         )
         
@@ -385,7 +386,6 @@ voronoiTreemap <- function(
       error_tol = error_tol,
       seed = seed,
       positioning = positioning
-      
     )
   )
   

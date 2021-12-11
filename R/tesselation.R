@@ -1,5 +1,8 @@
-#' @import gpclib
 #' @importFrom sp point.in.polygon
+#' @importFrom sf st_difference
+#' @importFrom sf st_polygon
+#' @importFrom sf st_intersection
+#' @importFrom sf st_cast
 #' @importFrom dplyr %>%
 #' @importFrom dplyr filter
 #' @importFrom dplyr filter_all
@@ -26,9 +29,8 @@ awv <- function(
 
 
 tidyCell <-
-  function(cell, tolerance) 
-  {
-
+  function(cell, tolerance) {
+    
     # if cell touches the border at two points, we need to close it
     # this is not necessary if cell touches border at 4 points (like a stripe)
     if (sum(
@@ -92,8 +94,6 @@ antiSide <- function(corner) {
   switch(corner, 1, 2, 3, 4)
 }
 
-
-
 closeClock <- function(x, y, start, end, scale = 2000) {
   cornerX <- c(-2 * scale, 2 * scale, 2 * scale,-2 * scale)
   cornerY <- c(2 * scale, 2 * scale,-2 * scale,-2 * scale)
@@ -132,6 +132,22 @@ closeAnti <- function(x, y, start, end, scale = 2000) {
   list(x = x, y = y)
 }
 
+# convert sf polygon to coordinates
+to_coords <- function(sfpoly) {
+  list(x = sfpoly[[1]][, 1], y = sfpoly[[1]][, 2])
+}
+
+# convert coordinates to sf polygon
+to_sfpoly <- function(coords) {
+  # close polygon
+  coords <- round(c(coords$x, coords$y), 4)
+  coords <- matrix(coords, ncol = 2)
+  if (!all(coords[1, ] == coords[nrow(coords), ])) {
+    coords <- rbind(coords, coords[1, ])
+  }
+  sf::st_polygon(list(coords))
+}
+
 
 closeCell <- function(cell, vertex, tol, scale = 2000) {
   # Two options:  go round clip region boundary clockwise or anti-clockwise
@@ -139,7 +155,6 @@ closeCell <- function(cell, vertex, tol, scale = 2000) {
   # If not, do second one (and check that vertex is "inside" that result!)
   x <- cell$x
   y <- cell$y
-  
   
   # ASSUME that both first and last vertices are on boundary!
   N <- length(x)
@@ -157,21 +172,17 @@ closeCell <- function(cell, vertex, tol, scale = 2000) {
     cell <- list(x = x, y = y)
     if (sp::point.in.polygon(vertex[1], vertex[2],
                          cell$x, cell$y) == 0) {
-      boundRect <- suppressWarnings(as(list(
-        x = c(-2 * scale,-2 * scale,
-              2 * scale, 2 * scale),
-        y = c(-2 * scale, 2 *
-                scale,
-              2 * scale,-2 * scale)
-      ),
-      "gpc.poly"))
+      boundRect <- to_sfpoly(list(
+        x = c(-2 * scale,-2 * scale, 2 * scale, 2 * scale),
+        y = c(-2 * scale, 2 * scale, 2 * scale,-2 * scale)
+      ))
       # "Subtract" smallCell from bound rect to get largeCell
-      cellPoly <- suppressWarnings(as(cell, "gpc.poly"))
-      cellPoly <-
-        gpclib::intersect(gpclib::append.poly(cellPoly, boundRect), boundRect)
-      pts <- getpts(cellPoly)
-      cell <- list(x = c(pts$x, pts$x[1]),
-                   y = c(pts$y, pts$y[1]))
+      cellPoly <- to_sfpoly(cell)
+      cellPoly <- sf::st_difference(boundRect, cellPoly)
+      
+      pts <- to_coords(cellPoly)
+      #cell <- list(x = c(pts$x, pts$x[1]),
+      #             y = c(pts$y, pts$y[1]))
       if (sp::point.in.polygon(vertex[1], vertex[2],
                            cell$x, cell$y) == 0) {
         stop("Failed to close cell")
@@ -194,48 +205,29 @@ closeCell <- function(cell, vertex, tol, scale = 2000) {
 }
 
 
-# Take polygons from Voronoi cells and intersect them with
-# outer polygon (e.g., circle radius 1000)
-# Return list of "gpc.poly"
+# convert cell from awv core function to sf polygon
 convertCell <- function(cell) {
   # Handle empty cells
   if (is.null(cell)) {
-    new("gpc.poly")
-  } else if (inherits(cell, "multipleCells")) {
-    polys <- lapply(cell, function(p) {
-      class(p) <- "list"
-      suppressWarnings(as(p, "gpc.poly"))
-    })
-    Reduce(gpclib::intersect, polys)
+    sf::st_polygon()
   } else {
-    suppressWarnings(as(cell, "gpc.poly"))
+    to_sfpoly(cell)
   }
 }
 
-
+# Take polygons from Voronoi cells and intersect them with
+# outer polygon (e.g., circle radius 1000)
 trimCells <- function(cells, region) {
   polys <- lapply(cells, convertCell)
-  lapply(polys, gpclib::intersect, region)
+  polys <- lapply(polys, function(poly) {
+    poly <- sf::st_intersection(poly, region)
+    if ("MULTIPOLYGON" %in% class(poly)) {
+      poly <- suppressWarnings(sf::st_cast(poly, to = "POLYGON"))
+    }
+    poly
+  })
+  return(polys)
 }
-
-
-# Extracting coordinates from "gpc.poly"
-#
-# It is possible for us to end up with a cell containing a hole
-# (because when the cell boundary is either zero area or
-# contains a zero-area indent, gpclib::intersect() can
-# produce isolated islands)
-#
-# To handle these cases, we just ignore the holes (which should
-# be zero-area anyway) and take the outer boundary.
-getpts <- function(x) {
-  pts <- gpclib::get.pts(x)
-  nonholes <- sapply(pts, function(y) !y$hole)
-  border <- which(nonholes)[1]
-  list(x=pts[[border]]$x,
-       y=pts[[border]]$y)
-}
-
 
 # generate starting coordinates within the boundary polygon
 # using sp package's spsample function. The set.seed() is important

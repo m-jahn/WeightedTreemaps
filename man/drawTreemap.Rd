@@ -169,7 +169,6 @@ drawTreemap(tm,
   label_color = grey(0.6)
 )
 
- 
 }
 \seealso{
 \code{\link{voronoiTreemap}} for generating the treemap that is

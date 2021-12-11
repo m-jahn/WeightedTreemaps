@@ -2,11 +2,13 @@
 #' @importFrom grid grid.polygon
 #' @importFrom grid grid.text
 #' @importFrom grid grid.lines
+#' @importFrom sf st_area
 #' @importFrom scales rescale
-#' @importFrom gpclib area.poly
 #' @importFrom methods as
 #' @importFrom methods new
 #' @importFrom stats median
+#' @importFrom colorspace lighten
+#' @importFrom colorspace rainbow_hcl
 
 # function to coerce and rescale different types of input to 
 # numeric range between 1 and 100 (for color coding)
@@ -31,9 +33,9 @@ convertInput <- function(x, from = NULL, to = c(1, 100)) {
   }
 }
 
-drawPoly <- function(p, name, fill, lwd, col) {
-  if (length(p@pts)) {
-    pts <- getpts(p)
+drawPoly <- function(sfpoly, name, fill, lwd, col) {
+  if (length(sfpoly)) {
+    pts <- to_coords(sfpoly)
     grid::grid.polygon(
       pts$x,
       pts$y,
@@ -43,18 +45,18 @@ drawPoly <- function(p, name, fill, lwd, col) {
   }
 }
 
-polyRangeX <- function(p) {
-  if (length(p@pts)) {
-    pts <- getpts(p)
+polyRangeX <- function(sfpoly) {
+  if (length(sfpoly)) {
+    pts <- to_coords(sfpoly)
     range(pts$x)
   } else {
     NA
   }
 }
 
-polyRangeY <- function(p) {
-  if (length(p@pts)) {
-    pts <- getpts(p)
+polyRangeY <- function(sfpoly) {
+  if (length(sfpoly)) {
+    pts <- to_coords(sfpoly)
     range(pts$y)
   } else {
     NA
@@ -75,7 +77,7 @@ drawRegions <- function(
   
   # draw polygon, pass graphical parameters to drawPoly function
   mapply(drawPoly, k, names, fill = fill,
-    SIMPLIFY=FALSE,
+    SIMPLIFY = FALSE,
     MoreArgs = list(lwd = lwd, col = col)
   )
   
@@ -111,14 +113,14 @@ draw_sector <- function(
   z <- seq(segment[1], segment[2], by = pi/400)
   xx <- c(a * cos(z), rev((a + diameter_sector) * cos(z)))
   yy <- c(a * sin(z), rev((a + diameter_sector) * sin(z)))
-  # rescale for canvas dimensions [0, 2000] and convert into gpclib polygon
-  poly = suppressWarnings(as(list(x = (xx+1)*1000, y = (yy+1)*1000), "gpc.poly"))
+  # rescale for canvas dimensions [0, 2000] and convert into sfpoly polygon
+  poly = to_sfpoly(list(x = (xx+1)*1000, y = (yy+1)*1000))
   
   # return list of polygon properties
   list(
     name = name,
     poly = poly,
-    area = gpclib::area.poly(poly),
+    area = sf::st_area(poly),
     lower_bound = lower_bound,
     upper_bound = upper_bound,
     level = level,

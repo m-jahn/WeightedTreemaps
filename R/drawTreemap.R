@@ -121,7 +121,6 @@
 #'   label_color = grey(0.6)
 #' )
 #' 
-#'  
 #' @importFrom dplyr %>%
 #' @importFrom grid grid.newpage
 #' @importFrom grid grid.text
