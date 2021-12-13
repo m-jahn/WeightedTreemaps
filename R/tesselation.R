@@ -181,8 +181,6 @@ closeCell <- function(cell, vertex, tol, scale = 2000) {
       cellPoly <- sf::st_difference(boundRect, cellPoly)
       
       pts <- to_coords(cellPoly)
-      #cell <- list(x = c(pts$x, pts$x[1]),
-      #             y = c(pts$y, pts$y[1]))
       if (sp::point.in.polygon(vertex[1], vertex[2],
                            cell$x, cell$y) == 0) {
         stop("Failed to close cell")
@@ -218,15 +216,14 @@ convertCell <- function(cell) {
 # Take polygons from Voronoi cells and intersect them with
 # outer polygon (e.g., circle radius 1000)
 trimCells <- function(cells, region) {
-  polys <- lapply(cells, convertCell)
-  polys <- lapply(polys, function(poly) {
+  lapply(cells, function(poly) {
+    poly <- convertCell(poly)
     poly <- sf::st_intersection(poly, region)
     if ("MULTIPOLYGON" %in% class(poly)) {
       poly <- suppressWarnings(sf::st_cast(poly, to = "POLYGON"))
     }
     poly
   })
-  return(polys)
 }
 
 # generate starting coordinates within the boundary polygon

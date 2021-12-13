@@ -137,7 +137,7 @@ draw_label_voronoi <- function(
   label_color
 ) {
   
-  lapply(rev(cells), function(tm_slot) {
+  for (tm_slot in rev(cells)) {
     
     if (tm_slot$level %in% label_level) {
       
@@ -169,7 +169,7 @@ draw_label_voronoi <- function(
       )
       
     }
-  }) %>% invisible
+  }
   
 }
 

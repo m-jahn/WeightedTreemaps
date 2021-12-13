@@ -62,15 +62,15 @@ breaking <- function(
 # difference to original implementation: adjustment of maximal 
 # step change of weights to prevent crashing of algorithm
 adjustWeights <- function(w, a, target) {
-  
   normA <- a / sum(a)
-  # avoid extreme scaling values -> squareroot function
+  # OPTION: avoid extreme scaling values -> squareroot function
   # to buffer strong difference between computed area and target
   # and to buffer the global weight increase
-  # these increase stability but also computation time
+  # these increase stability but also computation time:
+  #scaling <- ifelse(scaling < -1, scaling/sqrt(abs(scaling)), scaling)
+  #w + sqrt(mean(abs(w))) * scaling
   scaling <- ((target - normA) / target)
-  scaling <- ifelse(scaling < -1, scaling/sqrt(abs(scaling)), scaling)
-  w + sqrt(mean(abs(w))) * scaling
+  w + mean(abs(w)) * scaling
 }
 
 
