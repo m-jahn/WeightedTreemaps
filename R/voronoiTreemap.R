@@ -61,10 +61,14 @@
 #'   but will sort by cell target area instead of cell name. \code{positioning}
 #'   can be a single character or a vector of \code{length(levels)} to allow
 #'   different positioning algorithms for each level.
+#' @param verbose (logical) If verbose is TRUE (default is FALSE), messages
+#'   with statistics for each iteration of a treemap as well as a success message
+#'   are printed to the console.
 #' @param debug (logical) If debug is TRUE (default is FALSE), the solution 
 #'   for each iteration is drawn to the viewport to allow some visual 
 #'   inspection. The weights, target area, and difference are printed to the 
-#'   console. Use with care, this makes treemap generation much slower!
+#'   console. It is not recommended to set this option to TRUE unless you know
+#'   what you are doing, as it makes treemap generation much slower.
 #'   
 #' @return `voronoiTreemap` returns an object of the formal class `voronoiResult`.
 #'   It is essentially a list of objects related to the graphical
@@ -141,6 +145,7 @@ voronoiTreemap <- function(
   error_tol = 0.01,
   seed = NULL,
   positioning = "regular",
+  verbose = FALSE,
   debug = FALSE
 ) {
   
@@ -148,7 +153,7 @@ voronoiTreemap <- function(
   data <- validate_input(
     data, levels, fun,
     sort, filter, cell_size, 
-    custom_color)
+    custom_color, verbose)
 
   # in debug mode, open a viewport to draw iterations
   # of treemap generation called from allocate()
@@ -309,20 +314,23 @@ voronoiTreemap <- function(
         if (is.null(treemap) & counter < 10) {
           if (!is.null(seed)) {seed = seed + 1}
           counter = counter + 1
-          cat("Iteration failed, randomising positions...\n")
+          message("Iteration failed, randomising positions...")
           next
         } else if (is.null(treemap) & counter >= 10) {
           stop("Iteration failed after 10 randomisation trials, try to rerun treemap with new seed")
         }
 
         # print summary of cell tesselation
-        tessErr <- sapply(treemap, function(tm) tm$area)
-        tessErr <- abs(tessErr/sum(tessErr)-weights)
-        cat("Level", level, "tesselation: ",
-          round(mean(tessErr) * 100, 2), "% mean error, ",
-          round(max(tessErr) * 100, 2), "% max error, ",
-          treemap[[1]]$count, "iterations\n"
-        )
+        if (debug || verbose) {
+          tessErr <- sapply(treemap, function(tm) tm$area)
+          tessErr <- abs(tessErr/sum(tessErr)-weights)
+          message("Level ", level, " tesselation: ",
+            round(mean(tessErr) * 100, 2), " % mean error, ",
+            round(max(tessErr) * 100, 2), " % max error, ",
+            treemap[[1]]$count, " iterations."
+          )
+        }
+        
       }
       
       # add level and custom color info to treemap
@@ -372,7 +380,9 @@ voronoiTreemap <- function(
   tm <- voronoi_core(level = 1, df = data)
   tm <- tm[!duplicated(tm)]
   tm <- tm[names(tm) %>% order]
-  cat("Treemap successfully created\n")
+  if (debug || verbose) {
+    message("Treemap successfully created.")
+  }
   
   
   # set S4 class and return result

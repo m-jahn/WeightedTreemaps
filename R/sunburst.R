@@ -30,6 +30,8 @@
 #'   Defaults to 0.3,
 #' @param diameter_outer (numeric) The maximum outer diameter of the drawn map. 
 #'   Defaults to 0.8
+#' @param verbose (logical) If verbose is TRUE (default is FALSE), basic information
+#'   such as a success message is printed to the console.
 #' 
 #' @return `sunburstTreemap` returns an object of the formal class `sunburstResult`.
 #'   It is essentially a list of objects related to the graphical
@@ -111,14 +113,15 @@ sunburstTreemap <- function(
   cell_size = NULL,
   custom_color = NULL,
   diameter_inner = 0.3,
-  diameter_outer = 0.8
+  diameter_outer = 0.8,
+  verbose = FALSE
 ) {
   
   # validate input data and parameters
   data <- validate_input(
     data, levels, fun,
     sort, filter, cell_size, 
-    custom_color)
+    custom_color, verbose)
   
   # CORE FUNCTION (RECURSIVE)
   sunburst_core <- function(level, df, parent = c(0, 1), output = list()) {
@@ -213,7 +216,9 @@ sunburstTreemap <- function(
   tm <- sunburst_core(level = 1, df = data, parent = c(0, 1))
   tm <- tm[!duplicated(tm)]
   tm <- tm[names(tm) %>% order]
-  cat("Treemap successfully created\n")
+  if (verbose) {
+    message("Treemap successfully created.")
+  }
   
   
   # set S4 class and return result

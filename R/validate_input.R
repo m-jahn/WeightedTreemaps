@@ -9,7 +9,8 @@ validate_input <- function(
   sort,
   filter,
   cell_size,
-  custom_color) {
+  custom_color,
+  verbose) {
   
   # check input data frame
   if (!is.data.frame(data)) {
@@ -28,7 +29,9 @@ validate_input <- function(
   
   # check variable controlling cell size
   if (is.null(cell_size)) {
-    cat("No cell size column supplied, cell size encoded by number of members.\n")
+     if (verbose) {
+        message("No cell size column supplied, cell size encoded by number of members.")
+     }
   } else {
     
     if (!(cell_size %in% colnames(data))) {
@@ -48,7 +51,7 @@ validate_input <- function(
       
       if (sum(!filtered) > 0) {
         data <- subset(data, filtered)
-        cat(sum(!filtered), "out of", length(filtered), 
+        message(sum(!filtered), "out of", length(filtered), 
             "cells were filtered due to target area falling below treshold.\n")
       }
     }

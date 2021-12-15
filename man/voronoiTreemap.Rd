@@ -17,6 +17,7 @@ voronoiTreemap(
   error_tol = 0.01,
   seed = NULL,
   positioning = "regular",
+  verbose = FALSE,
   debug = FALSE
 )
 }
@@ -84,10 +85,15 @@ but will sort by cell target area instead of cell name. \code{positioning}
 can be a single character or a vector of \code{length(levels)} to allow
 different positioning algorithms for each level.}
 
+\item{verbose}{(logical) If verbose is TRUE (default is FALSE), messages
+with statistics for each iteration of a treemap as well as a success message
+are printed to the console.}
+
 \item{debug}{(logical) If debug is TRUE (default is FALSE), the solution 
 for each iteration is drawn to the viewport to allow some visual 
 inspection. The weights, target area, and difference are printed to the 
-console. Use with care, this makes treemap generation much slower!}
+console. It is not recommended to set this option to TRUE unless you know
+what you are doing, as it makes treemap generation much slower.}
 }
 \value{
 `voronoiTreemap` returns an object of the formal class `voronoiResult`.

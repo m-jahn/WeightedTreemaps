@@ -22,7 +22,7 @@ breaking <- function(
     err <- cellError(a, target)
     if (is.na(err) | is.nan(err)) err <- 1
     if (debug)
-      cat(paste("Difference: ", err,
+      message(paste("Difference: ", err,
                 " (", abs(err - prevError), ")",
                 "\n", sep = ""))
     stopping <- {err < error_tol}
@@ -35,7 +35,7 @@ breaking <- function(
     # Stop when *change* in *total* cell error is tiny
     # (i.e., we are not improving the solution)
     if (debug)
-      cat(paste(
+      message(paste(
         "Difference: ",
         round(sum(diff), 2),
         " (",

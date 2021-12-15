@@ -13,7 +13,8 @@ sunburstTreemap(
   cell_size = NULL,
   custom_color = NULL,
   diameter_inner = 0.3,
-  diameter_outer = 0.8
+  diameter_outer = 0.8,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -49,6 +50,9 @@ Defaults to 0.3,}
 
 \item{diameter_outer}{(numeric) The maximum outer diameter of the drawn map. 
 Defaults to 0.8}
+
+\item{verbose}{(logical) If verbose is TRUE (default is FALSE), basic information
+such as a success message is printed to the console.}
 }
 \value{
 `sunburstTreemap` returns an object of the formal class `sunburstResult`.
