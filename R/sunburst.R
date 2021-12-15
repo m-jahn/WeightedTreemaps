@@ -31,7 +31,13 @@
 #' @param diameter_outer (numeric) The maximum outer diameter of the drawn map. 
 #'   Defaults to 0.8
 #' 
-#' @return A named list with treemap objects containing polygons and metadata 
+#' @return `sunburstTreemap` returns an object of the formal class `sunburstResult`.
+#'   It is essentially a list of objects related to the graphical
+#'   representation of the treemap (polygons, labels, cell data) as well as data from the call
+#'   of the function. It contains the following slots:
+#'     \item{cells}{`list` of polygons for drawing a treemap}
+#'     \item{data}{`data.frame`, the original data that was supplied to calling `voronoiTreemap`}
+#'     \item{call}{`list` of arguments used to call `voronoiTreemap`}
 #' 
 #' @seealso \code{\link{drawTreemap}} for drawing the treemap.
 #' 

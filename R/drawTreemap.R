@@ -65,7 +65,8 @@
 #'   a treemap. When multiple treemaps should be plotted on the same page, this should be
 #'   set to TRUE, and position of treemaps specified by \code{layout} and \code{position} arguments.
 #' 
-#' @return Creates a grid viewport and draws the treemap.
+#' @return The function does not return a value (except NULL). It creates a grid viewport and
+#'   draws the treemap.
 #' 
 #' @seealso \code{\link{voronoiTreemap}} for generating the treemap that is
 #'   the input for the drawing function

@@ -109,7 +109,8 @@ a treemap. When multiple treemaps should be plotted on the same page, this shoul
 set to TRUE, and position of treemaps specified by \code{layout} and \code{position} arguments.}
 }
 \value{
-Creates a grid viewport and draws the treemap.
+The function does not return a value (except NULL). It creates a grid viewport and
+  draws the treemap.
 }
 \description{
 Draws the treemap object that was obtained by running \code{\link{voronoiTreemap}} or

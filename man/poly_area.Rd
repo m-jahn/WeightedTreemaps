@@ -17,7 +17,7 @@ A numeric, the area of the polygon.
 \description{
 Mainly for internal use. Determines the area of a polygon based on 
 its x and y coordinates.
-This function is a reimplementation of soiltexture::TT.polygon.area()
+This function is a reimplementation of `soiltexture::TT.polygon.area()`
 and only re-implemented to avoid extra dependencies.
 }
 \seealso{

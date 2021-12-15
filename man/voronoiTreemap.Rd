@@ -90,7 +90,13 @@ inspection. The weights, target area, and difference are printed to the
 console. Use with care, this makes treemap generation much slower!}
 }
 \value{
-A named list with treemap objects containing polygons and metadata
+`voronoiTreemap` returns an object of the formal class `voronoiResult`.
+  It is essentially a list of objects related to the graphical
+  representation of the treemap (polygons, labels, cell data) as well as data from the call
+  of the function. It contains the following slots:
+    \item{cells}{`list` of polygons for drawing a treemap}
+    \item{data}{`data.frame`, the original data that was supplied to calling `voronoiTreemap`}
+    \item{call}{`list` of arguments used to call `voronoiTreemap`}
 }
 \description{
 Create nested additively weighted Voronoi treemaps.
