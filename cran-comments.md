@@ -2,16 +2,25 @@
 
 This package was submitted previously, but returned with the following comments:
 
-1. `Package has a FOSS license but eventually depends on the following package which restricts use: gpclib`. Pls explain how it works.
+1. "If there are references describing the methods in your package, please
+add these in the description field of your DESCRIPTION file ..."
 
-2. Please omit `+ file LICENSE` and the file itself which is part of R anyway. It is only used to specify additional restrictions to the GPL such as attribution requirements.
+Action: One reference was added to the DESCRIPTION.
 
-Actions taken:
+2. "Please add \value to .Rd files regarding exported methods and explain
+the functions results in the documentation. Please write about the
+structure of the output (class) ... Missing Rd-tags: poly_sortpoints.Rd: \value"
 
-1. The `gpclib` dependency was removed. The respective functions from `gpclib` were replaced with similar functions from the newer `sf` package
+Action: The documentation in \value fields was extended for several functions.
+The function with missing \value was not required and therefore removed.
 
-2. The license file and link in DESCRIPTION was removed.
+3. "You write information messages to the console that cannot be easily
+suppressed. It is more R like to generate objects that can be used to extract the
+information a user is interested in, and then print() that object.
+Instead of print()/cat() rather use message()/warning() ..."
 
+Action: All cat() and print() statements were replaced by message(). Messages are
+now predominantly printed when the user specifies verbose = TRUE.
 
 ## Test environments (via Github Actions)
 
@@ -23,7 +32,7 @@ Actions taken:
 
 There were no ERRORs or WARNINGs.
 
-There were 3 NOTEs:
+There were 2 NOTEs:
 
 1. Note:
 
@@ -35,20 +44,9 @@ File ‘WeightedTreemaps/libs/WeightedTreemaps.so’:
     of to the console, nor use Fortran I/O nor system RNGs.
 ```
 
-The C++ function `voronoiDiagram.cpp` does not contain any such entry points. This Note is caused by the upstream dependency CGAL 4 headers (R package `cgal4h`). This note appeas only when checking on Mac OS.
+The C++ function `voronoiDiagram.cpp` does not contain any such entry points. This Note is caused by the upstream dependency CGAL 4 headers (R package `cgal4h`). This note appears only when checking on Mac OS.
 
 2. Note:
-
-```
-Examples with CPU (user + system) or elapsed time > 5s
-                  user system elapsed
-  drawTreemap    5.244  0.184   5.434
-  voronoiTreemap 5.093  0.140   5.238
-```
-
-Examples take just above 5 seconds on one of the test environments (ubuntu linux), triggering this note.
-
-3. Note:
 
 ```
 checking installed package size ... NOTE
