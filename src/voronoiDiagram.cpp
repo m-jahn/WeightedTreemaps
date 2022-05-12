@@ -105,7 +105,6 @@ SEXP cropped_voronoi(NumericMatrix sites)
     handles.push_back(handle);
   }
   if (!ag.is_valid(false, 0)) {
-      Rcpp::Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
   }
 
@@ -124,7 +123,6 @@ SEXP cropped_voronoi(NumericMatrix sites)
   for (Apollonius_graph::Vertex_handle h : handles)
   {
     if (h == NULL || !h->is_valid()) {
-      Rcpp::Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
     }
     Apollonius_graph::Edge_circulator ec = ag.incident_edges(h), done(ec);
@@ -148,7 +146,6 @@ SEXP cropped_voronoi(NumericMatrix sites)
 
     // stop and return NULL if polygon is empty
     if (xs.size() == 0) {
-      Rcpp::Rcout << "Invalid apollonius graph found" << std::endl;
       return R_NilValue;
     }
 
