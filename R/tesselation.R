@@ -219,7 +219,7 @@ trimCells <- function(cells, region) {
   lapply(cells, function(poly) {
     poly <- convertCell(poly)
     poly <- sf::st_intersection(poly, region)
-    if ("MULTIPOLYGON" %in% class(poly)) {
+    if (inherits(poly, "MULTIPOLYGON")) {
       poly <- suppressWarnings(sf::st_cast(poly, to = "POLYGON"))
     }
     poly

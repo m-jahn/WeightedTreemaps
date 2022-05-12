@@ -177,7 +177,7 @@ drawTreemap <- function(
   
   # determine color levels based on treemap type
   if (is.null(color_level)) {
-    if (class(treemap) == "sunburstResult") {
+    if (inherits(treemap, "sunburstResult")) {
       color_level = levels
     } else {
       color_level = min(levels)
@@ -261,7 +261,7 @@ drawTreemap <- function(
           # differentiate between voronoi treemap where we want decreasing
           # lwd of borders with decreasing level, and sunburst treemap where
           # we want the same size
-          if (class(treemap) == "sunburstResult") {
+          if (inherits(treemap, "sunburstResult")) {
             border_lwd <- border_size
           } else {
             border_lwd <- border_size / tm_slot$level
@@ -296,7 +296,7 @@ drawTreemap <- function(
     
     # two possible options: labels for voronoi treemaps
     # and labels for sunburst treemaps
-    if (class(treemap) == "sunburstResult") {
+    if (inherits(treemap, "sunburstResult")) {
       
       if (length(label_level) > 1) {
         stop("'label_level' should only have length 1 (labels for one level only)")

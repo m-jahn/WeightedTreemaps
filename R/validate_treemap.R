@@ -9,7 +9,7 @@ validate_treemap <- function(treemap,
   custom_range, title) {
   
   # check treemap object
-  stopifnot(class(treemap) %in% c("sunburstResult", "voronoiResult"))
+  stopifnot(inherits(treemap, c("sunburstResult", "voronoiResult")))
   
   # check layout options
   if (width > 0.9 || height > 0.9) {
