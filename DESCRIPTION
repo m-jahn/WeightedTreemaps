@@ -5,7 +5,8 @@ Authors@R: c(
     person(given = "Michael",
            family = "Jahn",
            role = c("aut", "cre"),
-           email = "michael.jahn@scilifelab.se"),
+           email = "michael.jahn@scilifelab.se",
+           comment = c(ORCID = "0000-0002-3913-153X")),
     person(given = "David",
            family = "Leslie",
            role = c("aut"),
@@ -13,11 +14,13 @@ Authors@R: c(
     person(given = "Ahmadou",
            family = "Dicko",
            role = c("aut"),
-           email = "mail@ahmadoudicko.com"),
+           email = "mail@ahmadoudicko.com",
+           comment = c(ORCID = "0000-0002-9654-7582")),
     person(given = "Paul",
            family = "Murrell",
            role = c("aut", "cph"),
-           email = "p.murrell@auckland.ac.nz"))
+           email = "p.murrell@auckland.ac.nz",
+           comment = c(ORCID = "0000-0002-3224-8858")))
 Description: Treemaps are a visually appealing graphical representation of numerical data using a 
   space-filling approach. A plane or 'map' is subdivided into smaller areas called cells. 
   The cells in the map are scaled according to an underlying metric which allows to grasp the 
@@ -31,7 +34,7 @@ Description: Treemaps are a visually appealing graphical representation of numer
   The Voronoi tesselation is based on functions from 
   Paul Murrell (2012) <https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html>.
 License: GPL-3
-Depends: R (>= 2.10)
+Depends: R (>= 3.5.0)
 LinkingTo:
     Rcpp,
     cgal4h,
@@ -48,7 +51,7 @@ Imports:
     Rcpp
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests:
     parallel,
     knitr,

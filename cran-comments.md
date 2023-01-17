@@ -5,28 +5,37 @@ This package was submitted previously, but returned with the following comments:
 1. "If there are references describing the methods in your package, please
 add these in the description field of your DESCRIPTION file ..."
 
-Action: One reference was added to the DESCRIPTION.
+-> one reference was added to the DESCRIPTION.
 
 2. "Please add \value to .Rd files regarding exported methods and explain
 the functions results in the documentation. Please write about the
 structure of the output (class) ... Missing Rd-tags: poly_sortpoints.Rd: \value"
 
-Action: The documentation in \value fields was extended for several functions.
-The function with missing \value was not required and therefore removed.
+-> the documentation in \value fields was extended for several functions.
+The function with a missing \value was removed.
 
 3. "You write information messages to the console that cannot be easily
 suppressed. It is more R like to generate objects that can be used to extract the
 information a user is interested in, and then print() that object.
 Instead of print()/cat() rather use message()/warning() ..."
 
-Action: All cat() and print() statements were replaced by message(). Messages are
-now predominantly printed when the user specifies verbose = TRUE.
+-> all cat() and print() statements were replaced by message(). Messages are
+now only printed when the user specifies verbose = TRUE.
 
-## Test environments (via Github Actions)
+## Test environments
+
+### with Github Actions
 
 - windows-latest (release)
 - macOS-latest (release)
 - ubuntu-20.04 (release)
+
+### with `rhub::check_for_cran()`
+
+- Fedora Linux, R-devel, clang, gfortran
+- Debian Linux, R-release, GCC
+- Windows Server 2022, R-devel, 64 bit
+- Ubuntu Linux 20.04.1 LTS, R-release, GCC
 
 ## R CMD check results
 
