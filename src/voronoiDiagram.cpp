@@ -18,19 +18,20 @@ using namespace Rcpp;
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <iterator>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_2 Point_2;
-typedef K::Iso_rectangle_2 Iso_rectangle_2;
-typedef K::Segment_2 Segment_2;
-typedef K::Ray_2 Ray_2;
-typedef K::Line_2 Line_2;
+// choose the kernel
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::Point_2 Point_2;
+typedef Kernel::Iso_rectangle_2 Iso_rectangle_2;
+typedef Kernel::Segment_2 Segment_2;
+typedef Kernel::Ray_2 Ray_2;
+typedef Kernel::Line_2 Line_2;
 
 // typedefs for the traits and the algorithm
 
 #include <CGAL/Apollonius_graph_2.h>
-#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/Apollonius_graph_filtered_traits_2.h>
 
-typedef CGAL::Apollonius_graph_traits_2<K> Traits;
+typedef CGAL::Apollonius_graph_filtered_traits_2<Kernel> Traits;
 typedef CGAL::Apollonius_graph_2<Traits> Apollonius_graph;
 
 //A class to recover Voronoi diagram from stream.
@@ -100,8 +101,8 @@ SEXP cropped_voronoi(NumericMatrix sites)
   std::vector<Apollonius_graph::Vertex_handle> handles;
   for (int i = 0; i != sites.nrow(); i++)
   {
-    auto site = Apollonius_graph::Site_2(Point_2(sites(i, 0), sites(i, 1)), sites(i, 2));
-    auto handle = ag.insert(site);
+    Apollonius_graph::Site_2 site = Apollonius_graph::Site_2(Point_2(sites(i, 0), sites(i, 1)), sites(i, 2));
+    Apollonius_graph::Vertex_handle handle = ag.insert(site);
     handles.push_back(handle);
   }
   if (!ag.is_valid(false, 0)) {
@@ -136,7 +137,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
     // collect the cropped Voronoi diagram edges as single points of polygon
     NumericVector xs;
     NumericVector ys;
-    for (auto &s : vor.m_cropped_vd)
+    for (const Segment_2 s : vor.m_cropped_vd)
     {
       xs.push_back(s.source().x());
       ys.push_back(s.source().y());
@@ -158,7 +159,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
 
     // for sorting polygon boundary points, determine angle from center
     // first calculate deltas
-    auto &vertex = h->site().point();
+    Point_2 vertex = h->site().point();
     NumericVector x_delta = xs - vertex.x();
     NumericVector y_delta = ys - vertex.y();
     // resolve angle, in radians
