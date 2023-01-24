@@ -1,6 +1,6 @@
 // This code is based on a CGAL example
 // examples/Apollonius_graph_2/ag2_exact_traits.cpp
-// [[Rcpp::depends(cgal4h)]]
+
 #include <Rcpp.h>
 using namespace Rcpp;
 
