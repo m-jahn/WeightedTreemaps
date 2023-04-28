@@ -8,14 +8,14 @@
 A data frame with 19790 rows and 12 variables
 }
 \source{
-\url{https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2}
+\url{https://pubmed.ncbi.nlm.nih.gov/30304686/}
 }
 \usage{
 data(Jahn_CellReports_2018)
 }
 \description{
-The dataset contains protein abundances of the Synechocystis sp. 
-PCC6803 proteome. Protein abundance was determined using shotgun 
+The dataset contains protein abundances of the Synechocystis sp.
+PCC6803 proteome. Protein abundance was determined using shotgun
 mass spectrometry. The data set also contains pathway information according to
 the cyanobase hierarchical annotation:
 }

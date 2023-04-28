@@ -2,12 +2,12 @@
 # save(df, file = "Jahn_CellReports_2018.RData")
 #
 #' Data from the publication of Jahn et al., CellReports, 2018
-#' 
-#' The dataset contains protein abundances of the Synechocystis sp. 
-#' PCC6803 proteome. Protein abundance was determined using shotgun 
+#'
+#' The dataset contains protein abundances of the Synechocystis sp.
+#' PCC6803 proteome. Protein abundance was determined using shotgun
 #' mass spectrometry. The data set also contains pathway information according to
 #' the cyanobase hierarchical annotation:
-#' 
+#'
 #' \itemize{
 #'   \item protein - protein ID
 #'   \item condition - combination from light and CO2
@@ -23,22 +23,22 @@
 #'   \item Pathway.abbr - abbreviated Pathway
 #'   \item Gene.names - trivial names of genes, if available
 #' }
-#' 
+#'
 #' @docType data
 #' @usage data(Jahn_CellReports_2018)
 #' @format A data frame with 19790 rows and 12 variables
-#' @source \url{https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2}
+#' @source \url{https://pubmed.ncbi.nlm.nih.gov/30304686/}
 "Jahn_CellReports_2018"
 
 #' Coordinates to draw a rounded rectangle as parent cell for treemaps
-#' 
+#'
 #' Set of coordinates for a rounded rectangle as parent cell for treemaps
-#' 
+#'
 #' \itemize{
 #'   \item X - coordinate
 #'   \item Y - coordinate
 #' }
-#' 
+#'
 #' @docType data
 #' @usage data(rounded_rect)
 #' @format A data frame with 50 rows and 2 variables
