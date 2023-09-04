@@ -20,6 +20,8 @@ drawTreemap(
   title_size = 1,
   title_color = grey(0.5),
   legend = FALSE,
+  legend_position = "left",
+  legend_size = 0.1,
   custom_range = NULL,
   width = 0.9,
   height = 0.9,
@@ -30,10 +32,10 @@ drawTreemap(
 }
 \arguments{
 \item{treemap}{(treemapResult) Either a \code{voronoiResult} or \code{sunburstResult}
-object that contains polygons and metadata as output from running 
+object that contains polygons and metadata as output from running
 \code{\link{voronoiTreemap}} or \code{\link{sunburstTreemap}}.}
 
-\item{levels}{(numeric) A numeric vector representing the hierarchical levels 
+\item{levels}{(numeric) A numeric vector representing the hierarchical levels
 that are drawn. The default is to draw all levels.}
 
 \item{color_type}{(character) One of "categorical", "cell_size", "both", or "custom_color".
@@ -41,10 +43,10 @@ For "categorical", each cell is colored based on the (parent) category it belong
 Colors may repeat if there are many cells. For "cell_size", cells are colored
 according to their relative area. For "both", cells are be colored the same
 way as for "categorical", but lightness is adjusted according to cell area.
-For "custom_color", a color index is used that was specified by 
+For "custom_color", a color index is used that was specified by
 \code{custom_color} during treemap generation. Use \code{NULL} to omit drawing colors.}
 
-\item{color_level}{(numeric) A numeric vector representing the hierarchical level 
+\item{color_level}{(numeric) A numeric vector representing the hierarchical level
 that should be used for cell coloring. Must be one of \code{levels}.
 Default is to use the lowest level cells for Voronoi treemaps and all levels
 for sunburst treemaps.}
@@ -56,25 +58,25 @@ The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}}
 used for drawing cell borders, or NULL to omit drawing borders, The default is
 that all borders are drawn.}
 
-\item{border_size}{(numeric) A single number indicating initial line width of the highest level 
-cells. Is reduced each level, default is 6 pts. Alternatively a vector of 
+\item{border_size}{(numeric) A single number indicating initial line width of the highest level
+cells. Is reduced each level, default is 6 pts. Alternatively a vector of
 \code{length(border_level)}, then each border is drawn with the specified width.}
 
-\item{border_color}{(character) A single character indicating color for cell borders, 
-default is a light grey. Alternatively a vector of \code{length(border_level)}, 
+\item{border_color}{(character) A single character indicating color for cell borders,
+default is a light grey. Alternatively a vector of \code{length(border_level)},
 then each border is drawn with the specified color.}
 
 \item{label_level}{(numeric) A numeric vector representing the hierarchical level that should be
 used for drawing cell labels, or NULL to omit drawing labels. The default is the
 deepest level (every cell has a label).}
 
-\item{label_size}{(numeric) A single number indicating relative size of each label 
-in relation to its parent cell. Alternatively a numeric vector of 
-\code{length(label_level)} that specifies relative size of labels for each level 
+\item{label_size}{(numeric) A single number indicating relative size of each label
+in relation to its parent cell. Alternatively a numeric vector of
+\code{length(label_level)} that specifies relative size of labels for each level
 individually.}
 
 \item{label_color}{(character) A single character indicating color for cell labels.
-Alternatively a vector of \code{length(label_level)}, then each label 
+Alternatively a vector of \code{length(label_level)}, then each label
 is drawn with the specified color.}
 
 \item{title}{(character) An optional title, default to \code{NULL}.}
@@ -84,6 +86,11 @@ is drawn with the specified color.}
 \item{title_color}{(character) Color for title.}
 
 \item{legend}{(logical) Set to TRUE if a color key should be drawn. Default is FALSE.}
+
+\item{legend_position}{(character) The position of the legend, one of "left" (default),
+"right", "top", or "bottom".}
+
+\item{legend_size}{(numeric) The relative size of the legend (0 to 1), default is 0.1.}
 
 \item{custom_range}{(numeric) A numeric vector of length 2 that can be used
 to rescale the values in \code{custom_color} to the range of choice.
@@ -100,7 +107,7 @@ that the plotting area is supposed to be subdivided in. Useful only together wit
 to omit starting a new page every time you call \code{drawTreemap()}.}
 
 \item{position}{(numeric) Vector of length 2 indicating the position where the current
-treemap should be drawn. Useful only together with \code{layout}, which indicates 
+treemap should be drawn. Useful only together with \code{layout}, which indicates
 the number of rows and columns the plotting area is subdivided into. Use \code{add = TRUE}
 to omit starting a new page every time you call \code{drawTreemap()}.}
 
@@ -115,7 +122,7 @@ The function does not return a value (except NULL). It creates a grid viewport a
 \description{
 Draws the treemap object that was obtained by running \code{\link{voronoiTreemap}} or
 \code{\link{sunburstTreemap}}. Many graphical parameters can be customized but some
-settings that determine the appearance of treemaps are already made 
+settings that determine the appearance of treemaps are already made
 during treemap generation. Such parameters are primarily cell size and
 initial shape of the treemap.
 }
