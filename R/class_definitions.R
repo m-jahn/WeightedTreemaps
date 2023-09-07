@@ -64,15 +64,15 @@ as.data.frame.sunburstResult <- function(x, ..., stringsAsFactors = FALSE) {
 #'
 #' Summary method for voronoiResult.
 #'
-#' @param x (voronoiResult) A voronoi treemap results object
+#' @param object (voronoiResult) A voronoi treemap results object
 #' @param ... (none) Not used
 #' @return Returns a data.frame
 #' @seealso \code{\link{voronoiTreemap}} for generating the treemap that is
 #'   the input for this function
 #' @importFrom utils head
 #' @export
-summary.voronoiResult <- function(x, ...) {
-  df <- as.data.frame(x)
+summary.voronoiResult <- function(object, ...) {
+  df <- as.data.frame(object)
   message(paste0(
     "A treemap object of class 'voronoiResult' with ",
     nrow(df), " cells on ",
@@ -86,14 +86,14 @@ summary.voronoiResult <- function(x, ...) {
 #'
 #' Summary method for sunburstResult
 #'
-#' @param x (sunburstResult) A sunburst treemap results object
+#' @param object (sunburstResult) A sunburst treemap results object
 #' @param ... (none) Not used
 #' @return Returns a data.frame
 #' @seealso \code{\link{sunburstTreemap}} for generating the treemap that is
 #'   the input for this function
 #' @export
-summary.sunburstResult <- function(x, ...) {
-  df <- as.data.frame(x)
+summary.sunburstResult <- function(object, ...) {
+  df <- as.data.frame(object)
   message(paste0(
     "A treemap object of class 'sunburstResult' with ",
     nrow(df), " cells on ",

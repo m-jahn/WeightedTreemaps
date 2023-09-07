@@ -4,10 +4,10 @@
 \alias{summary.voronoiResult}
 \title{summary.voronoiResult}
 \usage{
-\method{summary}{voronoiResult}(x, ...)
+\method{summary}{voronoiResult}(object, ...)
 }
 \arguments{
-\item{x}{(voronoiResult) A voronoi treemap results object}
+\item{object}{(voronoiResult) A voronoi treemap results object}
 
 \item{...}{(none) Not used}
 }

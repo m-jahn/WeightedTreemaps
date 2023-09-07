@@ -4,10 +4,10 @@
 \alias{summary.sunburstResult}
 \title{summary.sunburstResult}
 \usage{
-\method{summary}{sunburstResult}(x, ...)
+\method{summary}{sunburstResult}(object, ...)
 }
 \arguments{
-\item{x}{(sunburstResult) A sunburst treemap results object}
+\item{object}{(sunburstResult) A sunburst treemap results object}
 
 \item{...}{(none) Not used}
 }
