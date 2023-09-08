@@ -1,7 +1,7 @@
 WeightedTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2021-12-09
+2023-09-01
 
 <!-- include logo-->
 
@@ -147,7 +147,6 @@ can be customized using the `color_level` argument.
 drawTreemap(tm, title = "treemap 1", label_size = 2,
   color_type = "categorical", color_level = 1,
   layout = c(2, 2), position = c(1, 1), legend = TRUE)
-#> Note: use 'add = TRUE' if you want to add more treemaps to this page.
 
 drawTreemap(tm, title = "treemap 2", label_size = 2,
   color_type = "categorical", color_level = 2, border_size = 3,
@@ -210,7 +209,6 @@ tm3 <- voronoiTreemap(
 ``` r
 drawTreemap(tm1, title = "positioning = 'random'", border_size = 3,
   layout = c(1,3), position = c(1, 1))
-#> Note: use 'add = TRUE' if you want to add more treemaps to this page.
 
 drawTreemap(tm2, title = "positioning = 'regular'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 2))
@@ -263,7 +261,6 @@ tm3 <- voronoiTreemap(data = df, levels = "A",
 
 ``` r
 drawTreemap(tm1, layout = c(1,3), position = c(1, 1))
-#> Note: use 'add = TRUE' if you want to add more treemaps to this page.
 drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
@@ -512,7 +509,6 @@ drawTreemap(tm,
   layout = c(1, 3),
   position = c(1, 1)
 )
-#> Note: use 'add = TRUE' if you want to add more treemaps to this page.
 
 # use custom color palette
 drawTreemap(tm,

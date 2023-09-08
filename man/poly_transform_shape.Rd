@@ -15,7 +15,7 @@ poly_transform_shape(poly, xy_max = 2000)
 A list with slots 'x' and 'y' containing numeric coordinates
 }
 \description{
-Mainly for internal use. The function transforms ('projects') arbitrary input 
+Mainly for internal use. The function transforms ('projects') arbitrary input
 coordinates that are used as parent polygon or shape of the treemap.
 By default it scales and centers polygon coordinates on a square
 of 0 to 2000 units.

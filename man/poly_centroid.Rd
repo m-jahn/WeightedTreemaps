@@ -15,7 +15,7 @@ poly_centroid(poly_x, poly_y)
 A numeric, the area of the polygon.
 }
 \description{
-Mainly for internal use. Determines the centroids of a polygon based on 
+Mainly for internal use. Determines the centroids of a polygon based on
 its x and y coordinates.
 This function is a reimplementation of `soiltexture::TT.polygon.centroids()`
 and only re-implemented to avoid extra dependencies.
