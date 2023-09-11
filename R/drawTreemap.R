@@ -222,8 +222,8 @@ drawTreemap <- function(
   if (!legend) { legend_position <- "none" }
   key_offsets <- switch(
     legend_position,
-    left = c(0.5 - legend_size/2, 0.5, width - legend_size, height, 1 - legend_size/2, 0.5, legend_size, height),
-    right = c(0.5 + legend_size/2, 0.5, width - legend_size, height, legend_size/2, 0.5, legend_size, height),
+    left = c(0.5 + legend_size/2, 0.5, width - legend_size, height, legend_size/2, 0.5, legend_size, height),
+    right = c(0.5 - legend_size/2, 0.5, width - legend_size, height, 1 - legend_size/2, 0.5, legend_size, height),
     top = c(0.5, 0.5 - legend_size/2, width, height - legend_size, 0.5, 1 - legend_size/2, width, legend_size),
     bottom = c(0.5, 0.5 + legend_size/2, width, height - legend_size, 0.5, legend_size/2, width, legend_size),
     none = c(0.5, 0.5, width, height, 0.5, 0.5, 0, 0)
@@ -381,8 +381,7 @@ drawTreemap <- function(
     # create legend as a list of options
     pal <- treemap@call$palette
     colorkey <- list(
-      space = switch(
-        legend_position, left = "right", right = "left", top = "top", bottom = "bottom"),
+      space = legend_position,
       col = pal,
       at = 0:length(pal),
       labels = c(names(pal), ""),
