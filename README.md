@@ -1,7 +1,7 @@
 WeightedTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2023-09-01
+2023-10-05
 
 <!-- include logo-->
 
@@ -77,9 +77,15 @@ The C++ code computing the actual Voronoi tesselation requires the
 [CGAL](https://www.cgal.org/download.html) library headers. Thanks to
 [Ahmadou Dicko](https://github.com/dickoa), installing the complete CGAL
 library locally is no longer necessary. Instead, the package depends on
-the CGAL4 headers that are now available on CRAN as R package `cgal4h`.
-The dependencies are installed automatically and manual installation of
-CGAL (headers) should not be necessary.
+the CGAL headers that are available as R packages on CRAN. The package
+was using CGAL 4 (package `cgal4h`), but now moved to the latest CGAL
+5.5+ version available as package `RcppCGAL`. The dependencies are
+usually installed automatically and manual installation of CGAL
+(headers) should not be necessary.
+
+**NOTE**: The `RcppCGAL` package is currently (September 2023) not
+available on CRAN! Please install it [manually from
+Github](https://github.com/ericdunipace/RcppCGAL).
 
 ## Installation
 
