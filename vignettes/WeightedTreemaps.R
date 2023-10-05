@@ -5,7 +5,7 @@ knitr::opts_chunk$set(
   fig.path = "png/"
 )
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  devtools::install_github("m-jahn/WeightedTreemaps")
 
 ## -----------------------------------------------------------------------------
@@ -25,10 +25,10 @@ tm <- voronoiTreemap(
   seed = 123
 )
 
-## ---- fig.width = 5, fig.height = 5, out.width = "50%", fig.align = 'center'----
+## ----fig.width = 5, fig.height = 5, out.width = "50%", fig.align = 'center'----
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 
-## ---- fig.width = 9, fig.height = 9, out.width = "100%", fig.align = 'center', warning = FALSE----
+## ----fig.width = 9, fig.height = 9, out.width = "100%", fig.align = 'center', warning = FALSE----
 drawTreemap(tm, title = "treemap 1", label_size = 2,
   color_type = "categorical", color_level = 1,
   layout = c(2, 2), position = c(1, 1), legend = TRUE)
@@ -48,7 +48,7 @@ drawTreemap(tm, title = "treemap 4", label_size = 2,
   add = TRUE, layout = c(2, 2), position = c(2, 2),
   title_color = "black", legend = TRUE)
 
-## ---- message = FALSE, error = FALSE, results = 'hide'------------------------
+## ----message = FALSE, error = FALSE, results = 'hide'-------------------------
 # set seed to obtain same df every time
 set.seed(123)
 df <- data.frame(A = sample(10:100, 45))
@@ -74,7 +74,7 @@ tm3 <- voronoiTreemap(
   positioning = "clustered"
 )
 
-## ---- fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
+## ----fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
 drawTreemap(tm1, title = "positioning = 'random'", border_size = 3,
   layout = c(1,3), position = c(1, 1))
 
@@ -99,7 +99,7 @@ oct_coord <- list(
   y = cos(seq(0, 2, 2/8)*pi) * 1000 + 1000
 )
 
-## ---- message = FALSE, error = FALSE, results = 'hide'------------------------
+## ----message = FALSE, error = FALSE, results = 'hide'-------------------------
 tm1 <- voronoiTreemap(data = df, levels = "A",
   shape = house_coords)
 
@@ -109,7 +109,7 @@ tm2 <- voronoiTreemap(data = df, levels = "A",
 tm3 <- voronoiTreemap(data = df, levels = "A",
   shape = oct_coord)
 
-## ---- fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
+## ----fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
 drawTreemap(tm1, layout = c(1,3), position = c(1, 1))
 drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
@@ -124,14 +124,14 @@ df <- data.frame(
 
 head(df)
 
-## ---- results = 'hide'--------------------------------------------------------
+## ----results = 'hide'---------------------------------------------------------
 # by default cell (sector) size is encoded by number of members per group
 tm <- sunburstTreemap(
   data = df,
   levels = c("A", "B")
 )
 
-## ---- fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
+## ----fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
 # draw treemap with default options
 drawTreemap(tm,
   title = "A sunburst treemap",
