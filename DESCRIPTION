@@ -39,6 +39,7 @@ Imports:
     grid,
     methods,
     dplyr,
+    tibble,
     sp,
     sf,
     scales,
