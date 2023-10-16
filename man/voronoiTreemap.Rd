@@ -24,8 +24,8 @@ voronoiTreemap(
 \arguments{
 \item{data}{(data.frame) A data.frame with one column for each hierarchical level}
 
-\item{levels}{(character) Character vector indicating the column names to 
-be used. The order of names must correspond to the hierarchical levels, 
+\item{levels}{(character) Character vector indicating the column names to
+be used. The order of names must correspond to the hierarchical levels,
 going from broad to fine}
 
 \item{fun}{(function) Function to be used to aggregate cell sizes of parental cells}
@@ -33,12 +33,12 @@ going from broad to fine}
 \item{sort}{(logical) Should the columns of the data.frame be sorted before treemap generation?}
 
 \item{filter}{(numeric) Filter the supplied data frame to remove very small
-cells that may not be visible. The default is to remove cells with a 
-relative target area below a threshold of zero (no negative values allowed). 
-Computation time can increase when many small cells are present. For example, 
+cells that may not be visible. The default is to remove cells with a
+relative target area below a threshold of zero (no negative values allowed).
+Computation time can increase when many small cells are present. For example,
 a threshold of 0.01 filters out all observations/cells below 1 \% of the total area.}
 
-\item{cell_size}{(character) The name of the column used to control cell size. 
+\item{cell_size}{(character) The name of the column used to control cell size.
 Can be one of \code{levels} or any other column with numerical data. NA or
 values equal or less than zero are not allowed as the cell area needs to be positive.
 The values in this column are aggregated by the function specified by \code{fun}.
@@ -47,9 +47,9 @@ for the respective cell (corresponding to rows in the data.frame).}
 
 \item{custom_color}{(character) An optional column that can be specified to
 control cell color. Cell colors are determined when drawing the treemap
-using \code{\link{drawTreemap}}, but the default is to use one of 
+using \code{\link{drawTreemap}}, but the default is to use one of
 \code{levels} or \code{cell size}. Any other data source that shall be used
-instead has to be included in the treemap generation and explicitly 
+instead has to be included in the treemap generation and explicitly
 specified here. The default value is \code{NULL}.}
 
 \item{shape}{(list or character) Set the initial shape of the treemap. Currently
@@ -59,7 +59,7 @@ The slots of the list must be labeled 'x' and 'y'. The coordinates are not teste
 for validity, use on your own risk.}
 
 \item{maxIteration}{(numeric) Force algorithm to stop at this number of iterations
-for each parent cell. The algorithm usually converges to an acceptable 
+for each parent cell. The algorithm usually converges to an acceptable
 solution fairly quickly, so it seems reasonable to restrict this number
 in order to save computation time. However, more iterations give higher
 accuracy.}
@@ -68,19 +68,19 @@ accuracy.}
 The algorithm will stop when all cells have lower error than this value.
 It is calculated as the absolute difference of a cell's area to its target
 area. The default is 0.01 (or 1 \%) of the total parental area. Note: this
-is is different from a relative per-cell error, where 1 \% would be more 
+is is different from a relative per-cell error, where 1 \% would be more
 strict.}
 
-\item{seed}{(integer) The default seed is NULL, which will lead to a new 
+\item{seed}{(integer) The default seed is NULL, which will lead to a new
 random sampling of cell coordinates for each tesselation. If you want
 a reproducible arrangement of cells, set seed to an arbitrary number.}
 
-\item{positioning}{(character) Algorithm for positioning of starting 
+\item{positioning}{(character) Algorithm for positioning of starting
 coordinates of child cells in the parental cell using \code{spsample()};
-"random" for completely random positions, "regular" for cells aligned 
-to a grid sorted from bottom to top by name, "clustered" with regular 
-positions of cells but sorted by name from inside out. Two variants 
-"regular_by_area" and "clustered_by_area" will work as their counterparts 
+"random" for completely random positions, "regular" for cells aligned
+to a grid sorted from bottom to top by name, "clustered" with regular
+positions of cells but sorted by name from inside out. Two variants
+"regular_by_area" and "clustered_by_area" will work as their counterparts
 but will sort by cell target area instead of cell name. \code{positioning}
 can be a single character or a vector of \code{length(levels)} to allow
 different positioning algorithms for each level.}
@@ -89,9 +89,9 @@ different positioning algorithms for each level.}
 with statistics for each iteration of a treemap as well as a success message
 are printed to the console.}
 
-\item{debug}{(logical) If debug is TRUE (default is FALSE), the solution 
-for each iteration is drawn to the viewport to allow some visual 
-inspection. The weights, target area, and difference are printed to the 
+\item{debug}{(logical) If debug is TRUE (default is FALSE), the solution
+for each iteration is drawn to the viewport to allow some visual
+inspection. The weights, target area, and difference are printed to the
 console. It is not recommended to set this option to TRUE unless you know
 what you are doing, as it makes treemap generation much slower.}
 }
@@ -108,11 +108,11 @@ what you are doing, as it makes treemap generation much slower.}
 Create nested additively weighted Voronoi treemaps.
 }
 \details{
-This is a recursive wrapper function, making use of the original implementation 
+This is a recursive wrapper function, making use of the original implementation
 of the voronoi tesselation from Paul Murrell, University of Auckland.
 The original functions were obtained and slightly modified from
 \url{https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html}
-This function returns a treemap object instead of a plot. In order 
+This function returns a treemap object instead of a plot. In order
 to actually draw the treemap, use \code{\link{drawTreemap}}.
 }
 \examples{
