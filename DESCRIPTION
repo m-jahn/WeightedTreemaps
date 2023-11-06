@@ -60,3 +60,5 @@ LazyData: true
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 SystemRequirements: C++17
+URL: https://github.com/m-jahn/WeightedTreemaps
+BugReports: https://github.com/m-jahn/WeightedTreemaps/issues
