@@ -1,7 +1,7 @@
 WeightedTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2023-10-05
+2023-11-06
 
 <!-- include logo-->
 
@@ -278,9 +278,8 @@ drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 This example will cover the generation of a somewhat larger treemap, as
 it is often useful to visualize e.g. many genes or proteins at once in
 molecular biology studies. However, treemaps can be used for any type of
-data visualization. First we read a proteomics test data set from Jahn
-et al., Cell Reports, 2018.
-(<https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2>)
+data visualization. First we read a proteomics test data set from [Jahn
+et al., Cell Reports, 2018](https://pubmed.ncbi.nlm.nih.gov/30304686/).
 This dataset contains thousands of protein measurements of the
 cyanobacterium *Synechocystis* sp. PCC6803.
 

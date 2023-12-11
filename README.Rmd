@@ -233,9 +233,7 @@ drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 
 ### Advanced example for Voronoi treemaps
 
-This example will cover the generation of a somewhat larger treemap, as it is often useful to visualize e.g. many genes or proteins at once in molecular biology studies. However, treemaps can be used for any type of data visualization. First we read a proteomics test data set from Jahn et al., Cell Reports, 2018.
-(https://www.cell.com/cell-reports/fulltext/S2211-1247(18)31485-2)
-This dataset contains thousands of protein measurements of the cyanobacterium _Synechocystis_ sp. PCC6803.
+This example will cover the generation of a somewhat larger treemap, as it is often useful to visualize e.g. many genes or proteins at once in molecular biology studies. However, treemaps can be used for any type of data visualization. First we read a proteomics test data set from [Jahn et al., Cell Reports, 2018](https://pubmed.ncbi.nlm.nih.gov/30304686/). This dataset contains thousands of protein measurements of the cyanobacterium _Synechocystis_ sp. PCC6803.
 
 ```{r, message = FALSE, error = FALSE, results = 'hide'}
 # additional libraries for data filtering and colors

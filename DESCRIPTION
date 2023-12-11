@@ -5,7 +5,7 @@ Authors@R: c(
     person(given = "Michael",
            family = "Jahn",
            role = c("aut", "cre"),
-           email = "michael.jahn@scilifelab.se",
+           email = "jahn@mpusp.mpg.de",
            comment = c(ORCID = "0000-0002-3913-153X")),
     person(given = "David",
            family = "Leslie",
@@ -54,7 +54,6 @@ LinkingTo:
     Rcpp,
     RcppCGAL,
     BH
-Remotes: ericdunipace/RcppCGAL
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
