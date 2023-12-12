@@ -28,7 +28,10 @@ now only printed when the user specifies verbose = TRUE.
 
 - windows-latest (release)
 - macOS-latest (release)
-- ubuntu-20.04 (release)
+- ubuntu-latest (devel)
+- ubuntu-latest (release)
+- ubuntu-latest (oldrel-1)
+
 
 ### with `rhub::check_for_cran()`
 
@@ -53,7 +56,7 @@ File ‘WeightedTreemaps/libs/WeightedTreemaps.so’:
     of to the console, nor use Fortran I/O nor system RNGs.
 ```
 
-The C++ function `voronoiDiagram.cpp` does not contain any such entry points. This Note is caused by the upstream dependency CGAL headers (R package `RcppCGAL`) or boost headers (`BH`). This note appears only when checking on Mac OS.
+The C++ function `voronoiDiagram.cpp` does not contain any such entry points. This Note occasionally turns up on Mac OS tests, probably caused by the upstream dependency CGAL headers (R package `RcppCGAL`) or boost headers (`BH`).
 
 2. Note:
 
@@ -65,7 +68,7 @@ checking installed package size ... NOTE
     libs   7.7Mb
 ```
 
-Installed package size exceeding 5 MB is mainly caused by the compiled function `voronoiDiagram.o`. The size of this file can not be reduced.
+Installed package size exceeding 5 MB is caused by the compiled function `voronoiDiagram.o`. The size of this file can not be reduced.
 
 ## Downstream dependencies
 
