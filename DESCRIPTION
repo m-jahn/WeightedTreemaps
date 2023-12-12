@@ -1,63 +1,58 @@
 Package: WeightedTreemaps
-Title: Generate and Plot Voronoi or Sunburst Treemaps from Hierarchical Data
+Title: Generate and Plot Voronoi or Sunburst Treemaps from Hierarchical
+    Data
 Version: 0.1.1
 Authors@R: c(
-    person(given = "Michael",
-           family = "Jahn",
-           role = c("aut", "cre"),
-           email = "jahn@mpusp.mpg.de",
+    person("Michael", "Jahn", , "jahn@mpusp.mpg.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3913-153X")),
-    person(given = "David",
-           family = "Leslie",
-           role = c("aut"),
-           email = "david.leslie@scilifelab.se"),
-    person(given = "Ahmadou",
-           family = "Dicko",
-           role = c("aut"),
-           email = "mail@ahmadoudicko.com",
+    person("David", "Leslie", , "david.leslie@scilifelab.se", role = "aut"),
+    person("Ahmadou", "Dicko", , "mail@ahmadoudicko.com", role = "aut",
            comment = c(ORCID = "0000-0002-9654-7582")),
-    person(given = "Paul",
-           family = "Murrell",
-           role = c("aut", "cph"),
-           email = "p.murrell@auckland.ac.nz",
-           comment = c(ORCID = "0000-0002-3224-8858")))
-Description: Treemaps are a visually appealing graphical representation of numerical data using a 
-  space-filling approach. A plane or 'map' is subdivided into smaller areas called cells. 
-  The cells in the map are scaled according to an underlying metric which allows to grasp the 
-  hierarchical organization and relative importance of many objects at once. This package contains 
-  two different implementations of treemaps, Voronoi treemaps and Sunburst treemaps. 
-  The Voronoi treemap function subdivides the plot area in polygonal cells according to 
-  the highest hierarchical level, then continues to subdivide those parental cells on the 
-  next lower hierarchical level, and so on. The Sunburst treemap is a computationally less
-  demanding treemap that does not require iterative refinement, but simply generates 
-  circle sectors that are sized according to predefined weights.
-  The Voronoi tesselation is based on functions from 
-  Paul Murrell (2012) <https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html>.
+    person("Paul", "Murrell", , "p.murrell@auckland.ac.nz", role = c("aut", "cph"),
+           comment = c(ORCID = "0000-0002-3224-8858"))
+  )
+Description: Treemaps are a visually appealing graphical representation of
+    numerical data using a space-filling approach. A plane or 'map' is
+    subdivided into smaller areas called cells.  The cells in the map are
+    scaled according to an underlying metric which allows to grasp the
+    hierarchical organization and relative importance of many objects at
+    once. This package contains two different implementations of treemaps,
+    Voronoi treemaps and Sunburst treemaps.  The Voronoi treemap function
+    subdivides the plot area in polygonal cells according to the highest
+    hierarchical level, then continues to subdivide those parental cells
+    on the next lower hierarchical level, and so on. The Sunburst treemap
+    is a computationally less demanding treemap that does not require
+    iterative refinement, but simply generates circle sectors that are
+    sized according to predefined weights.  The Voronoi tesselation is
+    based on functions from Paul Murrell (2012)
+    <https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html>.
 License: GPL-3
-Depends: R (>= 3.5.0)
+URL: https://github.com/m-jahn/WeightedTreemaps
+BugReports: https://github.com/m-jahn/WeightedTreemaps/issues
+Depends:
+    R (>= 3.5.0)
 Imports:
-    grid,
-    methods,
-    dplyr,
-    tibble,
-    sp,
-    sf,
-    scales,
-    lattice,
     colorspace,
-    Rcpp
+    dplyr,
+    grid,
+    lattice,
+    methods,
+    Rcpp,
+    scales,
+    sf,
+    sp,
+    tibble
 Suggests:
-    parallel,
     knitr,
+    parallel,
     rmarkdown
 LinkingTo:
+    BH,
     Rcpp,
-    RcppCGAL,
-    BH
+    RcppCGAL
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
-VignetteBuilder: knitr
 SystemRequirements: C++17
-URL: https://github.com/m-jahn/WeightedTreemaps
-BugReports: https://github.com/m-jahn/WeightedTreemaps/issues
