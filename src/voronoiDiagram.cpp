@@ -187,7 +187,7 @@ SEXP cropped_voronoi(NumericMatrix sites)
     IntegerVector boundary_pos = get_boundary_pos(xs, ys);
     // then reorder only if boundary positions are not at the ends of the vector.
     if (boundary_pos.length() == 2) {
-      if ((boundary_pos[0] != 0) | (boundary_pos[1] != xs.length()-1)) {
+      if ((boundary_pos[0] != 0) || (boundary_pos[1] != xs.length()-1)) {
         IntegerVector seq1, seq2;
         seq1 = seq(boundary_pos[1], xs.length()-1);
         seq2 = seq(0, boundary_pos[1]-1);
