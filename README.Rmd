@@ -21,7 +21,8 @@ knitr::opts_chunk$set(
 <img src="images/logo.png" align="right" />
 
 <!-- badges start -->
-[![R build status](https://github.com/m-jahn/WeightedTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/WeightedTreemaps/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/WeightedTreemaps)](https://CRAN.R-project.org/package=WeightedTreemaps)
+[![R-CMD-check](https://github.com/m-jahn/WeightedTreemaps/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/m-jahn/WeightedTreemaps/actions/workflows/R-CMD-check.yaml)
 ![GitHub issues](https://img.shields.io/github/issues/m-jahn/WeightedTreemaps)
 ![GitHub last commit](https://img.shields.io/github/last-commit/m-jahn/WeightedTreemaps)
 ![Platform](https://img.shields.io/badge/platform-all-green)
@@ -57,6 +58,12 @@ drawTreemap(tm, label_size = 2.5, label_color = "white", title = "An example")
 
 ## News
 
+*14 December 2023*
+
+The package was finally released on CRAN!
+Prerequisite was testing and troubleshooting of C++ related compilation problems,
+and re-release of the CGAL dependency package `RcppCGAL` with latest version.
+
 *25 March 2021*
 
 A **Shiny app** for generating treemaps from custom data is now available on **[Shinyapps.io](https://m-jahn.shinyapps.io/ShinyTreemaps/)!**
@@ -76,11 +83,17 @@ The **Sunburst treemap** is a computationally less demanding treemap that does n
 
 The C++ code computing the actual Voronoi tesselation requires the [CGAL](https://www.cgal.org/download.html) library headers. Thanks to [Ahmadou Dicko](https://github.com/dickoa), installing the complete CGAL library locally is no longer necessary. Instead, the package depends on the CGAL headers that are available as R packages on CRAN. The package was using CGAL 4 (package `cgal4h`), but now moved to the latest CGAL 5.5+ version available as package `RcppCGAL`. The dependencies are usually installed automatically and manual installation of CGAL (headers) should not be necessary.
 
-**NOTE**: The `RcppCGAL` package is currently (September 2023) not available on CRAN! Please install it [manually from Github](https://github.com/ericdunipace/RcppCGAL).
+Note: If the `RcppCGAL` package is temporarily not available on CRAN (as happened 2023), please install it [manually from Github](https://github.com/ericdunipace/RcppCGAL).
 
 ## Installation
 
-To install the package directly from github, use the following function from the `devtools` package in your R session:
+To install the package from CRAN, use:
+
+```{r, eval = FALSE}
+install.packages("WeightedTreemaps")
+```
+
+To install the package directly from github, use the following function from the `devtools` package:
 
 ```{r, eval = FALSE}
 devtools::install_github("m-jahn/WeightedTreemaps")

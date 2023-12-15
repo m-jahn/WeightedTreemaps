@@ -1,7 +1,7 @@
 WeightedTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko
-2023-12-12
+2023-12-15
 
 <!-- include logo-->
 
@@ -9,8 +9,9 @@ Michael Jahn, David Leslie, Ahmadou Dicko
 
 <!-- badges start -->
 
-[![R build
-status](https://github.com/m-jahn/WeightedTreemaps/workflows/R-CMD-check/badge.svg)](https://github.com/m-jahn/WeightedTreemaps/actions)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/WeightedTreemaps)](https://CRAN.R-project.org/package=WeightedTreemaps)
+[![R-CMD-check](https://github.com/m-jahn/WeightedTreemaps/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/m-jahn/WeightedTreemaps/actions/workflows/R-CMD-check.yaml)
 ![GitHub
 issues](https://img.shields.io/github/issues/m-jahn/WeightedTreemaps)
 ![GitHub last
@@ -27,6 +28,12 @@ hierarchical data.
 <img src="images/unnamed-chunk-2-1.png" width="50%" style="display: block; margin: auto;" />
 
 ## News
+
+*14 December 2023*
+
+The package was finally released on CRAN! Prerequisite was testing and
+troubleshooting of C++ related compilation problems, and re-release of
+the CGAL dependency package `RcppCGAL` with latest version.
 
 *25 March 2021*
 
@@ -83,14 +90,20 @@ was using CGAL 4 (package `cgal4h`), but now moved to the latest CGAL
 usually installed automatically and manual installation of CGAL
 (headers) should not be necessary.
 
-**NOTE**: The `RcppCGAL` package is currently (September 2023) not
-available on CRAN! Please install it [manually from
+Note: If the `RcppCGAL` package is temporarily not available on CRAN (as
+happened 2023), please install it [manually from
 Github](https://github.com/ericdunipace/RcppCGAL).
 
 ## Installation
 
+To install the package from CRAN, use:
+
+``` r
+install.packages("WeightedTreemaps")
+```
+
 To install the package directly from github, use the following function
-from the `devtools` package in your R session:
+from the `devtools` package:
 
 ``` r
 devtools::install_github("m-jahn/WeightedTreemaps")
@@ -135,7 +148,7 @@ Draw the treemap.
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 ```
 
-<img src="images/unnamed-chunk-6-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-7-1.png" width="50%" style="display: block; margin: auto;" />
 
 The `voronoiTreemap()` and `drawTreemap()` functions are separated in
 order to allow drawing of the same treemap object in different ways.
@@ -170,7 +183,7 @@ drawTreemap(tm, title = "treemap 4", label_size = 2,
   title_color = "black", legend = TRUE)
 ```
 
-<img src="images/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Positioning of cells
 
@@ -223,7 +236,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="images/unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Custom initial shapes
 
@@ -271,7 +284,7 @@ drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="images/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-13-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Advanced example for Voronoi treemaps
 
@@ -546,7 +559,7 @@ drawTreemap(tm,
 )
 ```
 
-<img src="images/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
 
