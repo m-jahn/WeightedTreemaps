@@ -1,3 +1,5 @@
+# WeightedTreemaps 0.1.2
+
 # WeightedTreemaps 0.1.1
 
 - The package was prepared for release on CRAN
