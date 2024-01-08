@@ -1,7 +1,7 @@
 ---
 output:  github_document
 title: "WeightedTreemaps"
-author: "Michael Jahn, David Leslie, Ahmadou Dicko"
+author: "Michael Jahn, David Leslie, Ahmadou Dicko, Paul Murrell"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{WeightedTreemaps}

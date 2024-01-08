@@ -1,4 +1,4 @@
-## Release
+## Update
 
 ## Test environments
 
@@ -10,13 +10,13 @@
 - ubuntu-latest (release)
 - ubuntu-latest (oldrel-1)
 
-
 ### with `rhub::check_for_cran()`
 
 - Fedora Linux, R-devel, clang, gfortran
 - Debian Linux, R-release, GCC
 - Windows Server 2022, R-devel, 64 bit
 - Ubuntu Linux 20.04.1 LTS, R-release, GCC
+- Debian Linux, R-devel, GCC ASAN/UBSAN
 
 ## R CMD check results
 
@@ -33,6 +33,9 @@ checking installed package size ... NOTE
 ```
 
 Installed package size exceeding 5 MB is caused by the compiled function `voronoiDiagram.o`. The size of this file can not be reduced.
+
+There were "additional issues" brought up with from ASAN/UBSAN sanitizer checks.
+These were fixed in the current version.
 
 ## Downstream dependencies
 

@@ -1,7 +1,7 @@
 WeightedTreemaps
 ================
-Michael Jahn, David Leslie, Ahmadou Dicko
-2023-12-15
+Michael Jahn, David Leslie, Ahmadou Dicko, Paul Murrell
+2024-01-07
 
 <!-- include logo-->
 
