@@ -1,7 +1,7 @@
 WeightedTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko, Paul Murrell
-2024-01-07
+2024-05-17
 
 <!-- include logo-->
 
@@ -25,7 +25,7 @@ commit](https://img.shields.io/github/last-commit/m-jahn/WeightedTreemaps)
 Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from
 hierarchical data.
 
-<img src="images/unnamed-chunk-2-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="images/intro_draw-1.png" width="50%" style="display: block; margin: auto;" />
 
 ## News
 
@@ -132,7 +132,7 @@ need to be specified. Different parameters like the initial shape, or
 the maximum number of iterations are optional.
 
 ``` r
-# generate treemap; set seed to obtain same pattern every time
+# set seed to obtain same pattern every time
 tm <- voronoiTreemap(
   data = mtcars,
   levels = c("gear", "car_name"),
@@ -148,7 +148,7 @@ Draw the treemap.
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 ```
 
-<img src="images/unnamed-chunk-7-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="images/mtcars_tm_draw-1.png" width="50%" style="display: block; margin: auto;" />
 
 The `voronoiTreemap()` and `drawTreemap()` functions are separated in
 order to allow drawing of the same treemap object in different ways.
@@ -183,7 +183,7 @@ drawTreemap(tm, title = "treemap 4", label_size = 2,
   title_color = "black", legend = TRUE)
 ```
 
-<img src="images/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/mtcars_draw_examples-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Positioning of cells
 
@@ -236,7 +236,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="images/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/mtcars_positioning_draw-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Custom initial shapes
 
@@ -284,7 +284,7 @@ drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="images/unnamed-chunk-13-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/custom_shapes_draw-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Advanced example for Voronoi treemaps
 
@@ -339,9 +339,10 @@ palettes using `colorspace`s `hclwizard`. Just browse to the `Export`
 and then the `R` tab and copy the code to your script.
 
 ``` r
-# outcomment to run interactive wizard:
-#hclwizard()
+# interactive wizard to choose colors
+hclwizard()
 
+# define palettes manually
 custom_pal_1 <- sequential_hcl(
   n = 20,
   h = c(-46, 78),
@@ -559,7 +560,7 @@ drawTreemap(tm,
 )
 ```
 
-<img src="images/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/sunburst_draw-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
 

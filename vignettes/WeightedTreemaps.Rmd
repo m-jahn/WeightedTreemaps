@@ -36,13 +36,19 @@ The **Sunburst treemap** is a computationally less demanding treemap that does n
 
 The C++ code computing the actual Voronoi tesselation requires the [CGAL](https://www.cgal.org/download.html) library headers. Thanks to [Ahmadou Dicko](https://github.com/dickoa), installing the complete CGAL library locally is no longer necessary. Instead, the package depends on the CGAL headers that are available as R packages on CRAN. The package was using CGAL 4 (package `cgal4h`), but now moved to the latest CGAL 5.5+ version available as package `RcppCGAL`. The dependencies are usually installed automatically and manual installation of CGAL (headers) should not be necessary.
 
-**NOTE**: The `RcppCGAL` package is currently (September 2023) not available on CRAN! Please install it [manually from Github](https://github.com/ericdunipace/RcppCGAL).
+Note: If the `RcppCGAL` package is temporarily not available on CRAN (as happened 2023), please install it [manually from Github](https://github.com/ericdunipace/RcppCGAL).
 
 ## Installation
 
-To install the package directly from github, use the following function from the `devtools` package in your R session:
+To install the package from CRAN, use:
 
-```{r, eval = FALSE}
+```{r install_1, eval = FALSE}
+install.packages("WeightedTreemaps")
+```
+
+To install the package directly from github, use the following function from the `devtools` package:
+
+```{r install_2, eval = FALSE}
 devtools::install_github("m-jahn/WeightedTreemaps")
 ```
 
@@ -53,7 +59,7 @@ devtools::install_github("m-jahn/WeightedTreemaps")
 The functions to create Voronoi (or Sunburst) treemaps take a `data.frame` as main input. 
 The `data.frame` should contain column(s) with numerical or categorical data (i.e. a character vector). Let's create a simple example data frame.
 
-```{r}
+```{r mtcars_load}
 library(WeightedTreemaps)
 
 # load example data
@@ -65,8 +71,8 @@ Generate the treemap. It will return a list of polygons and metadata.
 The columns of the data frame that are used as levels of the treemap need to be specified.
 Different parameters like the initial shape, or the maximum number of iterations are optional.
 
-```{r, eval = FALSE}
-# generate treemap; set seed to obtain same pattern every time
+```{r mtcars_tm}
+# set seed to obtain same pattern every time
 tm <- voronoiTreemap(
   data = mtcars,
   levels = c("gear", "car_name"),
@@ -78,15 +84,13 @@ tm <- voronoiTreemap(
 
 Draw the treemap.
 
-```{r, fig.width = 5, fig.height = 5, out.width = "50%", fig.align = 'center', eval = FALSE}
+```{r mtcars_tm_draw, fig.width = 5, fig.height = 5, out.width = "50%", fig.align = 'center'}
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 ```
 
-<img src="png/unnamed-chunk-4-1.png" align="center" width="50%" />
-
 The `voronoiTreemap()` and `drawTreemap()` functions are separated in order to allow drawing of the same treemap object in different ways. Computation of treemaps with thousands of cells can be very time and resource consuming (around 5-10 minutes for a 2000-cell treemap on a regular desktop computer). With the `drawTreemap()` function, we can not only plot the same treemap in different ways but also combine several treemaps on one page using the `layout` and `position` arguments. The most important style element is color. Coloring can be based on cell category, cell size, or both, using the `color_type` argument. By default, the highest hierarchical level is used for coloring but that can be customized using the `color_level` argument.
 
-```{r, fig.width = 9, fig.height = 9, out.width = "100%", fig.align = 'center', warning = FALSE, eval = FALSE}
+```{r mtcars_draw_examples, fig.width = 9, fig.height = 9, out.width = "100%", fig.align = 'center'}
 drawTreemap(tm, title = "treemap 1", label_size = 2,
   color_type = "categorical", color_level = 1,
   layout = c(2, 2), position = c(1, 1), legend = TRUE)
@@ -107,13 +111,11 @@ drawTreemap(tm, title = "treemap 4", label_size = 2,
   title_color = "black", legend = TRUE)
 ```
 
-<img src="png/unnamed-chunk-5-1.png" align="center" width="100%" />
-
 ### Positioning of cells
 
 Generating a Voronoi treemap is an iterative and somewhat random process. Since the cells 'move' during the iteration process, it can be difficult to control the exact final position of cells. However, there are two ways to influence cell positioning. The first is to use different algorithms for sampling initial coordinates for each cell. The second is simply setting a seed, which will sample the same set of starting coordinates for the same input data. Regarding the `positioning` argument, compare the following three examples where initial positions are 1) random, 2) ordered from top to bottom, or 3) ordered from center to edges.
 
-```{r, message = FALSE, error = FALSE, results = 'hide', eval = FALSE}
+```{r mtcars_positioning}
 # set seed to obtain same df every time
 set.seed(123)
 df <- data.frame(A = sample(10:100, 45))
@@ -141,7 +143,7 @@ tm3 <- voronoiTreemap(
 ```
 
 
-```{r, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE, eval = FALSE}
+```{r mtcars_positioning_draw, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center'}
 drawTreemap(tm1, title = "positioning = 'random'", border_size = 3,
   layout = c(1,3), position = c(1, 1))
 
@@ -152,13 +154,11 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="png/unnamed-chunk-7-1.png" align="center" width="100%" />
-
 ### Custom initial shapes
 
 Instead of using predefined shapes, we can also supply a custom set of coordinates to plot a treemap using the `shape` argument. The validity of the supplied coordinates is not checked, so all responsibility lies with the user (!). The R session might even crash (due to C++ dependency) if a shape is supplied that is too irregular or edgy, and the tesselation becomes unfeasible. Here are some stable examples.
 
-```{r}
+```{r custom_shapes}
 # different initial shapes, the more squared the better
 house_coords <- list(
   x = c(0, 10, 10, 5, 0),
@@ -176,7 +176,7 @@ oct_coord <- list(
 
 Let's generate treemaps with the shapes of a house, a wide rectangle, and an octogon.
 
-```{r, message = FALSE, error = FALSE, results = 'hide', eval = FALSE}
+```{r custom_shapes_tm}
 tm1 <- voronoiTreemap(data = df, levels = "A",
   shape = house_coords)
 
@@ -188,20 +188,18 @@ tm3 <- voronoiTreemap(data = df, levels = "A",
 ```
 
 
-```{r, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE, eval = FALSE}
+```{r custom_shapes_draw, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center'}
 drawTreemap(tm1, layout = c(1,3), position = c(1, 1))
 drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
-
-<img src="png/unnamed-chunk-10-1.png" align="center" width="100%" />
 
 ### Sunburst treemaps
 
 Sunburst treemaps are generated in the same way as described above for Voronoi treemaps.
 The function to generate a sunburst treemap is `sunburstTreemap()`, and just like `voronoiTreemap()` it returns an object of class `treemapResult` (essentially a list) with polygons and metadata. Drawing is done using the same `drawTreemaps()` function as for Voronoi treemaps.
 
-```{r}
+```{r sunburst}
 # generate data frame
 set.seed(123)
 df <- data.frame(
@@ -214,7 +212,7 @@ head(df)
 
 Generate sunburst treemap.
 
-```{r, results = 'hide'}
+```{r sunburst_tm}
 # by default cell (sector) size is encoded by number of members per group
 tm <- sunburstTreemap(
   data = df,
@@ -224,7 +222,7 @@ tm <- sunburstTreemap(
 
 Draw treemaps with different graphical parameters
 
-```{r, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE}
+```{r sunburst_draw, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center'}
 # draw treemap with default options
 drawTreemap(tm,
   title = "A sunburst treemap",
@@ -266,9 +264,7 @@ drawTreemap(tm,
 )
 ```
 
-
 ## References and other treemap packages
-
 
 The Voronoi tesselation is based on functions from Paul Murrell, https://www.stat.auckland.ac.nz/~paul/Reports/VoronoiTreemap/voronoiTreeMap.html.
 We created a recursive wrapper around the main tesselation function and

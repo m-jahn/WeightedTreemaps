@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
 
 Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from hierarchical data. 
 
-```{r, results = 'hide', message = FALSE, echo = FALSE, warning = FALSE}
+```{r intro_tm, results = 'hide', echo = FALSE}
 library(WeightedTreemaps)
 
 # load example data
@@ -51,7 +51,7 @@ tm <- voronoiTreemap(
 ```
 
 
-```{r, fig.height = 5, fig.width = 5, out.width = "50%", fig.align = 'center', echo = FALSE}
+```{r intro_draw, fig.height = 5, fig.width = 5, out.width = "50%", fig.align = 'center', echo = FALSE}
 # draw treemap
 drawTreemap(tm, label_size = 2.5, label_color = "white", title = "An example")
 ```
@@ -89,13 +89,13 @@ Note: If the `RcppCGAL` package is temporarily not available on CRAN (as happene
 
 To install the package from CRAN, use:
 
-```{r, eval = FALSE}
+```{r install_1, eval = FALSE}
 install.packages("WeightedTreemaps")
 ```
 
 To install the package directly from github, use the following function from the `devtools` package:
 
-```{r, eval = FALSE}
+```{r install_2, eval = FALSE}
 devtools::install_github("m-jahn/WeightedTreemaps")
 ```
 
@@ -106,7 +106,7 @@ devtools::install_github("m-jahn/WeightedTreemaps")
 The functions to create Voronoi (or Sunburst) treemaps take a `data.frame` as main input. 
 The `data.frame` should contain column(s) with numerical or categorical data (i.e. a character vector). Let's create a simple example data frame.
 
-```{r, eval = FALSE}
+```{r mtcars_load, eval = FALSE}
 library(WeightedTreemaps)
 
 # load example data
@@ -118,8 +118,8 @@ Generate the treemap. It will return a list of polygons and metadata.
 The columns of the data frame that are used as levels of the treemap need to be specified.
 Different parameters like the initial shape, or the maximum number of iterations are optional.
 
-```{r, eval = FALSE}
-# generate treemap; set seed to obtain same pattern every time
+```{r mtcars_tm, eval = FALSE}
+# set seed to obtain same pattern every time
 tm <- voronoiTreemap(
   data = mtcars,
   levels = c("gear", "car_name"),
@@ -131,14 +131,14 @@ tm <- voronoiTreemap(
 
 Draw the treemap.
 
-```{r, fig.width = 5, fig.height = 5, out.width = "50%", fig.align = 'center'}
+```{r mtcars_tm_draw, fig.width = 5, fig.height = 5, out.width = "50%", fig.align = 'center'}
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 ```
 
 
 The `voronoiTreemap()` and `drawTreemap()` functions are separated in order to allow drawing of the same treemap object in different ways. Computation of treemaps with thousands of cells can be very time and resource consuming (around 5-10 minutes for a 2000-cell treemap on a regular desktop computer). With the `drawTreemap()` function, we can not only plot the same treemap in different ways but also combine several treemaps on one page using the `layout` and `position` arguments. The most important style element is color. Coloring can be based on cell category, cell size, or both, using the `color_type` argument. By default, the highest hierarchical level is used for coloring but that can be customized using the `color_level` argument.
 
-```{r, fig.width = 9, fig.height = 9, out.width = "100%", fig.align = 'center', warning = FALSE}
+```{r mtcars_draw_examples, fig.width = 9, fig.height = 9, out.width = "100%", fig.align = 'center'}
 drawTreemap(tm, title = "treemap 1", label_size = 2,
   color_type = "categorical", color_level = 1,
   layout = c(2, 2), position = c(1, 1), legend = TRUE)
@@ -164,7 +164,7 @@ drawTreemap(tm, title = "treemap 4", label_size = 2,
 
 Generating a Voronoi treemap is an iterative and somewhat random process. Since the cells 'move' during the iteration process, it can be difficult to control the exact final position of cells. However, there are two ways to influence cell positioning. The first is to use different algorithms for sampling initial coordinates for each cell. The second is simply setting a seed, which will sample the same set of starting coordinates for the same input data. Regarding the `positioning` argument, compare the following three examples where initial positions are 1) random, 2) ordered from top to bottom, or 3) ordered from center to edges.
 
-```{r, message = FALSE, error = FALSE, results = 'hide'}
+```{r mtcars_positioning}
 # set seed to obtain same df every time
 set.seed(123)
 df <- data.frame(A = sample(10:100, 45))
@@ -192,7 +192,7 @@ tm3 <- voronoiTreemap(
 ```
 
 
-```{r, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE}
+```{r mtcars_positioning_draw, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center'}
 drawTreemap(tm1, title = "positioning = 'random'", border_size = 3,
   layout = c(1,3), position = c(1, 1))
 
@@ -207,7 +207,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
 
 Instead of using predefined shapes, we can also supply a custom set of coordinates to plot a treemap using the `shape``argument. The validity of the supplied coordinates is not checked, so all responsibility lies with the user (!). The R session might even crash (due to C++ dependency) if a shape is supplied that is too irregular or edgy, and the tesselation becomes unfeasible. Here are some stable examples.
 
-```{r}
+```{r custom_shapes}
 # different initial shapes, the more squared the better
 house_coords <- list(
   x = c(0, 10, 10, 5, 0),
@@ -225,7 +225,7 @@ oct_coord <- list(
 
 Let's generate treemaps with the shapes of a house, a rectangle, or an octogon.
 
-```{r, message = FALSE, error = FALSE, results = 'hide'}
+```{r custom_shapes_tm}
 tm1 <- voronoiTreemap(data = df, levels = "A",
   shape = house_coords)
 
@@ -237,7 +237,7 @@ tm3 <- voronoiTreemap(data = df, levels = "A",
 ```
 
 
-```{r, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE}
+```{r custom_shapes_draw, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center'}
 drawTreemap(tm1, layout = c(1,3), position = c(1, 1))
 drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
@@ -248,7 +248,7 @@ drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 
 This example will cover the generation of a somewhat larger treemap, as it is often useful to visualize e.g. many genes or proteins at once in molecular biology studies. However, treemaps can be used for any type of data visualization. First we read a proteomics test data set from [Jahn et al., Cell Reports, 2018](https://pubmed.ncbi.nlm.nih.gov/30304686/). This dataset contains thousands of protein measurements of the cyanobacterium _Synechocystis_ sp. PCC6803.
 
-```{r, message = FALSE, error = FALSE, results = 'hide'}
+```{r tm_large, eval = FALSE}
 # additional libraries for data filtering and colors
 library(dplyr)
 library(colorspace)
@@ -262,7 +262,7 @@ df <- Jahn_CellReports_2018 %>%
 
 We can generate the Voronoi treemap using some more of the function's parameters. We can increase `maxIterations` and decrease `error_tol` which will lead to lower errors (difference between target cell size and actual cell size). Set a seed to obtain a similar arrangement of cells for similar maps, otherwise starting positions will be sampled more randomly. The `positioning` argument `clustered_by_area` will try to place cells with bigger target area in the middle and smaller area at the edges.
 
-```{r, eval = FALSE}
+```{r tm_large_tm, eval = FALSE}
 tm <- voronoiTreemap(
   data = df,
   levels = c("Process.abbr", "protein"),
@@ -277,10 +277,11 @@ tm <- voronoiTreemap(
 
 Generating and plotting of treemaps are two processes separated on purpose. Computing treemaps can be time-consuming and to recalculate them every time just for changing a color gradient or label size is inefficient. Once a treemap is computed, it can be drawn in different ways as the following example shows. First we can generate custom color palettes using `colorspace`s `hclwizard`. Just browse to the `Export` and then the `R` tab and copy the code to your script.
 
-```{r, message = FALSE, error = FALSE, results = 'hide'}
-# outcomment to run interactive wizard:
-#hclwizard()
+```{r tm_large_colors, eval = FALSE}
+# interactive wizard to choose colors
+hclwizard()
 
+# define palettes manually
 custom_pal_1 <- sequential_hcl(
   n = 20,
   h = c(-46, 78),
@@ -303,7 +304,7 @@ custom_pal_2 <- diverging_hcl(
 Draw a customized treemap using some of the graphical parameters.
 Compare two different color palettes.
 
-```{r, eval = FALSE}
+```{r tm_large_draw, eval = FALSE}
 drawTreemap(
   tm, 
   color_palette = custom_pal_1,
@@ -339,7 +340,7 @@ drawTreemap(
 
 This is an example how several treemaps can be computed in parallel. This functionality is not part of this package but just makes use of functions contained in the `parallel` package. First read the test data set with cyanobacterial proteomics data from 10 different growth conditions. Only the most abundant proteins are selected for treemap generation to reduce computation time.
 
-```{r}
+```{r tm_parallel, eval = FALSE}
 library(parallel)
 
 df <- Jahn_CellReports_2018 %>%
@@ -350,7 +351,7 @@ df <- Jahn_CellReports_2018 %>%
 
 Generate 10 treemaps using the parallel version of lapply, and the `condition` annotation to subset the data frame. Note that you can adjust the `mc.cores` parameter to the number of CPUs available on your computer. The `positioning` parameter can also take a vector of `length(levels)` to make cell positions on the first level more comparable between different treemaps.
 
-```{r, eval = FALSE}
+```{r tm_parallel_tm, eval = FALSE}
 tm <- mclapply(
   unique(df$condition), 
   mc.cores = 10, 
@@ -373,7 +374,7 @@ tm <- mclapply(
 
 Draw all 10 treemaps on one canvas using `layout` and `position` arguments.
 
-```{r, eval = FALSE}
+```{r tm_parallel_draw, eval = FALSE}
 lapply(1:10, function(i) {
   
   drawTreemap(
@@ -409,7 +410,7 @@ lapply(1:10, function(i) {
 Sunburst treemaps are generated in the same way as described above for Voronoi treemaps.
 The function to generate a sunburst treemap is `sunburstTreemap()`, and just like `voronoiTreemap()` it returns an object of class `treemapResult` (essentially a list) with polygons and metadata. Drawing is done using the same `drawTreemaps()` function as for Voronoi treemaps.
 
-```{r}
+```{r sunburst}
 # generate data frame
 set.seed(123)
 df <- data.frame(
@@ -422,7 +423,7 @@ head(df)
 
 Generate sunburst treemap.
 
-```{r, results = 'hide'}
+```{r sunburst_tm}
 # by default cell (sector) size is encoded by number of members per group
 tm <- sunburstTreemap(
   data = df,
@@ -432,7 +433,7 @@ tm <- sunburstTreemap(
 
 Draw treemaps with different graphical parameters
 
-```{r, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE}
+```{r sunburst_draw, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center'}
 # draw treemap with default options
 drawTreemap(tm,
   title = "A sunburst treemap",
