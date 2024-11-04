@@ -61,14 +61,20 @@ breaking <- function(
 # (and stabilizes the algorithm generally)
 # difference to original implementation: adjustment of maximal
 # step change of weights to prevent crashing of algorithm
-adjustWeights <- function(w, a, target) {
+adjustWeights <- function(w, a, target, convergence) {
   # OPTION: avoid extreme scaling values -> squareroot function
   # to buffer strong difference between computed area and target
   # and to buffer the global weight increase
   # these increase stability but also computation time:
   normA <- a / sum(a)
   scaling <- ((target - normA) / target)
-  scaling <- ifelse(scaling < -1, scaling/sqrt(abs(scaling)), scaling)
+  if (convergence == "slow") {
+    scaling <- ifelse(scaling < -1, -log10(abs(scaling)), scaling)
+  } else if (convergence == "intermediate") {
+    scaling <- ifelse(scaling < -1, -log(abs(scaling)), scaling)
+  } else if (convergence == "fast") {
+    scaling <- ifelse(scaling < -1, scaling/sqrt(abs(scaling)), scaling)
+  }
   w + sqrt(mean(abs(w))) * scaling
 }
 
@@ -117,6 +123,7 @@ allocate <- function(
   names, s, w, outer, target,
   maxIteration,
   error_tol,
+  convergence,
   min_target = 0.01,
   debug = FALSE,
   debugCell = FALSE)
@@ -208,7 +215,7 @@ allocate <- function(
 
     } else {
 
-      w <- adjustWeights(w, unlist(areas), target)
+      w <- adjustWeights(w, unlist(areas), target, convergence)
       s <- shiftSites(s, k)
       w <- shiftWeights(s, w)
     }

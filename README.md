@@ -1,7 +1,7 @@
 WeightedTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko, Paul Murrell
-2024-01-07
+2024-11-04
 
 <!-- include logo-->
 
@@ -25,7 +25,7 @@ commit](https://img.shields.io/github/last-commit/m-jahn/WeightedTreemaps)
 Generate and plot **Voronoi treemaps** or **Sunburst treemaps** from
 hierarchical data.
 
-<img src="images/unnamed-chunk-2-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="images/fig_example-1.png" width="50%" style="display: block; margin: auto;" />
 
 ## News
 
@@ -148,7 +148,9 @@ Draw the treemap.
 drawTreemap(tm, label_size = 2.5, label_color = "white")
 ```
 
-<img src="images/unnamed-chunk-7-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="images/fig_cars_basic-1.png" width="50%" style="display: block; margin: auto;" />
+
+### Drawing options
 
 The `voronoiTreemap()` and `drawTreemap()` functions are separated in
 order to allow drawing of the same treemap object in different ways.
@@ -183,7 +185,63 @@ drawTreemap(tm, title = "treemap 4", label_size = 2,
   title_color = "black", legend = TRUE)
 ```
 
-<img src="images/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/fig_cars_colors-1.png" width="100%" style="display: block; margin: auto;" />
+\### Convergence time
+
+The expansion of cells towards a certain target size is a
+non-deterministic process. During each iteration, cell size is adjusted
+using weights, but the final result can only be measured after a cell
+(polygon) was created. Is it too small compared to the target area, it
+will get a higher weight for the next iteration, and *vice versa*. The
+adjustment of weights can be controlled by the `convergence` parameter
+(“slow”, “intermediate”, “fast”). Faster convergence will adjust weights
+more strongly and attempts to reach the target size with fewer
+iterations. However this procedure increases the probability of
+obtaining problematic polygons with for example self-intersections or
+holes. Compare the following treemaps generated with identical input
+except for the `convergence`.
+
+``` r
+convergence <- c("slow", "intermediate", "fast")
+
+for (i in 1:3) {
+  tm <- voronoiTreemap(
+    data = mtcars,
+    levels = c("gear", "car_name"),
+    cell_size = "wt",
+    shape = "rounded_rect",
+    seed = 123,
+    convergence = convergence[i],
+    verbose = TRUE
+  )
+  drawTreemap(
+    tm,
+    title = paste0("convergence = ", convergence[i]),
+    label_size = 2.5,
+    label_color = "white",
+    layout = c(1, 3),
+    position = c(1, i),
+    add = ifelse(i == 1, FALSE, TRUE)
+  )
+}
+#> Level 1 tesselation: 6.87 % mean error, 10.3 % max error, 100 iterations.
+#> Level 2 tesselation: 0.33 % mean error, 0.97 % max error, 63 iterations.
+#> Level 2 tesselation: 0.58 % mean error, 0.98 % max error, 48 iterations.
+#> Level 2 tesselation: 0.54 % mean error, 0.98 % max error, 71 iterations.
+#> Treemap successfully created.
+#> Level 1 tesselation: 3.15 % mean error, 4.73 % max error, 100 iterations.
+#> Level 2 tesselation: 0.25 % mean error, 0.96 % max error, 71 iterations.
+#> Level 2 tesselation: 0.45 % mean error, 0.98 % max error, 52 iterations.
+#> Level 2 tesselation: 0.56 % mean error, 0.95 % max error, 64 iterations.
+#> Treemap successfully created.
+#> Level 1 tesselation: 0.64 % mean error, 0.96 % max error, 97 iterations.
+#> Level 2 tesselation: 0.36 % mean error, 0.97 % max error, 93 iterations.
+#> Level 2 tesselation: 0.45 % mean error, 1 % max error, 57 iterations.
+#> Level 2 tesselation: 0.54 % mean error, 0.98 % max error, 70 iterations.
+#> Treemap successfully created.
+```
+
+<img src="images/fig_cars_conv-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Positioning of cells
 
@@ -236,7 +294,7 @@ drawTreemap(tm3, title = "positioning = 'clustered'", border_size = 3,
   add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="images/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/fig_pos-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Custom initial shapes
 
@@ -284,7 +342,7 @@ drawTreemap(tm2, add = TRUE, layout = c(1,3), position = c(1, 2))
 drawTreemap(tm3, add = TRUE, layout = c(1,3), position = c(1, 3))
 ```
 
-<img src="images/unnamed-chunk-13-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/fig_shapes-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Advanced example for Voronoi treemaps
 
@@ -339,7 +397,7 @@ palettes using `colorspace`s `hclwizard`. Just browse to the `Export`
 and then the `R` tab and copy the code to your script.
 
 ``` r
-# outcomment to run interactive wizard:
+# remove comment to run interactive wizard:
 #hclwizard()
 
 custom_pal_1 <- sequential_hcl(
@@ -559,7 +617,7 @@ drawTreemap(tm,
 )
 ```
 
-<img src="images/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="images/fig_sunburst-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## References and other treemap packages
 
