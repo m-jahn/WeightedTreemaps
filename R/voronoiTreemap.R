@@ -49,6 +49,13 @@
 #'   area. The default is 0.01 (or 1 \%) of the total parental area. Note: this
 #'   is is different from a relative per-cell error, where 1 \% would be more
 #'   strict.
+#' @param convergence (character) One of "slow", "intermediate", or "fast".
+#'   Intermediate (default) and fast try to adjust cell weights stronger such
+#'   that the algorithm converges faster towards the final size of the cell.
+#'   However this comes at the price of stability, with a larger number of
+#'   polygons possibly being misformed, e.g. by having self-intersections.
+#'   Set convergence to "slow" if you experience problems to calculate treemaps
+#'   with very unequal cell sizes or very large treemaps.
 #' @param seed (integer) The default seed is NULL, which will lead to a new
 #'   random sampling of cell coordinates for each tesselation. If you want
 #'   a reproducible arrangement of cells, set seed to an arbitrary number.
@@ -144,6 +151,7 @@ voronoiTreemap <- function(
   shape = "rectangle",
   maxIteration = 100,
   error_tol = 0.01,
+  convergence = "intermediate",
   seed = NULL,
   positioning = "regular",
   verbose = FALSE,
@@ -305,6 +313,7 @@ voronoiTreemap <- function(
           target = weights,
           maxIteration = maxIteration,
           error_tol = error_tol,
+          convergence = convergence,
           outer = sfpoly,
           debug = debug
         )

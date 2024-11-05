@@ -23,7 +23,7 @@
 #'   Default is to use the lowest level cells for Voronoi treemaps and all levels
 #'   for sunburst treemaps.
 #' @param color_palette (character) A character vector of colors used to fill cells.
-#'   The default is to use \code{\link{rainbow_hcl}} from package \code{colorspace}
+#'   The default is to use \code{\link[colorspace]{rainbow_hcl}} from
 #' @param border_level (numeric) A numeric vector representing the hierarchical level that should be
 #'   used for drawing cell borders, or NULL to omit drawing borders, The default is
 #'   that all borders are drawn.

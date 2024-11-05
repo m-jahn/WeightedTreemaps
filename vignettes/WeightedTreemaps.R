@@ -48,6 +48,30 @@ mtcars$car_name = gsub(" ", "\n", row.names(mtcars))
 #    add = TRUE, layout = c(2, 2), position = c(2, 2),
 #    title_color = "black", legend = TRUE)
 
+## ----fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', eval = FALSE----
+#  convergence <- c("slow", "intermediate", "fast")
+#  
+#  for (i in 1:3) {
+#    tm <- voronoiTreemap(
+#      data = mtcars,
+#      levels = c("gear", "car_name"),
+#      cell_size = "wt",
+#      shape = "rounded_rect",
+#      seed = 123,
+#      convergence = convergence[i],
+#      verbose = TRUE
+#    )
+#    drawTreemap(
+#      tm,
+#      title = paste0("convergence = ", convergence[i]),
+#      label_size = 2.5,
+#      label_color = "white",
+#      layout = c(1, 3),
+#      position = c(1, i),
+#      add = ifelse(i == 1, FALSE, TRUE)
+#    )
+#  }
+
 ## ----message = FALSE, error = FALSE, results = 'hide', eval = FALSE-----------
 #  # set seed to obtain same df every time
 #  set.seed(123)
@@ -131,7 +155,7 @@ tm <- sunburstTreemap(
   levels = c("A", "B")
 )
 
-## ----fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
+## ----fig_sunburst, fig.width = 12, fig.height = 4, out.width = "100%", fig.align = 'center', warning = FALSE----
 # draw treemap with default options
 drawTreemap(tm,
   title = "A sunburst treemap",
