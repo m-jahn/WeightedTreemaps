@@ -10,7 +10,7 @@
 #' @importFrom colorspace lighten
 #' @importFrom colorspace rainbow_hcl
 
-# function to coerce and rescale different types of input to 
+# function to coerce and rescale different types of input to
 # numeric range between 1 and 100 (for color coding)
 convertInput <- function(x, from = NULL, to = c(1, 100)) {
   if (is.character(x)) {
@@ -22,8 +22,8 @@ convertInput <- function(x, from = NULL, to = c(1, 100)) {
     }
   }
   if (is.numeric(x)) {
-    res <- scales::rescale(x, 
-      from = {if (!is.null(from)) from else range(x)}, 
+    res <- scales::rescale(x,
+      from = {if (!is.null(from)) from else range(x)},
       to = to) %>% round
     res <- replace(res, res > to[2], to[2])
     res <- replace(res, res < to[1], to[1])
@@ -68,21 +68,21 @@ drawRegions <- function(
   debug = FALSE,
   label = TRUE,
   label.col = grey(0.5),
-  lwd = 2, col = grey(0.8), 
+  lwd = 2, col = grey(0.8),
   fill = NA)
 {
   names <- result$names
   k <- result$k
   sites <- result$s
-  
+
   # draw polygon, pass graphical parameters to drawPoly function
   mapply(drawPoly, k, names, fill = fill,
     SIMPLIFY = FALSE,
     MoreArgs = list(lwd = lwd, col = col)
   )
-  
+
   if (label) {
-    
+
     # function to determine label sizes for each individual cell
     # based on cell dimension and label character length
     cex = sqrt(unlist(result$a)) * 0.01 / nchar(names)  %>%
@@ -93,7 +93,7 @@ drawRegions <- function(
       default = "native",
       gp = gpar(cex = cex, col = label.col)
     )
-    
+
   }
 }
 
@@ -106,7 +106,7 @@ draw_sector <- function(
   diameter_sector,
   name,
   custom_color) {
-  
+
   # compute_sector from lower and upper bounds and diameter arguments
   segment <- c(lower_bound, upper_bound) * 2 * pi
   a <- diameter_inner + (diameter_sector * (level - 1))
@@ -115,7 +115,7 @@ draw_sector <- function(
   yy <- c(a * sin(z), rev((a + diameter_sector) * sin(z)))
   # rescale for canvas dimensions [0, 2000] and convert into sfpoly polygon
   poly = to_sfpoly(list(x = (xx+1)*1000, y = (yy+1)*1000))
-  
+
   # return list of polygon properties
   list(
     name = name,
@@ -126,39 +126,39 @@ draw_sector <- function(
     level = level,
     custom_color = custom_color
   )
-  
+
 }
 
 # function to draw labels for voronoi treemap
 draw_label_voronoi <- function(
-  cells, 
-  label_level, 
+  cells,
+  label_level,
   label_size,
   label_color
 ) {
-  
+
   for (tm_slot in rev(cells)) {
-    
+
     if (tm_slot$level %in% label_level) {
-      
+
       # determine label sizes for each individual cell
       # based on cell dimension and label character length
       label_cex <- sqrt(tm_slot$area) / (100 * nchar(tm_slot$name)) %>% round(1)
-        
+
       # additionally scale labels size and color from supplied options
       if (length(label_size) == 1) {
         label_cex <- label_cex * label_size
       } else {
         label_cex <- label_cex * label_size[which(label_level %in% tm_slot$level)]
       }
-      
+
       # determine label color
       if (length(label_color) == 1) {
         label_col <- label_color
       } else {
         label_col <- label_color[which(label_level %in% tm_slot$level)]
       }
-      
+
       # draw labels
       grid::grid.text(
         tm_slot$name,
@@ -167,26 +167,26 @@ draw_label_voronoi <- function(
         default = "native",
         gp = gpar(cex = label_cex, col = label_col)
       )
-      
+
     }
   }
-  
+
 }
 
 
 # function to draw labels for sunburst treemap
 draw_label_sunburst <- function(
-  cells, 
-  label_level, 
+  cells,
+  label_level,
   label_size,
   label_color,
   diameter
 ) {
-  
+
   lapply(cells, function(tm_slot) {
-    
+
     if (tm_slot$level %in% label_level) {
-      
+
       # determine label size and color from supplied options
       if (length(label_size) > 1) {
         label_cex <- label_size[1]
@@ -194,14 +194,14 @@ draw_label_sunburst <- function(
       } else {
         label_cex <- label_size
       }
-      
+
       if (length(label_color) > 1) {
         label_col <- label_color[1]
         warning("'label_color' should only have length 1. Using first argument.")
       } else {
         label_col <- label_color
       }
-      
+
       # compute_sector from lower and upper bounds and diameter arguments
       segment <- c(tm_slot$lower_bound, tm_slot$upper_bound) * 2 * pi
       z <- seq(segment[1], segment[2], by = pi/400)
@@ -211,7 +211,7 @@ draw_label_sunburst <- function(
       d1 <- diameter+0.02
       d2 <- diameter+0.05
       d3 <- diameter+0.10
-      
+
       # draw label arcs
       z <- z[-c(1, length(z))]
       grid::grid.lines(
@@ -229,7 +229,7 @@ draw_label_sunburst <- function(
         default.units = "native",
         gp = gpar(lwd = label_cex, col = label_col)
       )
-      
+
       #draw label text
       grid::grid.text(
         label = substr(tm_slot$name, 1, 18),
@@ -239,17 +239,17 @@ draw_label_sunburst <- function(
         default.units = "native",
         gp = gpar(cex = label_cex, col = label_col)
       )
-      
+
     }
   }) %>% invisible
 }
 
 
 # function to add colors to a treemap object
-add_color <- function(treemap, color_palette = NULL, 
+add_color <- function(treemap, color_palette = NULL,
   color_type = "categorical", color_level = 1,
-  custom_range = NULL) {
-  
+  color_steps = 10, custom_range = NULL) {
+
   # CASE 1: CATEGORICAL
   if (color_type %in% c("categorical", "both")) {
     # determine number of required colors
@@ -260,7 +260,7 @@ add_color <- function(treemap, color_palette = NULL,
         unlist
     }
   }
-  
+
   # CASE 2: CELL AREA
   # determine total area
   total_area <- lapply(treemap@cells, function(tm_slot) {
@@ -268,21 +268,22 @@ add_color <- function(treemap, color_palette = NULL,
   }) %>% unlist %>% sum
   # determine number of required colors
   if (color_type == "cell_size") {
-    color_list <- lapply(treemap@cells, function(tm_slot) {
+    cell_sizes <- lapply(treemap@cells, function(tm_slot) {
       if (tm_slot$level %in% color_level) tm_slot$area/total_area
-    }) %>% unlist %>% pretty(n = 10)
+    }) %>% unlist
+    color_list <- cell_sizes %>% pretty(n = color_steps)
   }
-  
+
   # CASE 3: CUSTOM COLOR
   # 'custom_color' to use a color index supplied during treemap generation
   if (color_type == "custom_color") {
-    
+
     # determine number of required colors
     color_list <- lapply(treemap@cells, function(tm_slot) {
         if (tm_slot$level %in% color_level) tm_slot$custom_color
       }) %>% unlist %>% pretty(n = 10)
   }
-  
+
   # DEFINE PALETTE
   # generate palette with defined number of colors
   # use a custom data range if supplied by user (does not work for categorical)
@@ -295,7 +296,7 @@ add_color <- function(treemap, color_palette = NULL,
     pal <- colorRampPalette(color_palette)(length(color_list))
   }
   pal <- setNames(pal, color_list)
-  
+
   # ADD COLORS TO TREEMAP OBJECT
   treemap@cells <- lapply(treemap@cells, function(tm_slot) {
     if (tm_slot$level %in% color_level) {
@@ -314,7 +315,7 @@ add_color <- function(treemap, color_palette = NULL,
     }
     tm_slot
   })
-  
+
   # SPECIAL CASE "BOTH": DARKEN OR LIGHTEN LOWEST CELL LEVEL
   if (color_type == "both") {
     # get range of cell areas for lowest level
@@ -338,9 +339,9 @@ add_color <- function(treemap, color_palette = NULL,
       tm_slot
     })
   }
-  
+
   # return treemap with colors and palette
   treemap@call$palette <- pal
   treemap
-  
+
 }

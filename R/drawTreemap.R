@@ -23,7 +23,11 @@
 #'   Default is to use the lowest level cells for Voronoi treemaps and all levels
 #'   for sunburst treemaps.
 #' @param color_palette (character) A character vector of colors used to fill cells.
-#'   The default is to use \code{\link[colorspace]{rainbow_hcl}} from
+#'   The default is to use \code{\link[colorspace]{rainbow_hcl}}
+#' @param color_steps (numeric) Approximate number of steps for the color gradient
+#'   to be used when drawing cells with \code{color_type = "cell_size"}.
+#'   Default step number is 10, and final step number can a vary a bit because
+#'   \code{pretty()} is used to calculate a decent color range.
 #' @param border_level (numeric) A numeric vector representing the hierarchical level that should be
 #'   used for drawing cell borders, or NULL to omit drawing borders, The default is
 #'   that all borders are drawn.
@@ -155,6 +159,7 @@ drawTreemap <- function(
   color_type = "categorical",
   color_level = NULL,
   color_palette = NULL,
+  color_steps = 10,
   border_level = levels,
   border_size = 6,
   border_color = grey(0.9),
@@ -253,7 +258,7 @@ drawTreemap <- function(
   # There are different possible cases to determine the cell color
   # depending on the user's choice
   treemap <- add_color(treemap, color_palette, color_type,
-    color_level, custom_range)
+    color_level, color_steps, custom_range)
   # the treemap object is a nested list
   # use apply function to draw the single polygons for desired level
   lapply(treemap@cells, function(tm_slot) {
