@@ -17,6 +17,7 @@ drawTreemap(
   label_level = max(levels),
   label_size = 1,
   label_color = grey(0.9),
+  label_autoscale = TRUE,
   title = NULL,
   title_size = 1,
   title_color = grey(0.5),
@@ -84,6 +85,9 @@ individually.}
 \item{label_color}{(character) A single character indicating color for cell labels.
 Alternatively a vector of \code{length(label_level)}, then each label
 is drawn with the specified color.}
+
+\item{label_autoscale}{(logical) Whether to automatically scale labels based on
+their estimated width. Default is TRUE.}
 
 \item{title}{(character) An optional title, default to \code{NULL}.}
 

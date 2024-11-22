@@ -134,7 +134,8 @@ draw_label_voronoi <- function(
   cells,
   label_level,
   label_size,
-  label_color
+  label_color,
+  label_autoscale
 ) {
 
   for (tm_slot in rev(cells)) {
@@ -143,7 +144,11 @@ draw_label_voronoi <- function(
 
       # determine label sizes for each individual cell
       # based on cell dimension and label character length
-      label_cex <- sqrt(tm_slot$area) / (100 * nchar(tm_slot$name)) %>% round(1)
+      if (label_autoscale) {
+        label_cex <- sqrt(tm_slot$area) / (100 * nchar(tm_slot$name)) %>% round(1)
+      } else {
+        label_cex <- 0.5
+      }
 
       # additionally scale labels size and color from supplied options
       if (length(label_size) == 1) {

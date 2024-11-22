@@ -47,6 +47,8 @@
 #' @param label_color (character) A single character indicating color for cell labels.
 #'   Alternatively a vector of \code{length(label_level)}, then each label
 #'   is drawn with the specified color.
+#' @param label_autoscale (logical) Whether to automatically scale labels based on
+#'   their estimated width. Default is TRUE.
 #' @param title (character) An optional title, default to \code{NULL}.
 #' @param title_size (numeric) The size (or 'character expansion') of the title.
 #' @param title_color (character) Color for title.
@@ -166,6 +168,7 @@ drawTreemap <- function(
   label_level = max(levels),
   label_size = 1,
   label_color = grey(0.9),
+  label_autoscale = TRUE,
   title = NULL,
   title_size = 1,
   title_color = grey(0.5),
@@ -339,7 +342,7 @@ drawTreemap <- function(
 
     } else {
       draw_label_voronoi(
-        treemap@cells, label_level, label_size, label_color
+        treemap@cells, label_level, label_size, label_color, label_autoscale
       )
     }
 
