@@ -10,12 +10,14 @@ drawTreemap(
   color_type = "categorical",
   color_level = NULL,
   color_palette = NULL,
+  color_steps = 10,
   border_level = levels,
   border_size = 6,
   border_color = grey(0.9),
   label_level = max(levels),
   label_size = 1,
   label_color = grey(0.9),
+  label_autoscale = TRUE,
   title = NULL,
   title_size = 1,
   title_color = grey(0.5),
@@ -52,7 +54,12 @@ Default is to use the lowest level cells for Voronoi treemaps and all levels
 for sunburst treemaps.}
 
 \item{color_palette}{(character) A character vector of colors used to fill cells.
-The default is to use \code{\link[colorspace]{rainbow_hcl}} from}
+The default is to use \code{\link[colorspace]{rainbow_hcl}}}
+
+\item{color_steps}{(numeric) Approximate number of steps for the color gradient
+to be used when drawing cells with \code{color_type = "cell_size"}.
+Default step number is 10, and final step number can a vary a bit because
+\code{pretty()} is used to calculate a decent color range.}
 
 \item{border_level}{(numeric) A numeric vector representing the hierarchical level that should be
 used for drawing cell borders, or NULL to omit drawing borders, The default is
@@ -78,6 +85,9 @@ individually.}
 \item{label_color}{(character) A single character indicating color for cell labels.
 Alternatively a vector of \code{length(label_level)}, then each label
 is drawn with the specified color.}
+
+\item{label_autoscale}{(logical) Whether to automatically scale labels based on
+their estimated width. Default is TRUE.}
 
 \item{title}{(character) An optional title, default to \code{NULL}.}
 

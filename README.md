@@ -1,7 +1,7 @@
 WeightedTreemaps
 ================
 Michael Jahn, David Leslie, Ahmadou Dicko, Paul Murrell
-2024-11-04
+2024-11-20
 
 <!-- include logo-->
 
@@ -186,7 +186,8 @@ drawTreemap(tm, title = "treemap 4", label_size = 2,
 ```
 
 <img src="images/fig_cars_colors-1.png" width="100%" style="display: block; margin: auto;" />
-\### Convergence time
+
+### Convergence time
 
 The expansion of cells towards a certain target size is a
 non-deterministic process. During each iteration, cell size is adjusted

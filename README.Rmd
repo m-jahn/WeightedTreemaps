@@ -159,6 +159,7 @@ drawTreemap(tm, title = "treemap 4", label_size = 2,
   add = TRUE, layout = c(2, 2), position = c(2, 2),
   title_color = "black", legend = TRUE)
 ```
+
 ### Convergence time
 
 The expansion of cells towards a certain target size is a non-deterministic process. During each iteration, cell size is adjusted using weights, but the final result can only be measured after a cell (polygon) was created. Is it too small compared to the target area, it will get a higher weight for the next iteration, and *vice versa*. The adjustment of weights can be controlled by the `convergence` parameter ("slow", "intermediate", "fast"). Faster convergence will adjust weights more strongly and attempts to reach the target size with fewer iterations. However this procedure increases the probability of obtaining problematic polygons with for example self-intersections or holes. Compare the following treemaps generated with identical input except for the `convergence`.
