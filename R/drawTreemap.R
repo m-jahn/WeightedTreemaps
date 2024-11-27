@@ -23,7 +23,11 @@
 #'   Default is to use the lowest level cells for Voronoi treemaps and all levels
 #'   for sunburst treemaps.
 #' @param color_palette (character) A character vector of colors used to fill cells.
-#'   The default is to use \code{\link[colorspace]{rainbow_hcl}} from
+#'   The default is to use \code{\link[colorspace]{rainbow_hcl}}
+#' @param color_steps (numeric) Approximate number of steps for the color gradient
+#'   to be used when drawing cells with \code{color_type = "cell_size"}.
+#'   Default step number is 10, and final step number can a vary a bit because
+#'   \code{pretty()} is used to calculate a decent color range.
 #' @param border_level (numeric) A numeric vector representing the hierarchical level that should be
 #'   used for drawing cell borders, or NULL to omit drawing borders, The default is
 #'   that all borders are drawn.
@@ -43,6 +47,8 @@
 #' @param label_color (character) A single character indicating color for cell labels.
 #'   Alternatively a vector of \code{length(label_level)}, then each label
 #'   is drawn with the specified color.
+#' @param label_autoscale (logical) Whether to automatically scale labels based on
+#'   their estimated width. Default is TRUE.
 #' @param title (character) An optional title, default to \code{NULL}.
 #' @param title_size (numeric) The size (or 'character expansion') of the title.
 #' @param title_color (character) Color for title.
@@ -155,12 +161,14 @@ drawTreemap <- function(
   color_type = "categorical",
   color_level = NULL,
   color_palette = NULL,
+  color_steps = 10,
   border_level = levels,
   border_size = 6,
   border_color = grey(0.9),
   label_level = max(levels),
   label_size = 1,
   label_color = grey(0.9),
+  label_autoscale = TRUE,
   title = NULL,
   title_size = 1,
   title_color = grey(0.5),
@@ -253,7 +261,7 @@ drawTreemap <- function(
   # There are different possible cases to determine the cell color
   # depending on the user's choice
   treemap <- add_color(treemap, color_palette, color_type,
-    color_level, custom_range)
+    color_level, color_steps, custom_range)
   # the treemap object is a nested list
   # use apply function to draw the single polygons for desired level
   lapply(treemap@cells, function(tm_slot) {
@@ -334,7 +342,7 @@ drawTreemap <- function(
 
     } else {
       draw_label_voronoi(
-        treemap@cells, label_level, label_size, label_color
+        treemap@cells, label_level, label_size, label_color, label_autoscale
       )
     }
 
