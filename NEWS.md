@@ -1,3 +1,9 @@
+# WeightedTreemaps 0.1.4
+
+- added option to draw different number of colors for gradient
+- added option to turn label size adjustment on or off
+- update to be compatible with RcppCGAL v6.0 (Eric Dunipace)
+
 # WeightedTreemaps 0.1.3
 
 - fixed links to external packages

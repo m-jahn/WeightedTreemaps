@@ -12,16 +12,15 @@
 
 ### with `rhub::rhub_check()`
 
-- MacOS arm64 latest, R-* (any version)
-- Windows Server 2022, R-devel, 64 bit
-- Ubuntu 22.04.5 LTS, R-devel, GCC 14
-- Ubuntu 22.04.5 LTS, R-devel, Clang ASAN/UBSAN
+- MacOS arm64 latest, R-* (any version, `3`)
+- Windows (windows-latest), R-* (any version, `4`)
+- Ubuntu 22.04.5 LTS, R-devel, Clang ASAN/UBSAN (`7`)
+- Ubuntu 22.04.5 LTS, R-devel, Clang 20 (`12`)
+- Fedora Linux 40, gcc14, R-devel (`15`)
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
-
-The Clang ASAN test throws 1 error, "AddressSanitizer: alloc-dealloc-mismatch (operator new vs free)", related to the upstream dependency libgeos. This is most likely a false-positive, see https://github.com/r-hub/rhub/issues/598.
 
 ## Downstream dependencies
 
